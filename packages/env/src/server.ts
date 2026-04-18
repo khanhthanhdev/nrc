@@ -1,13 +1,23 @@
 import "dotenv/config";
 import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
+import * as v from "valibot";
 
 export const env = createEnv({
-  server: {
-    DATABASE_URL: z.string().min(1),
-    CORS_ORIGIN: z.url(),
-    NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-  },
-  runtimeEnv: process.env,
   emptyStringAsUndefined: true,
+  runtimeEnv: process.env,
+  server: {
+    APP_NAME: v.optional(v.pipe(v.string(), v.minLength(1)), "RMS"),
+    CORS_ORIGIN: v.pipe(v.string(), v.url()),
+    DATABASE_URL: v.pipe(v.string(), v.minLength(1)),
+    NODE_ENV: v.optional(v.picklist(["development", "production", "test"]), "development"),
+    STEAMIFY_BASIC_AUTH_PASS: v.optional(v.pipe(v.string(), v.minLength(1))),
+    STEAMIFY_BASIC_AUTH_USER: v.optional(v.pipe(v.string(), v.minLength(1))),
+    STEAMIFY_URL: v.optional(v.pipe(v.string(), v.url())),
+    TEMPLATE_ID_ACCOUNT_CREATED: v.optional(v.pipe(v.string(), v.minLength(1))),
+    TEMPLATE_ID_ORGANIZATION_INVITATION: v.optional(v.pipe(v.string(), v.minLength(1))),
+    TEMPLATE_ID_PASSWORD_RESET: v.optional(v.pipe(v.string(), v.minLength(1))),
+    TEMPLATE_ID_TEAM_MEMBER_ADDED: v.optional(v.pipe(v.string(), v.minLength(1))),
+    TEMPLATE_ID_TEAM_MEMBER_WELCOME: v.optional(v.pipe(v.string(), v.minLength(1))),
+    TEMPLATE_ID_VERIFICATION: v.optional(v.pipe(v.string(), v.minLength(1))),
+  },
 });

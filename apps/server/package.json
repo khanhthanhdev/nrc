@@ -17,14 +17,13 @@
     "@nrc-full/env": "workspace:*",
     "@orpc/openapi": "catalog:",
     "@orpc/server": "catalog:",
-    "@orpc/zod": "catalog:",
+    "@orpc/valibot": "catalog:",
     "dotenv": "catalog:",
     "hono": "catalog:",
     "i18next": "catalog:",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
-    "valibot": "catalog:",
-    "zod": "catalog:"
+    "valibot": "catalog:"
   },
   "devDependencies": {
     "@nrc-full/config": "workspace:*",

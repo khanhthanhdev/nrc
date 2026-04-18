@@ -6,9 +6,11 @@ import {
   ListObjectsV2Command,
   HeadObjectCommand,
   CopyObjectCommand,
-  type PutObjectCommandInput,
-  type GetObjectCommandInput,
-  type ListObjectsV2CommandInput,
+} from "@aws-sdk/client-s3";
+import type {
+  PutObjectCommandInput,
+  GetObjectCommandInput,
+  ListObjectsV2CommandInput,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -17,11 +19,11 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
  * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/
  */
 export const s3Client = new S3Client({
-  region: process.env.AWS_S3_REGION!,
   credentials: {
     accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID!,
     secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY!,
   },
+  region: process.env.AWS_S3_REGION!,
 });
 
 const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME!;
@@ -43,20 +45,20 @@ export async function uploadFile(
   },
 ): Promise<{ key: string; etag?: string }> {
   const input: PutObjectCommandInput = {
-    Bucket: BUCKET_NAME,
-    Key: key,
-    Body: body,
-    ContentType: options?.contentType,
-    Metadata: options?.metadata,
     ACL: options?.acl,
+    Body: body,
+    Bucket: BUCKET_NAME,
+    ContentType: options?.contentType,
+    Key: key,
+    Metadata: options?.metadata,
   };
 
   const command = new PutObjectCommand(input);
   const response = await s3Client.send(command);
 
   return {
-    key,
     etag: response.ETag,
+    key,
   };
 }
 
@@ -79,8 +81,8 @@ export async function downloadFile(key: string): Promise<{
 
   return {
     body: response.Body?.transformToWebStream() ?? null,
-    contentType: response.ContentType,
     contentLength: response.ContentLength,
+    contentType: response.ContentType,
     metadata: response.Metadata,
   };
 }
@@ -140,9 +142,9 @@ export async function listFiles(
 }> {
   const input: ListObjectsV2CommandInput = {
     Bucket: BUCKET_NAME,
-    Prefix: prefix,
-    MaxKeys: options?.maxKeys ?? 1000,
     ContinuationToken: options?.continuationToken,
+    MaxKeys: options?.maxKeys ?? 1000,
+    Prefix: prefix,
   };
 
   const command = new ListObjectsV2Command(input);
@@ -151,8 +153,8 @@ export async function listFiles(
   return {
     files: (response.Contents ?? []).map((item) => ({
       key: item.Key!,
-      size: item.Size,
       lastModified: item.LastModified,
+      size: item.Size,
     })),
     isTruncated: response.IsTruncated ?? false,
     nextContinuationToken: response.NextContinuationToken,
@@ -194,8 +196,8 @@ export async function getFileMetadata(key: string): Promise<{
     const response = await s3Client.send(command);
 
     return {
-      contentType: response.ContentType,
       contentLength: response.ContentLength,
+      contentType: response.ContentType,
       lastModified: response.LastModified,
       metadata: response.Metadata,
     };
@@ -220,8 +222,8 @@ export async function copyFile(
   const response = await s3Client.send(command);
 
   return {
-    key: destinationKey,
     etag: response.CopyObjectResult?.ETag,
+    key: destinationKey,
   };
 }
 
@@ -249,8 +251,8 @@ export async function getUploadUrl(
 ): Promise<string> {
   const command = new PutObjectCommand({
     Bucket: BUCKET_NAME,
-    Key: key,
     ContentType: options?.contentType,
+    Key: key,
   });
 
   return getSignedUrl(s3Client, command, {

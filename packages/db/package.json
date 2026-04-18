@@ -23,8 +23,7 @@
     "@nrc-full/env": "workspace:*",
     "dotenv": "catalog:",
     "drizzle-orm": "^0.45.2",
-    "pg": "^8.20.0",
-    "zod": "catalog:"
+    "pg": "^8.20.0"
   },
   "devDependencies": {
     "@nrc-full/config": "workspace:*",

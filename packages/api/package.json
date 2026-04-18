@@ -16,11 +16,10 @@
     "@orpc/client": "catalog:",
     "@orpc/openapi": "catalog:",
     "@orpc/server": "catalog:",
-    "@orpc/zod": "catalog:",
+    "@orpc/valibot": "catalog:",
     "dotenv": "catalog:",
     "hono": "catalog:",
-    "valibot": "catalog:",
-    "zod": "catalog:"
+    "valibot": "catalog:"
   },
   "devDependencies": {
     "@nrc-full/config": "workspace:*",

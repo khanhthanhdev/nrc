@@ -1,11 +1,11 @@
 import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
+import * as v from "valibot";
 
 export const env = createEnv({
-  clientPrefix: "EXPO_PUBLIC_",
   client: {
-    EXPO_PUBLIC_SERVER_URL: z.url(),
+    EXPO_PUBLIC_SERVER_URL: v.pipe(v.string(), v.url()),
   },
-  runtimeEnv: process.env,
+  clientPrefix: "EXPO_PUBLIC_",
   emptyStringAsUndefined: true,
+  runtimeEnv: process.env,
 });

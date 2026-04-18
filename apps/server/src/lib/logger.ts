@@ -25,13 +25,13 @@ if (isDevelopment && process.env.PINO_PRETTY !== "false") {
   logger = pino({
     ...loggerOptions,
     transport: {
-      target: "pino-pretty",
       options: {
         colorize: true,
-        translateTime: "SYS:standard",
         ignore: "pid,hostname",
         singleLine: false,
+        translateTime: "SYS:standard",
       },
+      target: "pino-pretty",
     },
   });
 } else {

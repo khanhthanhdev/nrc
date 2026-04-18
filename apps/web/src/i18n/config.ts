@@ -6,20 +6,20 @@ i18n
   .use(HttpBackend)
   .use(LanguageDetector)
   .init({
-    fallbackLng: "en",
-    supportedLngs: ["en", "fr"],
-    defaultNS: "common",
-    ns: ["common"],
-    interpolation: {
-      escapeValue: false,
-    },
     backend: {
       loadPath: "/locales//.json",
     },
+    defaultNS: "common",
     detection: {
-      order: ["navigator", "htmlTag"],
       caches: ["localStorage"],
+      order: ["navigator", "htmlTag"],
     },
+    fallbackLng: "en",
+    interpolation: {
+      escapeValue: false,
+    },
+    ns: ["common"],
+    supportedLngs: ["en", "en"],
   });
 
 export default i18n;

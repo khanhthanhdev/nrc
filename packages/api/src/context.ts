@@ -1,8 +1,8 @@
 import type { Context as HonoContext } from "hono";
 
-export type CreateContextOptions = {
+export interface CreateContextOptions {
   context: HonoContext;
-};
+}
 
 export async function createContext(_opts: CreateContextOptions) {
   // No auth configured
