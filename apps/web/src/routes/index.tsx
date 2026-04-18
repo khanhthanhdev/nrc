@@ -1,6 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 
+import { resolvePostAuthRoute } from "@/lib/auth-routing";
+import { authClient } from "@/utils/auth-client";
 import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/")({
@@ -24,7 +28,28 @@ const TITLE_TEXT = `
  `;
 
 function HomeComponent() {
+  const navigate = useNavigate();
+  const session = authClient.useSession();
   const healthCheck = useQuery(orpc.healthCheck.queryOptions());
+
+  useEffect(() => {
+    if (session.isPending) {
+      return;
+    }
+
+    void (async () => {
+      if (!session.data) {
+        await navigate({ to: "/auth" });
+        return;
+      }
+
+      const to = await resolvePostAuthRoute();
+
+      if (to !== "/") {
+        await navigate({ to });
+      }
+    })();
+  }, [navigate, session.data, session.isPending]);
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-2">

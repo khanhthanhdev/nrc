@@ -1,7 +1,4 @@
-import { os } from "@orpc/server";
-
-import type { Context } from "./context.js";
-
-export const o = os.$context<Context>();
-
-export const publicProcedure = o;
+export * from "./app-router.js";
+export * from "./features/auth/index.js";
+export * from "./shared/context.js";
+export * from "./shared/procedure.js";

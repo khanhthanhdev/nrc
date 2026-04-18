@@ -1,150 +1,94 @@
 # Sync Error Surface
 
-This document defines the error surface for machine-facing sync endpoints. Keep it aligned with the machine router and application use cases so refactors do not change the public sync contract by accident.
+## Document Status
 
-**Last updated**: 2026-03-29 (Clean Architecture refactor complete)
+- Status: Target-state error contract (pre-implementation)
+- Last updated: 2026-04-18
+- Scope: Sync machine-facing endpoints, with translation rules from application failures
 
-## Architecture Context
+---
 
-After the Clean Architecture refactor:
+## 1. Error Flow Boundary
 
-- **Transport layer** (`apps/server`) — HTTP handling, OpenAPI exposure
-- **Presentation layer** (`sync-machine.router.ts`) — Auth, context mapping, ORPC error translation
-- **Application layer** (`application/machine/*.usecase.ts`) — Use case orchestration, result types
-- **Domain layer** (`domain/`) — Pure validation rules, error classifications
-- **Infrastructure layer** (`infrastructure/`) — Persistence, publication, audit logging
+Canonical flow:
 
-Error flow: **Domain → Application → Presentation (translate to ORPC) → Transport**
+`domain classification -> application result union -> presentation translation -> transport response`
 
-## Machine Endpoint Errors
+Rules:
 
-### GET /sync/v1/machine/bootstrap
+- Domain/application never throw transport-specific errors.
+- Application returns discriminated union failures for expected business outcomes.
+- Presentation layer maps failure reasons to canonical code + status.
 
-| Error Code       | HTTP Status | When                                                 |
-| ---------------- | ----------- | ---------------------------------------------------- |
-| `NOT_FOUND`      | 404         | Event registry not found for the machine's event key |
-| `CLIENT_REVOKED` | 403         | Machine secret has been revoked                      |
-| `CLIENT_EXPIRED` | 403         | Machine secret has expired                           |
-| `UNAUTHORIZED`   | 401         | Missing or invalid bearer token                      |
+---
 
-### POST /sync/v1/machine/push
+## 2. Machine Endpoint Error Codes
 
-| Error Code                       | HTTP Status | When                                                |
-| -------------------------------- | ----------- | --------------------------------------------------- |
-| `VALIDATION_FAILED`              | 400         | Schema validation failed or batch payload invalid   |
-| `SYNC_DISABLED`                  | 403         | `isSyncEnabled = false` for this event              |
-| `RESOURCE_TYPE_NOT_ALLOWED`      | 403         | Resource type not in `allowedPushResources`         |
-| `UNSUPPORTED_DEFINITION_VERSION` | 400         | Season registry doesn't have definition for version |
-| `BATCH_HASH_MISMATCH`            | 409         | Duplicate `batchId` with different payload          |
-| `CLIENT_REVOKED`                 | 403         | Machine secret has been revoked                     |
-| `CLIENT_EXPIRED`                 | 403         | Machine secret has expired                          |
-| `UNAUTHORIZED`                   | 401         | Missing or invalid bearer token                     |
+### GET `/api/sync/v1/machine/bootstrap`
 
-## Error Response Format
+| Code | Status | Meaning |
+| --- | --- | --- |
+| `UNAUTHORIZED` | 401 | Missing or invalid bearer token |
+| `CLIENT_REVOKED` | 403 | Credential revoked |
+| `CLIENT_EXPIRED` | 403 | Credential expired |
+| `NOT_FOUND` | 404 | Event/sync scope not found |
 
-Errors follow the ORPC error format:
+### POST `/api/sync/v1/machine/push`
 
-```json
-{
-  "code": "ERROR_CODE",
-  "message": "Human-readable error description",
-  "status": 400
-}
-```
+| Code | Status | Meaning |
+| --- | --- | --- |
+| `UNAUTHORIZED` | 401 | Missing or invalid bearer token |
+| `CLIENT_REVOKED` | 403 | Credential revoked |
+| `CLIENT_EXPIRED` | 403 | Credential expired |
+| `SYNC_DISABLED` | 403 | Event sync disabled |
+| `RESOURCE_TYPE_NOT_ALLOWED` | 403 | Pushed resource not allowed by policy |
+| `VALIDATION_FAILED` | 400 | Payload/schema/business validation failure |
+| `UNSUPPORTED_DEFINITION_VERSION` | 400 | Unsupported season definition version |
+| `BATCH_HASH_MISMATCH` | 409 | Same `(syncClientId,batchId)` with different hash |
 
-## Router Layer Responsibilities
+---
 
-The router layer (`sync-machine.router.ts`) handles:
+## 3. Result-Union Contract (Application Layer)
 
-1. **Auth middleware** — `requireMachineAuth` validates bearer token
-2. **Context mapping** — `getMachineContext` ensures machine context exists
-3. **Error translation** — application use case results → `ORPCError` with correct HTTP status
-4. **No business logic** — all validation and decision-making happens in application/domain layers
-
-**Example error translation:**
+Target pattern for push use case:
 
 ```typescript
-// sync-machine.router.ts
-pushSyncBatch: syncMachineContract.pushSyncBatch.handler(async (opts) => {
-  const { input, context } = opts;
-  const requestId = opts.context.requestId;
-
-  const result = await syncModule.machine.processPushBatch.execute({
-    machineScope: context.machineScope,
-    payload: input,
-    request: { requestId },
-  });
-
-  // Application returned failure → translate to ORPC error
-  if (!result.success) {
-    switch (result.reason) {
-      case "sync_disabled":
-        throw new ORPCError("SYNC_DISABLED", { status: 403 });
-      case "client_revoked":
-        throw new ORPCError("CLIENT_REVOKED", { status: 403 });
-      case "validation_failed":
-        throw new ORPCError("VALIDATION_FAILED", { status: 400 });
-      // ... other cases
-    }
-  }
-
-  // Application succeeded → return receipt
-  return result.batch;
-});
-```
-
-## Application Use Case Error Handling
-
-Application use cases return discriminated union results instead of throwing transport errors. This keeps business logic decoupled from HTTP/ORPC concerns.
-
-**Push batch result type:**
-
-```typescript
-// application/types/push-batch.types.ts
 export type ProcessPushBatchResult =
-  | { success: true; batch: PushBatchReceipt }
+  | { success: true; receipt: PushBatchReceipt }
   | { success: false; reason: ProcessPushBatchFailureReason };
 
 export type ProcessPushBatchFailureReason =
+  | "unauthorized"
   | "client_revoked"
   | "client_expired"
   | "sync_disabled"
   | "validation_failed"
-  | "hash_mismatch"
   | "resource_type_not_allowed"
   | "unsupported_definition_version"
-  | "duplicate_batch";
+  | "batch_hash_mismatch";
 ```
 
-**Use case execution pattern:**
+Mapping responsibility:
 
-```typescript
-// Router calls use case through composition root
-const result = await syncModule.machine.processPushBatch.execute({
-  machineScope,
-  payload,
-  request: { requestId },
-});
+- presentation/router converts `reason` to symbolic code + status
+- unexpected/unclassified failures map to internal server error contract
 
-// Use case returns result, doesn't throw
-if (!result.success) {
-  // Router translates to ORPC error
-  throw new ORPCError(result.reason.toUpperCase());
-}
-```
+---
 
-**Domain errors bubble up through application:**
+## 4. Idempotency and Duplicate Semantics
 
-```typescript
-// Domain service returns validation failure
-const validation = validatePushBatch(batch, policy);
-if (!validation.valid) {
-  return { success: false, reason: "validation_failed" };
-}
+- Duplicate with identical payload hash is a successful idempotent outcome and should return a duplicate receipt.
+- Duplicate with differing payload hash is an explicit conflict (`BATCH_HASH_MISMATCH`).
+- Persisted status graph includes `duplicate` as first-class state.
 
-// Application orchestrates, domain decides
-```
+---
 
-## Contract Reference
+## 5. Consistency Rules
 
-See `packages/api/src/contracts/sync-machine.contract.ts` for the authoritative error definitions.
+This file must stay aligned with:
+
+- `docs/clean-architecture-openapi.md` (architecture + state machine)
+- `docs/nrc_sync_api_spec.md` (public contract)
+- implementation code once sync is built
+
+No section should claim runtime implementation status unless code is present.

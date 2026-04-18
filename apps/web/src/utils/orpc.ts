@@ -1,4 +1,4 @@
-import type { AppRouter } from "@nrc-full/api/routers/index";
+import type { AppRouter } from "@nrc-full/api/app-router";
 import type { RouterClient } from "@orpc/server";
 
 import { env } from "@nrc-full/env/web";
@@ -22,6 +22,11 @@ export const queryClient = new QueryClient({
 });
 
 const link = new RPCLink({
+  fetch: async (request, init) =>
+    fetch(request, {
+      ...init,
+      credentials: "include",
+    }),
   url: `${env.VITE_SERVER_URL}/rpc`,
 });
 

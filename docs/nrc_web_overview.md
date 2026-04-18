@@ -767,6 +767,10 @@ The authentication feature should support:
 - verified-email account linking when a Google account matches an existing password account and policy allows linking
 - invite-aware redirects across sign-up, sign-in, verification, and organization acceptance
 
+Implementation source of truth for auth workflows and edge-case policy:
+
+- `docs/authentication-source-of-truth.md`
+
 ### 15.4. Frontend Implementation Baseline
 
 Auth, public pages, and dashboard work should fit the current frontend structure:
