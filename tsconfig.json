@@ -1,0 +1,6 @@
+{
+  "extends": "@nrc-full/config/tsconfig.base.json",
+  "compilerOptions": {
+    "strictNullChecks": true
+  }
+}

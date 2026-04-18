@@ -1,0 +1,35 @@
+{
+  "name": "@nrc-full/api",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@nrc-full/db": "workspace:*",
+    "@nrc-full/env": "workspace:*",
+    "@orpc/client": "catalog:",
+    "@orpc/openapi": "catalog:",
+    "@orpc/server": "catalog:",
+    "@orpc/zod": "catalog:",
+    "dotenv": "catalog:",
+    "hono": "catalog:",
+    "valibot": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@nrc-full/config": "workspace:*",
+    "@playwright/test": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "@vitest/ui": "catalog:",
+    "jsdom": "catalog:",
+    "playwright": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

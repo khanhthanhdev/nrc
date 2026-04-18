@@ -1,0 +1,63 @@
+{
+  "name": "nrc-full",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "dotenv": "^17.4.1",
+      "zod": "^4.3.6",
+      "typescript": "^6.0.2",
+      "@types/bun": "^1.3.11",
+      "hono": "^4.12.11",
+      "@orpc/server": "^1.13.13",
+      "@orpc/openapi": "^1.13.13",
+      "@orpc/zod": "^1.13.13",
+      "valibot": "^1.3.1",
+      "i18next": "^25.0.1",
+      "vitest": "^4.1.2",
+      "@vitest/ui": "^4.1.2",
+      "@vitest/coverage-v8": "^4.1.2",
+      "jsdom": "^29.0.1",
+      "@playwright/test": "^1.59.1",
+      "playwright": "^1.59.1",
+      "@orpc/client": "^1.13.13"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "check-types": "turbo check-types",
+    "dev:native": "turbo -F native dev",
+    "dev:web": "turbo -F web dev",
+    "dev:server": "turbo -F server dev",
+    "db:push": "turbo -F @nrc-full/db db:push",
+    "db:studio": "turbo -F @nrc-full/db db:studio",
+    "db:generate": "turbo -F @nrc-full/db db:generate",
+    "db:migrate": "turbo -F @nrc-full/db db:migrate",
+    "db:start": "turbo -F @nrc-full/db db:start",
+    "db:watch": "turbo -F @nrc-full/db db:watch",
+    "db:stop": "turbo -F @nrc-full/db db:stop",
+    "db:down": "turbo -F @nrc-full/db db:down",
+    "check": "ultracite check",
+    "fix": "ultracite fix"
+  },
+  "dependencies": {
+    "@nrc-full/env": "workspace:*",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@nrc-full/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "oxfmt": "latest",
+    "oxlint": "latest",
+    "turbo": "^2.9.6",
+    "typescript": "catalog:",
+    "ultracite": "7.6.0"
+  },
+  "packageManager": "bun@1.3.10"
+}
