@@ -1,7 +1,10 @@
 import { ORPCError } from "@orpc/server";
 
 import { publicProcedure } from "../../../shared/procedure.js";
-import { completeOnboardingByUserId, getOnboardingProfileByUserId } from "../application/onboarding.js";
+import {
+  completeOnboardingByUserId,
+  getOnboardingProfileByUserId,
+} from "../application/onboarding.js";
 import { completeOnboardingInputSchema } from "../schemas/onboarding.js";
 
 const requireUserId = (session: { session: { userId: string } } | null): string => {

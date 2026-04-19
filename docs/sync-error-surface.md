@@ -26,25 +26,25 @@ Rules:
 
 ### GET `/api/sync/v1/machine/bootstrap`
 
-| Code | Status | Meaning |
-| --- | --- | --- |
-| `UNAUTHORIZED` | 401 | Missing or invalid bearer token |
-| `CLIENT_REVOKED` | 403 | Credential revoked |
-| `CLIENT_EXPIRED` | 403 | Credential expired |
-| `NOT_FOUND` | 404 | Event/sync scope not found |
+| Code             | Status | Meaning                         |
+| ---------------- | ------ | ------------------------------- |
+| `UNAUTHORIZED`   | 401    | Missing or invalid bearer token |
+| `CLIENT_REVOKED` | 403    | Credential revoked              |
+| `CLIENT_EXPIRED` | 403    | Credential expired              |
+| `NOT_FOUND`      | 404    | Event/sync scope not found      |
 
 ### POST `/api/sync/v1/machine/push`
 
-| Code | Status | Meaning |
-| --- | --- | --- |
-| `UNAUTHORIZED` | 401 | Missing or invalid bearer token |
-| `CLIENT_REVOKED` | 403 | Credential revoked |
-| `CLIENT_EXPIRED` | 403 | Credential expired |
-| `SYNC_DISABLED` | 403 | Event sync disabled |
-| `RESOURCE_TYPE_NOT_ALLOWED` | 403 | Pushed resource not allowed by policy |
-| `VALIDATION_FAILED` | 400 | Payload/schema/business validation failure |
-| `UNSUPPORTED_DEFINITION_VERSION` | 400 | Unsupported season definition version |
-| `BATCH_HASH_MISMATCH` | 409 | Same `(syncClientId,batchId)` with different hash |
+| Code                             | Status | Meaning                                           |
+| -------------------------------- | ------ | ------------------------------------------------- |
+| `UNAUTHORIZED`                   | 401    | Missing or invalid bearer token                   |
+| `CLIENT_REVOKED`                 | 403    | Credential revoked                                |
+| `CLIENT_EXPIRED`                 | 403    | Credential expired                                |
+| `SYNC_DISABLED`                  | 403    | Event sync disabled                               |
+| `RESOURCE_TYPE_NOT_ALLOWED`      | 403    | Pushed resource not allowed by policy             |
+| `VALIDATION_FAILED`              | 400    | Payload/schema/business validation failure        |
+| `UNSUPPORTED_DEFINITION_VERSION` | 400    | Unsupported season definition version             |
+| `BATCH_HASH_MISMATCH`            | 409    | Same `(syncClientId,batchId)` with different hash |
 
 ---
 

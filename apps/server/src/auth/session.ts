@@ -13,6 +13,10 @@ export const getAuthSessionFromHeaders = async (
 
   return {
     session: {
+      activeOrganizationId:
+        typeof session.session.activeOrganizationId === "string"
+          ? session.session.activeOrganizationId
+          : null,
       expiresAt: session.session.expiresAt,
       id: session.session.id,
       userId: session.session.userId,

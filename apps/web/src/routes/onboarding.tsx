@@ -64,7 +64,7 @@ function OnboardingPage() {
     setForm({
       address: profileQuery.data.address,
       city:
-        (VIETNAM_34_CITIES.find((city) => city === profileQuery.data.city) ?? VIETNAM_34_CITIES[0]),
+        VIETNAM_34_CITIES.find((city) => city === profileQuery.data.city) ?? VIETNAM_34_CITIES[0],
       dateOfBirth: profileQuery.data.dateOfBirth,
       organizationOrSchool: profileQuery.data.organizationOrSchool,
       phone: profileQuery.data.phone,
@@ -103,7 +103,9 @@ function OnboardingPage() {
     <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-8">
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold">Complete onboarding</h1>
-        <p className="text-muted-foreground text-sm">Fill all required profile fields to continue.</p>
+        <p className="text-muted-foreground text-sm">
+          Fill all required profile fields to continue.
+        </p>
       </div>
 
       <form
@@ -127,7 +129,9 @@ function OnboardingPage() {
           <Label htmlFor="address">Address</Label>
           <Textarea
             id="address"
-            onChange={(event) => setForm((current) => ({ ...current, address: event.target.value }))}
+            onChange={(event) =>
+              setForm((current) => ({ ...current, address: event.target.value }))
+            }
             required
             value={form.address}
           />
@@ -142,7 +146,8 @@ function OnboardingPage() {
               setForm((current) => ({
                 ...current,
                 city: event.target.value as (typeof VIETNAM_34_CITIES)[number],
-              }))}
+              }))
+            }
             required
             value={form.city}
           >
@@ -159,7 +164,8 @@ function OnboardingPage() {
           <Input
             id="organizationOrSchool"
             onChange={(event) =>
-              setForm((current) => ({ ...current, organizationOrSchool: event.target.value }))}
+              setForm((current) => ({ ...current, organizationOrSchool: event.target.value }))
+            }
             required
             value={form.organizationOrSchool}
           />
@@ -169,7 +175,9 @@ function OnboardingPage() {
           <Label htmlFor="dateOfBirth">Date of birth</Label>
           <Input
             id="dateOfBirth"
-            onChange={(event) => setForm((current) => ({ ...current, dateOfBirth: event.target.value }))}
+            onChange={(event) =>
+              setForm((current) => ({ ...current, dateOfBirth: event.target.value }))
+            }
             required
             type="date"
             value={form.dateOfBirth}

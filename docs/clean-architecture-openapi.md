@@ -26,15 +26,15 @@ No section in this document should be interpreted as "already implemented" unles
 
 ## 2. Current State vs Target State
 
-| Area | Current state (repo) | Target state (approved) | Gap |
-| --- | --- | --- | --- |
-| API composition | `appRouter` exposes `healthCheck` only | `appRouter.sync.machine.*` and `appRouter.sync.admin.*` | Add sync contracts/routers/use cases |
-| Sync package layout | No `src/features/sync` tree yet | `packages/api/src/features/sync/{contracts,schemas,presentation,application,domain,infrastructure}` | Create full feature-root layering |
-| OpenAPI reference route | `/api-reference` serves Scalar reference | Keep `/api-reference` reference route | Keep and document as canonical |
-| OpenAPI JSON route | No `/openapi.json` route currently exposed | Canonical spec endpoint at `/openapi.json` | Add explicit server route during implementation |
-| External sync base path | No sync routes currently exposed | `/api/sync/v1/*` | Add machine/admin sync routes |
-| Error propagation model | No sync-specific pattern in code | Application returns result unions; presentation translates to transport errors | Implement standardized result contracts |
-| Idempotency status graph | DB supports `duplicate` in `sync_batch_status` | Canonical state model includes `duplicate` as first-class persisted outcome | Keep database and docs aligned |
+| Area                     | Current state (repo)                           | Target state (approved)                                                                             | Gap                                             |
+| ------------------------ | ---------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| API composition          | `appRouter` exposes `healthCheck` only         | `appRouter.sync.machine.*` and `appRouter.sync.admin.*`                                             | Add sync contracts/routers/use cases            |
+| Sync package layout      | No `src/features/sync` tree yet                | `packages/api/src/features/sync/{contracts,schemas,presentation,application,domain,infrastructure}` | Create full feature-root layering               |
+| OpenAPI reference route  | `/api-reference` serves Scalar reference       | Keep `/api-reference` reference route                                                               | Keep and document as canonical                  |
+| OpenAPI JSON route       | No `/openapi.json` route currently exposed     | Canonical spec endpoint at `/openapi.json`                                                          | Add explicit server route during implementation |
+| External sync base path  | No sync routes currently exposed               | `/api/sync/v1/*`                                                                                    | Add machine/admin sync routes                   |
+| Error propagation model  | No sync-specific pattern in code               | Application returns result unions; presentation translates to transport errors                      | Implement standardized result contracts         |
+| Idempotency status graph | DB supports `duplicate` in `sync_batch_status` | Canonical state model includes `duplicate` as first-class persisted outcome                         | Keep database and docs aligned                  |
 
 Current-state references:
 

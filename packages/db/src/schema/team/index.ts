@@ -1,6 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import { boolean, index, pgEnum, pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
-import { user } from "../auth/index.js";
+import { organization, user } from "../auth/index.js";
 
 export const teamMembershipRoleEnum = pgEnum("team_membership_role", [
   "TEAM_MENTOR",
@@ -32,7 +32,9 @@ export const team = pgTable(
     description: text("description"),
     id: text("id").primaryKey(),
     name: text("name").notNull(),
-    organizationId: text("organization_id").notNull(),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
     schoolOrOrganization: text("school_or_organization"),
     teamNumber: text("team_number").notNull(),
     updatedAt: timestamp("updated_at")

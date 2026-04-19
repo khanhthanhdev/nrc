@@ -7,6 +7,7 @@
  * - organization invitations
  * - team onboarding notifications
  */
+import { EvlogError, createError } from "evlog";
 
 export interface Recipients {
   to: string[];
@@ -114,10 +115,35 @@ export const sendSteamifyEmail = async (payload: IEmailPayload): Promise<void> =
 
     if (!response.ok) {
       const errorPayload = await response.text().catch(() => "Unknown error");
-      throw new Error(`Steamify API error: ${response.status} - ${errorPayload}`);
+      throw createError({
+        fix: "Retry later or verify Steamify credentials and template configuration.",
+        internal: {
+          provider: "steamify",
+          responseBody: errorPayload,
+          status: response.status,
+          templateId: payload.templateId,
+        },
+        message: "Unable to send transactional email. Please try again later.",
+        status: 502,
+        why: `Steamify API returned ${response.status}.`,
+      });
     }
-  } catch {
-    throw new Error("Unable to send transactional email. Please try again later.");
+  } catch (error) {
+    if (error instanceof EvlogError) {
+      throw error;
+    }
+
+    throw createError({
+      cause: error instanceof Error ? error : undefined,
+      fix: "Retry later or contact support if this persists.",
+      internal: {
+        provider: "steamify",
+        templateId: payload.templateId,
+      },
+      message: "Unable to send transactional email. Please try again later.",
+      status: 502,
+      why: "Email provider request failed unexpectedly.",
+    });
   }
 };
 

@@ -3,7 +3,7 @@
 ## 1. Status and Ownership
 
 - Status: Active implementation specification.
-- Last updated: 2026-04-18.
+- Last updated: 2026-04-19.
 - Canonical auth runtime: Better Auth mounted at `/api/auth/*` on `apps/server`.
 - Canonical onboarding API: oRPC endpoints under `auth.*` in `packages/api`.
 
@@ -32,9 +32,11 @@ The system supports:
 Policy is asymmetric and explicit:
 
 1. Password-first account, then Google sign-in using same verified email:
+
 - account linking is allowed (Better Auth account linking enabled).
 
 2. Google-first account, then email/password sign-up with same email:
+
 - credential sign-up is blocked.
 - user must continue with Google.
 - API error code: `GOOGLE_ACCOUNT_EXISTS`.
@@ -133,3 +135,80 @@ Run commands:
 
 - `bun run test:unit`
 - `bun run test:e2e`
+
+## 8. Team Identity Source of Truth (Better Auth Organization)
+
+Team identity and team membership use Better Auth organization tables as the canonical source:
+
+- `organization` maps to NRC team identity.
+- `member` maps to team membership.
+- `invitation` maps to team invitation flow.
+- `session.activeOrganizationId` tracks the active team context.
+
+The app-owned `team` table remains the profile and routing anchor (`team_number`, media, and other team page fields) and keeps a 1:1 link with `organization.id`.
+
+### 8.1 Role Model
+
+- System roles remain outside organization membership: `USER`, `MANAGER`, `ADMIN`.
+- Team roles are organization membership roles: `TEAM_MENTOR`, `TEAM_LEADER`, `TEAM_MEMBER`.
+- Organization creator role is `TEAM_MENTOR`.
+
+### 8.2 Invitation Flow and Policy
+
+#### 8.2.1 Creation and Delivery
+
+- Invitation creation uses Better Auth organization endpoint:
+  - `POST /api/auth/organization/invite-member`
+- Server-side policy in current auth config:
+  - `requireEmailVerificationOnInvitation=true`
+  - `invitationExpiresIn=172800` seconds (48 hours)
+  - `cancelPendingInvitationsOnReInvite=true`
+- Invitation email delivery is sent by `sendInvitationEmail` via Steamify.
+- Email link format:
+  - `/auth/accept-invitation?invitationId=<id>`
+
+#### 8.2.2 New User Invitation Flow (email not registered yet)
+
+1. Invitee clicks invitation link from email.
+2. `/auth/accept-invitation` checks auth session. If no session, redirect to `/auth?invitationId=<id>`.
+3. User signs up (`/auth`) with preserved `invitationId`.
+4. If user signs up with email/password, account is created, verification is required, and callback uses `/auth/post-verify?invitationId=<id>`.
+5. After verification, `/auth/post-verify` redirects to `/auth/accept-invitation?invitationId=<id>`.
+6. Accept route calls `authClient.organization.acceptInvitation({ invitationId })`.
+7. On success, Better Auth sets invitation status to accepted, creates organization membership (`member`) with invited role, sets `session.activeOrganizationId`, and web redirects using post-auth rule:
+  - onboarding incomplete -> `/onboarding`
+  - onboarding completed -> `/`
+
+#### 8.2.3 Existing User Invitation Flow
+
+- If signed in with matching email:
+  - accept is processed immediately at `/auth/accept-invitation`.
+- If signed in with a different email:
+  - Better Auth rejects acceptance (recipient mismatch).
+  - user must sign out and sign in with invited email.
+
+#### 8.2.4 Failure and Rejection Paths
+
+- Missing `invitationId` query:
+  - UI shows error and redirects to `/auth`.
+- Expired/canceled/invalid invitation:
+  - accept call returns error from Better Auth.
+- Unverified recipient when verification is required:
+  - accept call is rejected until email is verified.
+- Recipient email mismatch:
+  - accept call is rejected (`YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION`).
+
+#### 8.2.5 Current Surface and Gaps
+
+- Acceptance UI is implemented:
+  - `/auth/accept-invitation`
+- Invite creation UI is not yet implemented in web routes.
+  - Current invite creation is API-driven through Better Auth endpoint(s).
+  - Team invite management screen is a follow-up deliverable.
+
+### 8.3 Team Creation Guardrails
+
+- Team creation requires authenticated user session.
+- Team creation requires onboarding completion.
+- Team creation requires user age >= 18.
+- Team creation promotes `userType` from `PARTICIPANT` to `MENTOR` for eligible creators.

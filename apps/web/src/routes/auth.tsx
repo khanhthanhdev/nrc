@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 
-import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
+import {
+  Link,
+  Outlet,
+  createFileRoute,
+  useNavigate,
+  useRouterState,
+  useSearch,
+} from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import { toBrowserCallbackURL } from "@/lib/auth-callback-url";
@@ -11,12 +18,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 type AuthMode = "sign-in" | "sign-up";
+interface AuthSearch {
+  invitationId?: string;
+}
 
 const AuthPage = () => {
   const navigate = useNavigate();
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
+  const { invitationId } = useSearch({ from: "/auth" });
   const session = authClient.useSession();
 
   const [mode, setMode] = useState<AuthMode>("sign-in");
@@ -25,19 +36,31 @@ const AuthPage = () => {
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const callbackPath = invitationId
+    ? `/auth/post-verify?invitationId=${encodeURIComponent(invitationId)}`
+    : "/auth/post-verify";
+
   useEffect(() => {
     if (!session.data) {
       return;
     }
 
     void (async () => {
+      if (invitationId) {
+        await navigate({
+          search: { invitationId },
+          to: "/auth/accept-invitation",
+        });
+        return;
+      }
+
       const to = await resolvePostAuthRoute();
       await navigate({ to });
     })();
-  }, [navigate, session.data]);
+  }, [invitationId, navigate, session.data]);
 
   const onSignIn = async () => {
-    const callbackURL = toBrowserCallbackURL("/auth/post-verify");
+    const callbackURL = toBrowserCallbackURL(callbackPath);
     setIsSubmitting(true);
 
     const { error } = await authClient.signIn.email({
@@ -54,12 +77,20 @@ const AuthPage = () => {
       return;
     }
 
+    if (invitationId) {
+      await navigate({
+        search: { invitationId },
+        to: "/auth/accept-invitation",
+      });
+      return;
+    }
+
     const to = await resolvePostAuthRoute();
     await navigate({ to });
   };
 
   const onSignUp = async () => {
-    const callbackURL = toBrowserCallbackURL("/auth/post-verify");
+    const callbackURL = toBrowserCallbackURL(callbackPath);
     setIsSubmitting(true);
 
     const { data, error } = await authClient.signUp.email({
@@ -77,6 +108,14 @@ const AuthPage = () => {
     }
 
     if (data?.token) {
+      if (invitationId) {
+        await navigate({
+          search: { invitationId },
+          to: "/auth/accept-invitation",
+        });
+        return;
+      }
+
       const to = await resolvePostAuthRoute();
       await navigate({ to });
       return;
@@ -86,7 +125,7 @@ const AuthPage = () => {
   };
 
   const onGoogleSignIn = async () => {
-    const callbackURL = toBrowserCallbackURL("/auth/post-verify");
+    const callbackURL = toBrowserCallbackURL(callbackPath);
     setIsSubmitting(true);
 
     const { error } = await authClient.signIn.social({
@@ -196,4 +235,7 @@ const AuthPage = () => {
 
 export const Route = createFileRoute("/auth")({
   component: AuthPage,
+  validateSearch: (search): AuthSearch => ({
+    invitationId: typeof search.invitationId === "string" ? search.invitationId : undefined,
+  }),
 });

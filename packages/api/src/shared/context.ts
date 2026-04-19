@@ -1,5 +1,6 @@
 export interface AuthContextSession {
   session: {
+    activeOrganizationId?: string | null;
     expiresAt: Date;
     id: string;
     userId: string;

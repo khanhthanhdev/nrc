@@ -32,7 +32,7 @@ This file provides context about the project for AI assistants.
 ### Additional Features
 
 - Testing: vitest-playwright
-- Logging: pino
+- Logging: evlog
 
 ## Project Structure
 

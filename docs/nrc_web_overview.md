@@ -882,11 +882,14 @@ Authorization should be resolved from the combination of:
 
 ## 16. Open Questions
 
-These items should be resolved before final database design:
+Resolved team authorization decisions:
 
-- Can a user mentor more than one team?
-- Can a team have more than one mentor?
-- What permissions should `TEAM_LEADER` have beyond viewing team data?
+- A user can mentor more than one team.
+- A team can have more than one mentor.
+- `TEAM_LEADER` can manage team profile and roster/invitations, but cannot perform mentor-only event registration authority.
+
+Remaining cross-domain questions:
+
 - Which event schedule data is owned by the web app versus the offline app?
 - Are rankings always computed offline, or can admins edit them manually in the web app?
 - Should notifications support browser push in v1 or only email and in-app notifications?

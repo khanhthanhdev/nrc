@@ -1,10 +1,11 @@
 import { createContext } from "@nrc-full/api/shared/context";
+import type { EvlogVariables } from "evlog/hono";
 import type { Hono } from "hono";
 
 import { getAuthSessionFromHeaders } from "../../auth/session";
 import { apiHandler, rpcHandler } from "./orpc-handlers";
 
-export const registerOrpcMiddleware = (app: Hono): void => {
+export const registerOrpcMiddleware = (app: Hono<EvlogVariables>): void => {
   app.use("/*", async (c, next) => {
     if (c.req.path.startsWith("/api/auth")) {
       await next();

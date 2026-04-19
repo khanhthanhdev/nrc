@@ -4,8 +4,15 @@ import { and, eq, isNull } from "drizzle-orm";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError, createAuthMiddleware } from "better-auth/api";
+import { admin, organization } from "better-auth/plugins";
+import { defaultStatements } from "better-auth/plugins/organization/access";
+import { createAccessControl } from "better-auth/plugins/access";
 
-import { sendPasswordResetEmailViaSteamify, sendVerificationEmailViaSteamify } from "../adapters/email";
+import {
+  sendOrganizationInvitationEmailViaSteamify,
+  sendPasswordResetEmailViaSteamify,
+  sendVerificationEmailViaSteamify,
+} from "../adapters/email";
 import {
   normalizeEmailForLookup,
   shouldBlockCredentialSignUpForGoogleOnlyAccount,
@@ -16,6 +23,66 @@ const authOrigin = new URL(env.BETTER_AUTH_URL).origin;
 const staffRoleEmailConfig = {
   adminEmail: env.ADMIN_EMAIL,
   managerEmail: env.MANAGER_EMAIL,
+} as const;
+
+const adminAccessControl = createAccessControl({
+  session: ["list", "revoke", "delete"],
+  user: [
+    "create",
+    "list",
+    "set-role",
+    "ban",
+    "impersonate",
+    "delete",
+    "set-password",
+    "get",
+    "update",
+  ],
+});
+
+const staffRolePermissions = {
+  ADMIN: adminAccessControl.newRole({
+    session: ["list", "revoke", "delete"],
+    user: [
+      "create",
+      "list",
+      "set-role",
+      "ban",
+      "impersonate",
+      "delete",
+      "set-password",
+      "get",
+      "update",
+    ],
+  }),
+  MANAGER: adminAccessControl.newRole({
+    session: [],
+    user: [],
+  }),
+  USER: adminAccessControl.newRole({
+    session: [],
+    user: [],
+  }),
+} as const;
+
+const organizationAccessControl = createAccessControl(defaultStatements);
+
+const teamMembershipRolePermissions = {
+  TEAM_LEADER: organizationAccessControl.newRole({
+    invitation: ["create", "cancel"],
+    member: ["create", "update", "delete"],
+    organization: ["update"],
+  }),
+  TEAM_MEMBER: organizationAccessControl.newRole({
+    invitation: [],
+    member: [],
+    organization: [],
+  }),
+  TEAM_MENTOR: organizationAccessControl.newRole({
+    invitation: ["create", "cancel"],
+    member: ["create", "update", "delete"],
+    organization: ["update"],
+  }),
 } as const;
 
 const syncStaffRoleAssignmentForSession = async (userId: string): Promise<void> => {
@@ -54,7 +121,24 @@ const syncStaffRoleAssignmentForSession = async (userId: string): Promise<void> 
 };
 
 export const auth = betterAuth({
+  account: {
+    accountLinking: {
+      enabled: true,
+    },
+  },
+  basePath: "/api/auth",
+  baseURL: env.BETTER_AUTH_URL,
+  database: drizzleAdapter(db, {
+    provider: "pg",
+  }),
   databaseHooks: {
+    session: {
+      create: {
+        after: async (session) => {
+          await syncStaffRoleAssignmentForSession(session.userId);
+        },
+      },
+    },
     user: {
       create: {
         before: async (newUser) => {
@@ -73,24 +157,7 @@ export const auth = betterAuth({
         },
       },
     },
-    session: {
-      create: {
-        after: async (session) => {
-          await syncStaffRoleAssignmentForSession(session.userId);
-        },
-      },
-    },
   },
-  account: {
-    accountLinking: {
-      enabled: true,
-    },
-  },
-  basePath: "/api/auth",
-  baseURL: env.BETTER_AUTH_URL,
-  database: drizzleAdapter(db, {
-    provider: "pg",
-  }),
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
@@ -154,6 +221,70 @@ export const auth = betterAuth({
       }
     }),
   },
+  plugins: [
+    admin({
+      adminRoles: ["ADMIN"],
+      defaultRole: "USER",
+      roles: staffRolePermissions,
+      schema: {
+        user: {
+          fields: {
+            role: "systemRole",
+          },
+        },
+      },
+    }),
+    organization({
+      ac: organizationAccessControl,
+      allowUserToCreateOrganization: false,
+      cancelPendingInvitationsOnReInvite: true,
+      creatorRole: "TEAM_MENTOR",
+      disableOrganizationDeletion: true,
+      invitationExpiresIn: 60 * 60 * 48,
+      requireEmailVerificationOnInvitation: true,
+      roles: teamMembershipRolePermissions,
+      schema: {
+        organization: {
+          additionalFields: {
+            teamNumber: {
+              input: false,
+              required: false,
+              type: "string",
+            },
+          },
+        },
+        session: {
+          fields: {
+            activeOrganizationId: "activeOrganizationId",
+          },
+        },
+      },
+      sendInvitationEmail: async ({
+        email,
+        id,
+        inviter,
+        organization: invitedOrganization,
+        role,
+      }) => {
+        const invitationUrl = `${env.CORS_ORIGIN}/auth/accept-invitation?invitationId=${encodeURIComponent(id)}`;
+        const organizationTeamNumber =
+          typeof (invitedOrganization as any).teamNumber === "string"
+            ? (invitedOrganization as any).teamNumber
+            : null;
+
+        await sendOrganizationInvitationEmailViaSteamify({
+          email,
+          invitationUrl,
+          inviter,
+          organization: {
+            name: invitedOrganization.name,
+            teamNumber: organizationTeamNumber,
+          },
+          role,
+        });
+      },
+    }),
+  ],
   secret: env.BETTER_AUTH_SECRET,
   socialProviders: {
     google: {

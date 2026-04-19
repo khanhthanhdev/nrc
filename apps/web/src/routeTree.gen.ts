@@ -11,10 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TeamsNewRouteImport } from './routes/teams.new'
+import { Route as TeamsMyRouteImport } from './routes/teams.my'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthPostVerifyRouteImport } from './routes/auth.post-verify'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as AuthAcceptInvitationRouteImport } from './routes/auth.accept-invitation'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
@@ -26,9 +30,24 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamsNewRoute = TeamsNewRouteImport.update({
+  id: '/teams/new',
+  path: '/teams/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamsMyRoute = TeamsMyRouteImport.update({
+  id: '/teams/my',
+  path: '/teams/my',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
@@ -46,63 +65,95 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthAcceptInvitationRoute = AuthAcceptInvitationRouteImport.update({
+  id: '/accept-invitation',
+  path: '/accept-invitation',
+  getParentRoute: () => AuthRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/auth': typeof AuthRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/auth/accept-invitation': typeof AuthAcceptInvitationRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/post-verify': typeof AuthPostVerifyRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/teams/my': typeof TeamsMyRoute
+  '/teams/new': typeof TeamsNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/auth': typeof AuthRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/auth/accept-invitation': typeof AuthAcceptInvitationRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/post-verify': typeof AuthPostVerifyRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/teams/my': typeof TeamsMyRoute
+  '/teams/new': typeof TeamsNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/auth': typeof AuthRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/auth/accept-invitation': typeof AuthAcceptInvitationRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/post-verify': typeof AuthPostVerifyRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/teams/my': typeof TeamsMyRoute
+  '/teams/new': typeof TeamsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/auth'
     | '/onboarding'
+    | '/auth/accept-invitation'
     | '/auth/forgot-password'
     | '/auth/post-verify'
     | '/auth/reset-password'
+    | '/teams/my'
+    | '/teams/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/auth'
     | '/onboarding'
+    | '/auth/accept-invitation'
     | '/auth/forgot-password'
     | '/auth/post-verify'
     | '/auth/reset-password'
+    | '/teams/my'
+    | '/teams/new'
   id:
     | '__root__'
     | '/'
+    | '/account'
     | '/auth'
     | '/onboarding'
+    | '/auth/accept-invitation'
     | '/auth/forgot-password'
     | '/auth/post-verify'
     | '/auth/reset-password'
+    | '/teams/my'
+    | '/teams/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
   AuthRoute: typeof AuthRouteWithChildren
   OnboardingRoute: typeof OnboardingRoute
+  TeamsMyRoute: typeof TeamsMyRoute
+  TeamsNewRoute: typeof TeamsNewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -121,11 +172,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teams/new': {
+      id: '/teams/new'
+      path: '/teams/new'
+      fullPath: '/teams/new'
+      preLoaderRoute: typeof TeamsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teams/my': {
+      id: '/teams/my'
+      path: '/teams/my'
+      fullPath: '/teams/my'
+      preLoaderRoute: typeof TeamsMyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/reset-password': {
@@ -149,16 +221,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/auth/accept-invitation': {
+      id: '/auth/accept-invitation'
+      path: '/accept-invitation'
+      fullPath: '/auth/accept-invitation'
+      preLoaderRoute: typeof AuthAcceptInvitationRouteImport
+      parentRoute: typeof AuthRoute
+    }
   }
 }
 
 interface AuthRouteChildren {
+  AuthAcceptInvitationRoute: typeof AuthAcceptInvitationRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthPostVerifyRoute: typeof AuthPostVerifyRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthAcceptInvitationRoute: AuthAcceptInvitationRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthPostVerifyRoute: AuthPostVerifyRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
@@ -168,8 +249,11 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
   AuthRoute: AuthRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
+  TeamsMyRoute: TeamsMyRoute,
+  TeamsNewRoute: TeamsNewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
