@@ -4,7 +4,9 @@ import { publicProcedure } from "../../../shared/procedure.js";
 import { createTeamForUser, getMyTeamByUser } from "../application/team.js";
 import { createTeamInputSchema } from "../schemas/team.js";
 
-const requireSession = (session: { session: { id: string; userId: string; activeOrganizationId?: string | null } } | null) => {
+const requireSession = (
+  session: { session: { id: string; userId: string; activeOrganizationId?: string | null } } | null,
+) => {
   if (!session) {
     throw new ORPCError("UNAUTHORIZED", {
       message: "You must be signed in to access this resource.",

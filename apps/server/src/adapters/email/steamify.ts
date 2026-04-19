@@ -9,6 +9,10 @@
  */
 import { EvlogError, createError } from "evlog";
 
+import { capturePasswordResetEmail, captureVerificationEmail } from "./test-auth-email-store";
+
+const isE2ETestEmailCaptureEnabled = (): boolean => process.env.ENABLE_E2E_TEST_HELPERS === "1";
+
 export interface Recipients {
   to: string[];
   cc?: string[];
@@ -154,6 +158,10 @@ export const sendVerificationEmailViaSteamify = async ({
   user: { email: string; name?: string | null };
   url: string;
 }): Promise<void> => {
+  if (isE2ETestEmailCaptureEnabled()) {
+    captureVerificationEmail(user.email, url);
+  }
+
   const { appName, templateIds } = getEmailConfig();
   const greetingName = user.name || "there";
 
@@ -184,6 +192,12 @@ export const sendPasswordResetEmailViaSteamify = async ({
   token: string;
   resetLink?: string;
 }): Promise<void> => {
+  const resolvedResetLink = resetLink ?? url;
+
+  if (isE2ETestEmailCaptureEnabled()) {
+    capturePasswordResetEmail(user.email, resolvedResetLink, token);
+  }
+
   const { appName, templateIds } = getEmailConfig();
   const greetingName = user.name || "there";
 
@@ -191,7 +205,7 @@ export const sendPasswordResetEmailViaSteamify = async ({
     data: {
       appName,
       greetingName,
-      resetLink: resetLink ?? url,
+      resetLink: resolvedResetLink,
       token,
       url,
     },

@@ -17,7 +17,7 @@ describe("normalizeEmailForLookup", () => {
 
   it("returns null for non-string values", () => {
     expect(normalizeEmailForLookup(null)).toBeNull();
-    expect(normalizeEmailForLookup(undefined)).toBeNull();
+    expect(normalizeEmailForLookup()).toBeNull();
     expect(normalizeEmailForLookup(123)).toBeNull();
   });
 });

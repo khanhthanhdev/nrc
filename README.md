@@ -68,3 +68,6 @@ nrc-full/
 - `bun run check-types`: Check TypeScript types across all apps
 - `bun run db:push`: Push schema changes to database
 - `bun run db:studio`: Open database studio UI
+- `bun run test:e2e:install`: Install Playwright browsers
+- `bun run test:e2e`: Run browser E2E tests (Playwright)
+- `bun run test:e2e:api`: Run API E2E tests (Vitest)

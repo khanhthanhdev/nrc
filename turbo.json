@@ -18,6 +18,7 @@
     },
     "dev": {
       "cache": false,
+      "env": ["ENABLE_E2E_TEST_HELPERS"],
       "persistent": true
     },
     "db:push": {

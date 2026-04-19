@@ -6,9 +6,11 @@
       "name": "nrc-full",
       "devDependencies": {
         "@nrc-full/config": "workspace:*",
+        "@playwright/test": "catalog:",
         "@types/bun": "catalog:",
         "oxfmt": "latest",
         "oxlint": "latest",
+        "playwright": "catalog:",
         "turbo": "^2.9.6",
         "typescript": "catalog:",
         "ultracite": "7.6.0",

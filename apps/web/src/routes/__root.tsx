@@ -19,14 +19,18 @@ export interface RouterAppContext {
 }
 
 const RootDocument = () => (
-  <html lang="en" className="dark">
+  <html lang="en">
     <head>
       <HeadContent />
     </head>
     <body>
-      <div className="grid h-svh grid-rows-[auto_1fr]">
-        <Header />
-        <Outlet />
+      <div className="nrc-shell min-h-svh">
+        <div className="mx-auto grid min-h-svh max-w-[1440px] grid-rows-[auto_1fr] px-4 pb-8 sm:px-6 lg:px-8">
+          <Header />
+          <main className="py-6 sm:py-8">
+            <Outlet />
+          </main>
+        </div>
       </div>
       <Toaster richColors />
 
@@ -61,7 +65,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
         name: "viewport",
       },
       {
-        title: "My App",
+        title: "NRC Competition Hub",
       },
     ],
   }),

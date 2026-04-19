@@ -135,6 +135,7 @@ Run commands:
 
 - `bun run test:unit`
 - `bun run test:e2e`
+- `bun run test:e2e:api`
 
 ## 8. Team Identity Source of Truth (Better Auth Organization)
 
@@ -176,8 +177,9 @@ The app-owned `team` table remains the profile and routing anchor (`team_number`
 5. After verification, `/auth/post-verify` redirects to `/auth/accept-invitation?invitationId=<id>`.
 6. Accept route calls `authClient.organization.acceptInvitation({ invitationId })`.
 7. On success, Better Auth sets invitation status to accepted, creates organization membership (`member`) with invited role, sets `session.activeOrganizationId`, and web redirects using post-auth rule:
-  - onboarding incomplete -> `/onboarding`
-  - onboarding completed -> `/`
+
+- onboarding incomplete -> `/onboarding`
+- onboarding completed -> `/`
 
 #### 8.2.3 Existing User Invitation Flow
 

@@ -10,15 +10,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const ForgotPasswordPage = () => {
-  const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const onSubmit = async () => {
+  const resetSuccessMessage = () => {
+    if (successMessage) {
+      setSuccessMessage(null);
+    }
+  };
+
+  const onSubmit = async (emailAddress: string) => {
     const redirectTo = toBrowserCallbackURL("/auth/reset-password");
     setIsSubmitting(true);
+    setSuccessMessage(null);
 
     const { error } = await authClient.requestPasswordReset({
-      email,
+      email: emailAddress,
       redirectTo,
     });
 
@@ -29,7 +36,9 @@ const ForgotPasswordPage = () => {
       return;
     }
 
-    toast.success("If the email exists, a reset link has been sent.");
+    const message = "If the email exists, a reset link has been sent.";
+    setSuccessMessage(message);
+    toast.success(message);
   };
 
   return (
@@ -45,19 +54,39 @@ const ForgotPasswordPage = () => {
         className="space-y-4"
         onSubmit={(event) => {
           event.preventDefault();
-          void onSubmit();
+          const formData = new FormData(event.currentTarget);
+          const emailAddress = formData.get("email");
+
+          if (typeof emailAddress !== "string") {
+            toast.error("Enter a valid email address.");
+            return;
+          }
+
+          void onSubmit(emailAddress);
         }}
       >
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
-            onChange={(event) => setEmail(event.target.value)}
+            name="email"
+            onInput={() => {
+              resetSuccessMessage();
+            }}
             required
             type="email"
-            value={email}
           />
         </div>
+
+        {successMessage ? (
+          <p
+            aria-live="polite"
+            className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900"
+            role="status"
+          >
+            {successMessage}
+          </p>
+        ) : null}
 
         <Button className="w-full" disabled={isSubmitting} type="submit">
           Send reset email

@@ -1,5 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3001";
+
 export default defineConfig({
   forbidOnly: !!process.env.CI,
   fullyParallel: true,
@@ -21,13 +23,14 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   testDir: "./apps/web/e2e",
   use: {
-    baseURL: "http://localhost:3001",
+    baseURL: BASE_URL,
     trace: "on-first-retry",
   },
   webServer: {
-    command: "bun dev",
+    command: "ENABLE_E2E_TEST_HELPERS=1 turbo run dev --filter=server --filter=web",
     reuseExistingServer: !process.env.CI,
-    url: "http://localhost:3001",
+    timeout: 120_000,
+    url: BASE_URL,
   },
   workers: process.env.CI ? 1 : undefined,
 });
