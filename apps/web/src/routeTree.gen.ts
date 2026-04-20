@@ -9,17 +9,49 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TeamsRouteImport } from './routes/teams'
+import { Route as StaffRouteImport } from './routes/staff'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as SeasonRouteImport } from './routes/$season'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TeamsNewRouteImport } from './routes/teams.new'
-import { Route as TeamsMyRouteImport } from './routes/teams.my'
+import { Route as StaffSeasonsRouteImport } from './routes/staff.seasons'
+import { Route as StaffEventsRouteImport } from './routes/staff.events'
+import { Route as RegisterEventIdRouteImport } from './routes/register.$eventId'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthPostVerifyRouteImport } from './routes/auth.post-verify'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
 import { Route as AuthAcceptInvitationRouteImport } from './routes/auth.accept-invitation'
+import { Route as SeasonEventIdRouteImport } from './routes/$season.$eventId'
+import { Route as StaffSeasonsNewRouteImport } from './routes/staff.seasons.new'
+import { Route as StaffEventsNewRouteImport } from './routes/staff.events.new'
+import { Route as RegisterEventIdRegistrationIdRouteImport } from './routes/register.$eventId.$registrationId'
+import { Route as SeasonEventIdRankingsRouteImport } from './routes/$season.$eventId.rankings'
+import { Route as SeasonEventIdQualificationsRouteImport } from './routes/$season.$eventId.qualifications'
+import { Route as SeasonEventIdPlayoffsRouteImport } from './routes/$season.$eventId.playoffs'
+import { Route as SeasonEventIdAwardsRouteImport } from './routes/$season.$eventId.awards'
+import { Route as StaffSeasonsSeasonIdEditRouteImport } from './routes/staff.seasons.$seasonId.edit'
+import { Route as StaffEventsEventIdEditRouteImport } from './routes/staff.events.$eventId.edit'
+import { Route as SeasonEventIdQualificationsMatchNumberRouteImport } from './routes/$season.$eventId.qualifications.$matchNumber'
 
+const TeamsRoute = TeamsRouteImport.update({
+  id: '/teams',
+  path: '/teams',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StaffRoute = StaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -35,20 +67,35 @@ const AccountRoute = AccountRouteImport.update({
   path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SeasonRoute = SeasonRouteImport.update({
+  id: '/$season',
+  path: '/$season',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TeamsNewRoute = TeamsNewRouteImport.update({
-  id: '/teams/new',
-  path: '/teams/new',
-  getParentRoute: () => rootRouteImport,
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => TeamsRoute,
 } as any)
-const TeamsMyRoute = TeamsMyRouteImport.update({
-  id: '/teams/my',
-  path: '/teams/my',
-  getParentRoute: () => rootRouteImport,
+const StaffSeasonsRoute = StaffSeasonsRouteImport.update({
+  id: '/seasons',
+  path: '/seasons',
+  getParentRoute: () => StaffRoute,
+} as any)
+const StaffEventsRoute = StaffEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => StaffRoute,
+} as any)
+const RegisterEventIdRoute = RegisterEventIdRouteImport.update({
+  id: '/$eventId',
+  path: '/$eventId',
+  getParentRoute: () => RegisterRoute,
 } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -70,94 +117,278 @@ const AuthAcceptInvitationRoute = AuthAcceptInvitationRouteImport.update({
   path: '/accept-invitation',
   getParentRoute: () => AuthRoute,
 } as any)
+const SeasonEventIdRoute = SeasonEventIdRouteImport.update({
+  id: '/$eventId',
+  path: '/$eventId',
+  getParentRoute: () => SeasonRoute,
+} as any)
+const StaffSeasonsNewRoute = StaffSeasonsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => StaffSeasonsRoute,
+} as any)
+const StaffEventsNewRoute = StaffEventsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => StaffEventsRoute,
+} as any)
+const RegisterEventIdRegistrationIdRoute =
+  RegisterEventIdRegistrationIdRouteImport.update({
+    id: '/$registrationId',
+    path: '/$registrationId',
+    getParentRoute: () => RegisterEventIdRoute,
+  } as any)
+const SeasonEventIdRankingsRoute = SeasonEventIdRankingsRouteImport.update({
+  id: '/rankings',
+  path: '/rankings',
+  getParentRoute: () => SeasonEventIdRoute,
+} as any)
+const SeasonEventIdQualificationsRoute =
+  SeasonEventIdQualificationsRouteImport.update({
+    id: '/qualifications',
+    path: '/qualifications',
+    getParentRoute: () => SeasonEventIdRoute,
+  } as any)
+const SeasonEventIdPlayoffsRoute = SeasonEventIdPlayoffsRouteImport.update({
+  id: '/playoffs',
+  path: '/playoffs',
+  getParentRoute: () => SeasonEventIdRoute,
+} as any)
+const SeasonEventIdAwardsRoute = SeasonEventIdAwardsRouteImport.update({
+  id: '/awards',
+  path: '/awards',
+  getParentRoute: () => SeasonEventIdRoute,
+} as any)
+const StaffSeasonsSeasonIdEditRoute =
+  StaffSeasonsSeasonIdEditRouteImport.update({
+    id: '/$seasonId/edit',
+    path: '/$seasonId/edit',
+    getParentRoute: () => StaffSeasonsRoute,
+  } as any)
+const StaffEventsEventIdEditRoute = StaffEventsEventIdEditRouteImport.update({
+  id: '/$eventId/edit',
+  path: '/$eventId/edit',
+  getParentRoute: () => StaffEventsRoute,
+} as any)
+const SeasonEventIdQualificationsMatchNumberRoute =
+  SeasonEventIdQualificationsMatchNumberRouteImport.update({
+    id: '/$matchNumber',
+    path: '/$matchNumber',
+    getParentRoute: () => SeasonEventIdQualificationsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$season': typeof SeasonRouteWithChildren
   '/account': typeof AccountRoute
   '/auth': typeof AuthRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/register': typeof RegisterRouteWithChildren
+  '/staff': typeof StaffRouteWithChildren
+  '/teams': typeof TeamsRouteWithChildren
+  '/$season/$eventId': typeof SeasonEventIdRouteWithChildren
   '/auth/accept-invitation': typeof AuthAcceptInvitationRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/post-verify': typeof AuthPostVerifyRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/teams/my': typeof TeamsMyRoute
+  '/register/$eventId': typeof RegisterEventIdRouteWithChildren
+  '/staff/events': typeof StaffEventsRouteWithChildren
+  '/staff/seasons': typeof StaffSeasonsRouteWithChildren
   '/teams/new': typeof TeamsNewRoute
+  '/$season/$eventId/awards': typeof SeasonEventIdAwardsRoute
+  '/$season/$eventId/playoffs': typeof SeasonEventIdPlayoffsRoute
+  '/$season/$eventId/qualifications': typeof SeasonEventIdQualificationsRouteWithChildren
+  '/$season/$eventId/rankings': typeof SeasonEventIdRankingsRoute
+  '/register/$eventId/$registrationId': typeof RegisterEventIdRegistrationIdRoute
+  '/staff/events/new': typeof StaffEventsNewRoute
+  '/staff/seasons/new': typeof StaffSeasonsNewRoute
+  '/$season/$eventId/qualifications/$matchNumber': typeof SeasonEventIdQualificationsMatchNumberRoute
+  '/staff/events/$eventId/edit': typeof StaffEventsEventIdEditRoute
+  '/staff/seasons/$seasonId/edit': typeof StaffSeasonsSeasonIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$season': typeof SeasonRouteWithChildren
   '/account': typeof AccountRoute
   '/auth': typeof AuthRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/register': typeof RegisterRouteWithChildren
+  '/staff': typeof StaffRouteWithChildren
+  '/teams': typeof TeamsRouteWithChildren
+  '/$season/$eventId': typeof SeasonEventIdRouteWithChildren
   '/auth/accept-invitation': typeof AuthAcceptInvitationRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/post-verify': typeof AuthPostVerifyRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/teams/my': typeof TeamsMyRoute
+  '/register/$eventId': typeof RegisterEventIdRouteWithChildren
+  '/staff/events': typeof StaffEventsRouteWithChildren
+  '/staff/seasons': typeof StaffSeasonsRouteWithChildren
   '/teams/new': typeof TeamsNewRoute
+  '/$season/$eventId/awards': typeof SeasonEventIdAwardsRoute
+  '/$season/$eventId/playoffs': typeof SeasonEventIdPlayoffsRoute
+  '/$season/$eventId/qualifications': typeof SeasonEventIdQualificationsRouteWithChildren
+  '/$season/$eventId/rankings': typeof SeasonEventIdRankingsRoute
+  '/register/$eventId/$registrationId': typeof RegisterEventIdRegistrationIdRoute
+  '/staff/events/new': typeof StaffEventsNewRoute
+  '/staff/seasons/new': typeof StaffSeasonsNewRoute
+  '/$season/$eventId/qualifications/$matchNumber': typeof SeasonEventIdQualificationsMatchNumberRoute
+  '/staff/events/$eventId/edit': typeof StaffEventsEventIdEditRoute
+  '/staff/seasons/$seasonId/edit': typeof StaffSeasonsSeasonIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$season': typeof SeasonRouteWithChildren
   '/account': typeof AccountRoute
   '/auth': typeof AuthRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/register': typeof RegisterRouteWithChildren
+  '/staff': typeof StaffRouteWithChildren
+  '/teams': typeof TeamsRouteWithChildren
+  '/$season/$eventId': typeof SeasonEventIdRouteWithChildren
   '/auth/accept-invitation': typeof AuthAcceptInvitationRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/post-verify': typeof AuthPostVerifyRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/teams/my': typeof TeamsMyRoute
+  '/register/$eventId': typeof RegisterEventIdRouteWithChildren
+  '/staff/events': typeof StaffEventsRouteWithChildren
+  '/staff/seasons': typeof StaffSeasonsRouteWithChildren
   '/teams/new': typeof TeamsNewRoute
+  '/$season/$eventId/awards': typeof SeasonEventIdAwardsRoute
+  '/$season/$eventId/playoffs': typeof SeasonEventIdPlayoffsRoute
+  '/$season/$eventId/qualifications': typeof SeasonEventIdQualificationsRouteWithChildren
+  '/$season/$eventId/rankings': typeof SeasonEventIdRankingsRoute
+  '/register/$eventId/$registrationId': typeof RegisterEventIdRegistrationIdRoute
+  '/staff/events/new': typeof StaffEventsNewRoute
+  '/staff/seasons/new': typeof StaffSeasonsNewRoute
+  '/$season/$eventId/qualifications/$matchNumber': typeof SeasonEventIdQualificationsMatchNumberRoute
+  '/staff/events/$eventId/edit': typeof StaffEventsEventIdEditRoute
+  '/staff/seasons/$seasonId/edit': typeof StaffSeasonsSeasonIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$season'
     | '/account'
     | '/auth'
     | '/onboarding'
+    | '/register'
+    | '/staff'
+    | '/teams'
+    | '/$season/$eventId'
     | '/auth/accept-invitation'
     | '/auth/forgot-password'
     | '/auth/post-verify'
     | '/auth/reset-password'
-    | '/teams/my'
+    | '/register/$eventId'
+    | '/staff/events'
+    | '/staff/seasons'
     | '/teams/new'
+    | '/$season/$eventId/awards'
+    | '/$season/$eventId/playoffs'
+    | '/$season/$eventId/qualifications'
+    | '/$season/$eventId/rankings'
+    | '/register/$eventId/$registrationId'
+    | '/staff/events/new'
+    | '/staff/seasons/new'
+    | '/$season/$eventId/qualifications/$matchNumber'
+    | '/staff/events/$eventId/edit'
+    | '/staff/seasons/$seasonId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$season'
     | '/account'
     | '/auth'
     | '/onboarding'
+    | '/register'
+    | '/staff'
+    | '/teams'
+    | '/$season/$eventId'
     | '/auth/accept-invitation'
     | '/auth/forgot-password'
     | '/auth/post-verify'
     | '/auth/reset-password'
-    | '/teams/my'
+    | '/register/$eventId'
+    | '/staff/events'
+    | '/staff/seasons'
     | '/teams/new'
+    | '/$season/$eventId/awards'
+    | '/$season/$eventId/playoffs'
+    | '/$season/$eventId/qualifications'
+    | '/$season/$eventId/rankings'
+    | '/register/$eventId/$registrationId'
+    | '/staff/events/new'
+    | '/staff/seasons/new'
+    | '/$season/$eventId/qualifications/$matchNumber'
+    | '/staff/events/$eventId/edit'
+    | '/staff/seasons/$seasonId/edit'
   id:
     | '__root__'
     | '/'
+    | '/$season'
     | '/account'
     | '/auth'
     | '/onboarding'
+    | '/register'
+    | '/staff'
+    | '/teams'
+    | '/$season/$eventId'
     | '/auth/accept-invitation'
     | '/auth/forgot-password'
     | '/auth/post-verify'
     | '/auth/reset-password'
-    | '/teams/my'
+    | '/register/$eventId'
+    | '/staff/events'
+    | '/staff/seasons'
     | '/teams/new'
+    | '/$season/$eventId/awards'
+    | '/$season/$eventId/playoffs'
+    | '/$season/$eventId/qualifications'
+    | '/$season/$eventId/rankings'
+    | '/register/$eventId/$registrationId'
+    | '/staff/events/new'
+    | '/staff/seasons/new'
+    | '/$season/$eventId/qualifications/$matchNumber'
+    | '/staff/events/$eventId/edit'
+    | '/staff/seasons/$seasonId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SeasonRoute: typeof SeasonRouteWithChildren
   AccountRoute: typeof AccountRoute
   AuthRoute: typeof AuthRouteWithChildren
   OnboardingRoute: typeof OnboardingRoute
-  TeamsMyRoute: typeof TeamsMyRoute
-  TeamsNewRoute: typeof TeamsNewRoute
+  RegisterRoute: typeof RegisterRouteWithChildren
+  StaffRoute: typeof StaffRouteWithChildren
+  TeamsRoute: typeof TeamsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/teams': {
+      id: '/teams'
+      path: '/teams'
+      fullPath: '/teams'
+      preLoaderRoute: typeof TeamsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/staff': {
+      id: '/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -179,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$season': {
+      id: '/$season'
+      path: '/$season'
+      fullPath: '/$season'
+      preLoaderRoute: typeof SeasonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -188,17 +426,31 @@ declare module '@tanstack/react-router' {
     }
     '/teams/new': {
       id: '/teams/new'
-      path: '/teams/new'
+      path: '/new'
       fullPath: '/teams/new'
       preLoaderRoute: typeof TeamsNewRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof TeamsRoute
     }
-    '/teams/my': {
-      id: '/teams/my'
-      path: '/teams/my'
-      fullPath: '/teams/my'
-      preLoaderRoute: typeof TeamsMyRouteImport
-      parentRoute: typeof rootRouteImport
+    '/staff/seasons': {
+      id: '/staff/seasons'
+      path: '/seasons'
+      fullPath: '/staff/seasons'
+      preLoaderRoute: typeof StaffSeasonsRouteImport
+      parentRoute: typeof StaffRoute
+    }
+    '/staff/events': {
+      id: '/staff/events'
+      path: '/events'
+      fullPath: '/staff/events'
+      preLoaderRoute: typeof StaffEventsRouteImport
+      parentRoute: typeof StaffRoute
+    }
+    '/register/$eventId': {
+      id: '/register/$eventId'
+      path: '/$eventId'
+      fullPath: '/register/$eventId'
+      preLoaderRoute: typeof RegisterEventIdRouteImport
+      parentRoute: typeof RegisterRoute
     }
     '/auth/reset-password': {
       id: '/auth/reset-password'
@@ -228,8 +480,130 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAcceptInvitationRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/$season/$eventId': {
+      id: '/$season/$eventId'
+      path: '/$eventId'
+      fullPath: '/$season/$eventId'
+      preLoaderRoute: typeof SeasonEventIdRouteImport
+      parentRoute: typeof SeasonRoute
+    }
+    '/staff/seasons/new': {
+      id: '/staff/seasons/new'
+      path: '/new'
+      fullPath: '/staff/seasons/new'
+      preLoaderRoute: typeof StaffSeasonsNewRouteImport
+      parentRoute: typeof StaffSeasonsRoute
+    }
+    '/staff/events/new': {
+      id: '/staff/events/new'
+      path: '/new'
+      fullPath: '/staff/events/new'
+      preLoaderRoute: typeof StaffEventsNewRouteImport
+      parentRoute: typeof StaffEventsRoute
+    }
+    '/register/$eventId/$registrationId': {
+      id: '/register/$eventId/$registrationId'
+      path: '/$registrationId'
+      fullPath: '/register/$eventId/$registrationId'
+      preLoaderRoute: typeof RegisterEventIdRegistrationIdRouteImport
+      parentRoute: typeof RegisterEventIdRoute
+    }
+    '/$season/$eventId/rankings': {
+      id: '/$season/$eventId/rankings'
+      path: '/rankings'
+      fullPath: '/$season/$eventId/rankings'
+      preLoaderRoute: typeof SeasonEventIdRankingsRouteImport
+      parentRoute: typeof SeasonEventIdRoute
+    }
+    '/$season/$eventId/qualifications': {
+      id: '/$season/$eventId/qualifications'
+      path: '/qualifications'
+      fullPath: '/$season/$eventId/qualifications'
+      preLoaderRoute: typeof SeasonEventIdQualificationsRouteImport
+      parentRoute: typeof SeasonEventIdRoute
+    }
+    '/$season/$eventId/playoffs': {
+      id: '/$season/$eventId/playoffs'
+      path: '/playoffs'
+      fullPath: '/$season/$eventId/playoffs'
+      preLoaderRoute: typeof SeasonEventIdPlayoffsRouteImport
+      parentRoute: typeof SeasonEventIdRoute
+    }
+    '/$season/$eventId/awards': {
+      id: '/$season/$eventId/awards'
+      path: '/awards'
+      fullPath: '/$season/$eventId/awards'
+      preLoaderRoute: typeof SeasonEventIdAwardsRouteImport
+      parentRoute: typeof SeasonEventIdRoute
+    }
+    '/staff/seasons/$seasonId/edit': {
+      id: '/staff/seasons/$seasonId/edit'
+      path: '/$seasonId/edit'
+      fullPath: '/staff/seasons/$seasonId/edit'
+      preLoaderRoute: typeof StaffSeasonsSeasonIdEditRouteImport
+      parentRoute: typeof StaffSeasonsRoute
+    }
+    '/staff/events/$eventId/edit': {
+      id: '/staff/events/$eventId/edit'
+      path: '/$eventId/edit'
+      fullPath: '/staff/events/$eventId/edit'
+      preLoaderRoute: typeof StaffEventsEventIdEditRouteImport
+      parentRoute: typeof StaffEventsRoute
+    }
+    '/$season/$eventId/qualifications/$matchNumber': {
+      id: '/$season/$eventId/qualifications/$matchNumber'
+      path: '/$matchNumber'
+      fullPath: '/$season/$eventId/qualifications/$matchNumber'
+      preLoaderRoute: typeof SeasonEventIdQualificationsMatchNumberRouteImport
+      parentRoute: typeof SeasonEventIdQualificationsRoute
+    }
   }
 }
+
+interface SeasonEventIdQualificationsRouteChildren {
+  SeasonEventIdQualificationsMatchNumberRoute: typeof SeasonEventIdQualificationsMatchNumberRoute
+}
+
+const SeasonEventIdQualificationsRouteChildren: SeasonEventIdQualificationsRouteChildren =
+  {
+    SeasonEventIdQualificationsMatchNumberRoute:
+      SeasonEventIdQualificationsMatchNumberRoute,
+  }
+
+const SeasonEventIdQualificationsRouteWithChildren =
+  SeasonEventIdQualificationsRoute._addFileChildren(
+    SeasonEventIdQualificationsRouteChildren,
+  )
+
+interface SeasonEventIdRouteChildren {
+  SeasonEventIdAwardsRoute: typeof SeasonEventIdAwardsRoute
+  SeasonEventIdPlayoffsRoute: typeof SeasonEventIdPlayoffsRoute
+  SeasonEventIdQualificationsRoute: typeof SeasonEventIdQualificationsRouteWithChildren
+  SeasonEventIdRankingsRoute: typeof SeasonEventIdRankingsRoute
+}
+
+const SeasonEventIdRouteChildren: SeasonEventIdRouteChildren = {
+  SeasonEventIdAwardsRoute: SeasonEventIdAwardsRoute,
+  SeasonEventIdPlayoffsRoute: SeasonEventIdPlayoffsRoute,
+  SeasonEventIdQualificationsRoute:
+    SeasonEventIdQualificationsRouteWithChildren,
+  SeasonEventIdRankingsRoute: SeasonEventIdRankingsRoute,
+}
+
+const SeasonEventIdRouteWithChildren = SeasonEventIdRoute._addFileChildren(
+  SeasonEventIdRouteChildren,
+)
+
+interface SeasonRouteChildren {
+  SeasonEventIdRoute: typeof SeasonEventIdRouteWithChildren
+}
+
+const SeasonRouteChildren: SeasonRouteChildren = {
+  SeasonEventIdRoute: SeasonEventIdRouteWithChildren,
+}
+
+const SeasonRouteWithChildren =
+  SeasonRoute._addFileChildren(SeasonRouteChildren)
 
 interface AuthRouteChildren {
   AuthAcceptInvitationRoute: typeof AuthAcceptInvitationRoute
@@ -247,13 +621,89 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface RegisterEventIdRouteChildren {
+  RegisterEventIdRegistrationIdRoute: typeof RegisterEventIdRegistrationIdRoute
+}
+
+const RegisterEventIdRouteChildren: RegisterEventIdRouteChildren = {
+  RegisterEventIdRegistrationIdRoute: RegisterEventIdRegistrationIdRoute,
+}
+
+const RegisterEventIdRouteWithChildren = RegisterEventIdRoute._addFileChildren(
+  RegisterEventIdRouteChildren,
+)
+
+interface RegisterRouteChildren {
+  RegisterEventIdRoute: typeof RegisterEventIdRouteWithChildren
+}
+
+const RegisterRouteChildren: RegisterRouteChildren = {
+  RegisterEventIdRoute: RegisterEventIdRouteWithChildren,
+}
+
+const RegisterRouteWithChildren = RegisterRoute._addFileChildren(
+  RegisterRouteChildren,
+)
+
+interface StaffEventsRouteChildren {
+  StaffEventsNewRoute: typeof StaffEventsNewRoute
+  StaffEventsEventIdEditRoute: typeof StaffEventsEventIdEditRoute
+}
+
+const StaffEventsRouteChildren: StaffEventsRouteChildren = {
+  StaffEventsNewRoute: StaffEventsNewRoute,
+  StaffEventsEventIdEditRoute: StaffEventsEventIdEditRoute,
+}
+
+const StaffEventsRouteWithChildren = StaffEventsRoute._addFileChildren(
+  StaffEventsRouteChildren,
+)
+
+interface StaffSeasonsRouteChildren {
+  StaffSeasonsNewRoute: typeof StaffSeasonsNewRoute
+  StaffSeasonsSeasonIdEditRoute: typeof StaffSeasonsSeasonIdEditRoute
+}
+
+const StaffSeasonsRouteChildren: StaffSeasonsRouteChildren = {
+  StaffSeasonsNewRoute: StaffSeasonsNewRoute,
+  StaffSeasonsSeasonIdEditRoute: StaffSeasonsSeasonIdEditRoute,
+}
+
+const StaffSeasonsRouteWithChildren = StaffSeasonsRoute._addFileChildren(
+  StaffSeasonsRouteChildren,
+)
+
+interface StaffRouteChildren {
+  StaffEventsRoute: typeof StaffEventsRouteWithChildren
+  StaffSeasonsRoute: typeof StaffSeasonsRouteWithChildren
+}
+
+const StaffRouteChildren: StaffRouteChildren = {
+  StaffEventsRoute: StaffEventsRouteWithChildren,
+  StaffSeasonsRoute: StaffSeasonsRouteWithChildren,
+}
+
+const StaffRouteWithChildren = StaffRoute._addFileChildren(StaffRouteChildren)
+
+interface TeamsRouteChildren {
+  TeamsNewRoute: typeof TeamsNewRoute
+}
+
+const TeamsRouteChildren: TeamsRouteChildren = {
+  TeamsNewRoute: TeamsNewRoute,
+}
+
+const TeamsRouteWithChildren = TeamsRoute._addFileChildren(TeamsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SeasonRoute: SeasonRouteWithChildren,
   AccountRoute: AccountRoute,
   AuthRoute: AuthRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
-  TeamsMyRoute: TeamsMyRoute,
-  TeamsNewRoute: TeamsNewRoute,
+  RegisterRoute: RegisterRouteWithChildren,
+  StaffRoute: StaffRouteWithChildren,
+  TeamsRoute: TeamsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

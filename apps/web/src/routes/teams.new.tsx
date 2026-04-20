@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useRequireAuth } from "@/lib/route-guards";
 
 const NewTeamPage = () => {
   const navigate = useNavigate();
@@ -32,19 +33,11 @@ const NewTeamPage = () => {
     onSuccess: async (data) => {
       toast.success(`Team created: ${data.teamNumber}`);
       await queryClient.invalidateQueries();
-      await navigate({ to: "/teams/my" });
+      await navigate({ to: "/teams" });
     },
   });
 
-  useEffect(() => {
-    if (session.isPending) {
-      return;
-    }
-
-    if (!session.data) {
-      void navigate({ to: "/auth" });
-    }
-  }, [navigate, session.data, session.isPending]);
+  useRequireAuth(session);
 
   const onSubmit = async (): Promise<void> => {
     if (!termsAccepted) {
