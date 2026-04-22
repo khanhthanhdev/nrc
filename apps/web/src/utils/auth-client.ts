@@ -1,10 +1,50 @@
 import { env } from "@nrc-full/env/web";
 import { createAuthClient } from "better-auth/react";
-import { adminClient, organizationClient } from "better-auth/client/plugins";
+import { adminClient, inferAdditionalFields, organizationClient } from "better-auth/client/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
 import { defaultStatements } from "better-auth/plugins/organization/access";
 
 const organizationAccessControl = createAccessControl(defaultStatements);
+const adminAccessControl = createAccessControl({
+  session: ["list", "revoke", "delete"],
+  user: [
+    "create",
+    "list",
+    "set-role",
+    "ban",
+    "impersonate",
+    "impersonate-admins",
+    "delete",
+    "set-password",
+    "get",
+    "update",
+  ],
+});
+
+const staffRolePermissions = {
+  ADMIN: adminAccessControl.newRole({
+    session: ["list", "revoke", "delete"],
+    user: [
+      "create",
+      "list",
+      "set-role",
+      "ban",
+      "impersonate",
+      "delete",
+      "set-password",
+      "get",
+      "update",
+    ],
+  }),
+  MANAGER: adminAccessControl.newRole({
+    session: [],
+    user: [],
+  }),
+  USER: adminAccessControl.newRole({
+    session: [],
+    user: [],
+  }),
+} as const;
 
 const teamMembershipRoles = {
   TEAM_LEADER: organizationAccessControl.newRole({
@@ -30,7 +70,22 @@ export const authClient = createAuthClient({
     credentials: "include",
   },
   plugins: [
-    adminClient(),
+    inferAdditionalFields({
+      user: {
+        systemRole: {
+          required: false,
+          type: "string",
+        },
+        userType: {
+          required: false,
+          type: "string",
+        },
+      },
+    }),
+    adminClient({
+      ac: adminAccessControl,
+      roles: staffRolePermissions,
+    }),
     organizationClient({
       ac: organizationAccessControl,
       roles: teamMembershipRoles,

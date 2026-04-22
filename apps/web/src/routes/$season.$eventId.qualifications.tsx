@@ -17,7 +17,7 @@ const QualificationsPage = () => {
     >
       <div className="space-y-2">
         <Link
-          className="block rounded-xl border px-4 py-3 text-sm hover:bg-white"
+          className="nrc-pill block px-4 py-3 text-sm hover:bg-muted"
           params={{ eventId, matchNumber: "2", season }}
           to="/$season/$eventId/qualifications/$matchNumber"
         >

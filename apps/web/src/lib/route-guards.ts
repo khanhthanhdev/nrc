@@ -4,7 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 
 import { authClient } from "@/utils/auth-client";
 
-import { getSystemRole, isStaffSystemRole } from "./route-policy";
+import { getSystemRole, isAdminSystemRole, isStaffSystemRole } from "./route-policy";
 
 type SessionState = ReturnType<typeof authClient.useSession>;
 
@@ -42,6 +42,28 @@ export const useRequireStaff = (
     }
 
     if (!isStaffSystemRole(getSystemRole(session.data))) {
+      void navigate({ to: redirectTo });
+    }
+  }, [navigate, redirectTo, session.data, session.isPending]);
+};
+
+export const useRequireAdmin = (
+  session: SessionState,
+  redirectTo = "/teams",
+): void => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (session.isPending) {
+      return;
+    }
+
+    if (!session.data) {
+      void navigate({ to: "/auth" });
+      return;
+    }
+
+    if (!isAdminSystemRole(getSystemRole(session.data))) {
       void navigate({ to: redirectTo });
     }
   }, [navigate, redirectTo, session.data, session.isPending]);

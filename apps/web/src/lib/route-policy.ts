@@ -24,6 +24,9 @@ export const isValidMatchNumber = (matchNumber: string) => MATCH_NUMBER_PATTERN.
 export const isStaffSystemRole = (systemRole?: string | null): systemRole is "MANAGER" | "ADMIN" =>
   systemRole === "MANAGER" || systemRole === "ADMIN";
 
+export const isAdminSystemRole = (systemRole?: string | null): systemRole is "ADMIN" =>
+  systemRole === "ADMIN";
+
 export const getSystemRole = (session: AuthSession | null | undefined): SystemRole | undefined => {
   const user = session?.user as SessionUser | undefined;
 

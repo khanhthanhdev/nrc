@@ -22,7 +22,7 @@ const EventPage = () => {
     <PublicEventShell eventId={eventId} season={season}>
       {pathname === `/${season}/${eventId}` ? (
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-[24px] border border-white/70 bg-white/78 p-4 shadow-sm backdrop-blur">
+          <div className="nrc-card-subtle p-4">
             <h2 className="text-lg font-semibold">Event info</h2>
             <p className="text-muted-foreground mt-1 text-sm">
               Read-only public information page. Rankings, qualifications, playoffs, and awards
@@ -30,7 +30,7 @@ const EventPage = () => {
             </p>
           </div>
 
-          <div className="rounded-[24px] border border-white/70 bg-white/78 p-4 shadow-sm backdrop-blur">
+          <div className="nrc-card-subtle p-4">
             <h2 className="text-lg font-semibold">Quick links</h2>
             <div className="mt-4 flex flex-wrap gap-2">
               <Link

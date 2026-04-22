@@ -8,10 +8,9 @@ interface PublicEventShellProps {
   season: string;
 }
 
-const tabClassName =
-  "nrc-pill px-3 py-2 text-sm font-medium text-[#6b778c] transition-colors hover:bg-[#f7f9fc] hover:text-[#172b4d]";
+const tabClassName = "nrc-hero-tab";
 
-const activeTabClassName = "bg-[#eef3ff] text-[#172b4d]";
+const activeTabClassName = "nrc-hero-tab-active";
 
 export function PublicEventShell({ children, eventId, season }: PublicEventShellProps) {
   const tabs = [
@@ -23,31 +22,35 @@ export function PublicEventShell({ children, eventId, season }: PublicEventShell
 
   return (
     <section className="space-y-6">
-      <div className="rounded-4xl border border-white/70 bg-white/78 p-5 shadow-sm backdrop-blur">
-        <div className="space-y-1">
-          <p className="text-muted-foreground text-sm uppercase tracking-[0.2em]">Public event</p>
-          <h1 className="text-2xl font-semibold tracking-[-0.02em]">
-            {season} / {eventId}
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            FTC-like public information route. Read-only. Season-specific behavior comes from the
-            shared adapter layer.
-          </p>
-        </div>
+      <div className="-mx-4 sm:-mx-6 lg:-mx-8">
+        <div className="nrc-hero overflow-hidden px-6 py-10 sm:px-8 sm:py-12 lg:px-12">
+          <div className="max-w-3xl space-y-5">
+            <div className="space-y-2">
+              <p className="text-sm uppercase tracking-[0.22em] text-white/65">Public event</p>
+              <h1 className="text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">
+                {season} / {eventId}
+              </h1>
+              <p className="max-w-2xl text-sm leading-6 text-white/76">
+                FTC-like public information route. Read-only. Season-specific behavior comes from the
+                shared adapter layer.
+              </p>
+            </div>
 
-        <nav className="mt-4 flex flex-wrap gap-2">
-          {tabs.map(({ label, to }) => (
-            <Link
-              key={to}
-              activeProps={{ className: activeTabClassName }}
-              className={tabClassName}
-              params={{ eventId, season }}
-              to={to}
-            >
-              {label}
-            </Link>
-          ))}
-        </nav>
+            <nav className="flex flex-wrap gap-3 border-t border-white/12 pt-5">
+              {tabs.map(({ label, to }) => (
+                <Link
+                  key={to}
+                  activeProps={{ className: activeTabClassName }}
+                  className={tabClassName}
+                  params={{ eventId, season }}
+                  to={to}
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4">{children}</div>

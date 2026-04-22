@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UsersRouteImport } from './routes/users'
 import { Route as TeamsRouteImport } from './routes/teams'
 import { Route as StaffRouteImport } from './routes/staff'
 import { Route as RegisterRouteImport } from './routes/register'
@@ -37,6 +38,11 @@ import { Route as StaffSeasonsSeasonIdEditRouteImport } from './routes/staff.sea
 import { Route as StaffEventsEventIdEditRouteImport } from './routes/staff.events.$eventId.edit'
 import { Route as SeasonEventIdQualificationsMatchNumberRouteImport } from './routes/$season.$eventId.qualifications.$matchNumber'
 
+const UsersRoute = UsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeamsRoute = TeamsRouteImport.update({
   id: '/teams',
   path: '/teams',
@@ -186,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRouteWithChildren
   '/staff': typeof StaffRouteWithChildren
   '/teams': typeof TeamsRouteWithChildren
+  '/users': typeof UsersRoute
   '/$season/$eventId': typeof SeasonEventIdRouteWithChildren
   '/auth/accept-invitation': typeof AuthAcceptInvitationRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRouteWithChildren
   '/staff': typeof StaffRouteWithChildren
   '/teams': typeof TeamsRouteWithChildren
+  '/users': typeof UsersRoute
   '/$season/$eventId': typeof SeasonEventIdRouteWithChildren
   '/auth/accept-invitation': typeof AuthAcceptInvitationRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -245,6 +253,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRouteWithChildren
   '/staff': typeof StaffRouteWithChildren
   '/teams': typeof TeamsRouteWithChildren
+  '/users': typeof UsersRoute
   '/$season/$eventId': typeof SeasonEventIdRouteWithChildren
   '/auth/accept-invitation': typeof AuthAcceptInvitationRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/staff'
     | '/teams'
+    | '/users'
     | '/$season/$eventId'
     | '/auth/accept-invitation'
     | '/auth/forgot-password'
@@ -305,6 +315,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/staff'
     | '/teams'
+    | '/users'
     | '/$season/$eventId'
     | '/auth/accept-invitation'
     | '/auth/forgot-password'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/staff'
     | '/teams'
+    | '/users'
     | '/$season/$eventId'
     | '/auth/accept-invitation'
     | '/auth/forgot-password'
@@ -364,10 +376,18 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRouteWithChildren
   StaffRoute: typeof StaffRouteWithChildren
   TeamsRoute: typeof TeamsRouteWithChildren
+  UsersRoute: typeof UsersRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/users': {
+      id: '/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof UsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/teams': {
       id: '/teams'
       path: '/teams'
@@ -704,6 +724,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRouteWithChildren,
   StaffRoute: StaffRouteWithChildren,
   TeamsRoute: TeamsRouteWithChildren,
+  UsersRoute: UsersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

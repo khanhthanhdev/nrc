@@ -6,16 +6,27 @@ import { RPCHandler } from "@orpc/server/fetch";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { AppRouter } from "../../../app-router";
-import type { AuthContextSession } from "../../../shared/context";
+import type { AuthAdminContext, AuthContextSession } from "../../../shared/context";
 import type { OnboardingProfile } from "../application/onboarding";
 import type { CompleteOnboardingInput } from "../schemas/onboarding";
 
 const getOnboardingProfileByUserIdMock = vi.fn();
 const completeOnboardingByUserIdMock = vi.fn();
+const createManagedUserForAdminMock = vi.fn();
+const getManagedUserForAdminMock = vi.fn();
+const listManagedUsersForAdminMock = vi.fn();
+const saveManagedUserForAdminMock = vi.fn();
 
 vi.mock("../application/onboarding.js", () => ({
   completeOnboardingByUserId: completeOnboardingByUserIdMock,
   getOnboardingProfileByUserId: getOnboardingProfileByUserIdMock,
+}));
+
+vi.mock("../application/managed-users.js", () => ({
+  createManagedUserForAdmin: createManagedUserForAdminMock,
+  getManagedUserForAdmin: getManagedUserForAdminMock,
+  listManagedUsersForAdmin: listManagedUsersForAdminMock,
+  saveManagedUserForAdmin: saveManagedUserForAdminMock,
 }));
 
 const { appRouter } = await import("../../../app-router.js");
@@ -42,7 +53,23 @@ const VALID_ONBOARDING_INPUT: CompleteOnboardingInput = {
   phone: "0911222333",
 };
 
-const createClient = (session: AuthContextSession | null): RouterClient<AppRouter> => {
+const ADMIN_SESSION: AuthContextSession = {
+  ...TEST_SESSION,
+  user: {
+    ...TEST_SESSION.user,
+    systemRole: "ADMIN",
+  },
+};
+
+const TEST_AUTH_ADMIN: AuthAdminContext = {
+  createUser: vi.fn(),
+  updateUser: vi.fn(),
+};
+
+const createClient = (
+  session: AuthContextSession | null,
+  authAdmin?: AuthAdminContext,
+): RouterClient<AppRouter> => {
   const handler = new RPCHandler(appRouter);
 
   const fetchAdapter = async (
@@ -54,7 +81,7 @@ const createClient = (session: AuthContextSession | null): RouterClient<AppRoute
       requestInput instanceof Request ? requestInput : new Request(requestInput, init);
 
     const result = await handler.handle(normalizedRequest, {
-      context: { session },
+      context: { authAdmin, session },
       prefix: "/rpc",
     });
 
@@ -76,7 +103,13 @@ const createClient = (session: AuthContextSession | null): RouterClient<AppRoute
 describe("authRouter e2e", () => {
   beforeEach(() => {
     completeOnboardingByUserIdMock.mockReset();
+    createManagedUserForAdminMock.mockReset();
     getOnboardingProfileByUserIdMock.mockReset();
+    getManagedUserForAdminMock.mockReset();
+    listManagedUsersForAdminMock.mockReset();
+    saveManagedUserForAdminMock.mockReset();
+    TEST_AUTH_ADMIN.createUser = vi.fn();
+    TEST_AUTH_ADMIN.updateUser = vi.fn();
   });
 
   it("rejects unauthenticated onboarding profile access", async () => {
@@ -423,5 +456,170 @@ describe("authRouter e2e", () => {
 
     await client.auth.completeOnboarding(VALID_ONBOARDING_INPUT);
     expect(completeOnboardingByUserIdMock).toHaveBeenCalledWith("user-42", VALID_ONBOARDING_INPUT);
+  });
+
+  it("rejects managed user queries for unauthenticated callers", async () => {
+    const client = createClient(null);
+
+    await expect(
+      client.auth.getManagedUsers({
+        includeExampleAccounts: false,
+        page: 1,
+        pageSize: 20,
+        roleFilter: "all",
+        searchField: "email",
+        sort: "newest",
+        statusFilter: "all",
+      }),
+    ).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+      message: "You must be signed in to access this resource.",
+    });
+    expect(listManagedUsersForAdminMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects managed user queries for non-admin callers", async () => {
+    const client = createClient(TEST_SESSION);
+
+    await expect(
+      client.auth.getManagedUsers({
+        includeExampleAccounts: false,
+        page: 1,
+        pageSize: 20,
+        roleFilter: "all",
+        searchField: "email",
+        sort: "newest",
+        statusFilter: "all",
+      }),
+    ).rejects.toMatchObject({
+      code: "FORBIDDEN",
+      message: "You must be an admin to access this resource.",
+    });
+    expect(listManagedUsersForAdminMock).not.toHaveBeenCalled();
+  });
+
+  it("returns managed users for admin callers", async () => {
+    const expected = {
+      counts: {
+        admins: 1,
+        banned: 1,
+        managers: 1,
+        users: 2,
+      },
+      hiddenExampleAccountCount: 3,
+      page: 2,
+      pageSize: 20,
+      total: 4,
+      users: [],
+    };
+    listManagedUsersForAdminMock.mockResolvedValue(expected);
+
+    const client = createClient(ADMIN_SESSION, TEST_AUTH_ADMIN);
+    const result = await client.auth.getManagedUsers({
+      includeExampleAccounts: false,
+      page: 2,
+      pageSize: 20,
+      roleFilter: "all",
+      searchField: "email",
+      searchValue: "admin",
+      sort: "updated",
+      statusFilter: "all",
+    });
+
+    expect(result).toEqual(expected);
+    expect(listManagedUsersForAdminMock).toHaveBeenCalledWith({
+      includeExampleAccounts: false,
+      page: 2,
+      pageSize: 20,
+      roleFilter: "all",
+      searchField: "email",
+      searchValue: "admin",
+      sort: "updated",
+      statusFilter: "all",
+    });
+  });
+
+  it("returns a managed user for admin callers", async () => {
+    const expectedUser = {
+      banExpires: null,
+      banReason: null,
+      banned: false,
+      createdAt: new Date("2026-01-01T00:00:00.000Z"),
+      email: "member@example.com",
+      emailVerified: true,
+      id: "member-1",
+      image: null,
+      name: "Member User",
+      systemRole: "USER",
+      updatedAt: new Date("2026-01-02T00:00:00.000Z"),
+      userType: "PARTICIPANT",
+    };
+    getManagedUserForAdminMock.mockResolvedValue(expectedUser);
+
+    const client = createClient(ADMIN_SESSION, TEST_AUTH_ADMIN);
+    const result = await client.auth.getManagedUser({
+      userId: "member-1",
+    });
+
+    expect(result).toEqual(expectedUser);
+    expect(getManagedUserForAdminMock).toHaveBeenCalledWith({
+      userId: "member-1",
+    });
+  });
+
+  it("creates managed users for admin callers", async () => {
+    const expectedUser = {
+      email: "manager@example.com",
+      id: "managed-user-1",
+      name: "Manager User",
+      systemRole: "MANAGER",
+      userType: "STAFF",
+    };
+    createManagedUserForAdminMock.mockResolvedValue(expectedUser);
+
+    const client = createClient(ADMIN_SESSION, TEST_AUTH_ADMIN);
+    const result = await client.auth.createManagedUser({
+      email: "manager@example.com",
+      name: "Manager User",
+      password: "TempPass123!",
+      systemRole: "MANAGER",
+    });
+
+    expect(result).toEqual(expectedUser);
+    expect(createManagedUserForAdminMock).toHaveBeenCalledWith(TEST_AUTH_ADMIN, {
+      email: "manager@example.com",
+      name: "Manager User",
+      password: "TempPass123!",
+      systemRole: "MANAGER",
+    });
+  });
+
+  it("saves managed users for admin callers with the actor user id", async () => {
+    const expectedUser = {
+      email: "member@example.com",
+      id: "member-1",
+      name: "Updated Name",
+      systemRole: "USER",
+      userType: "PARTICIPANT",
+    };
+    saveManagedUserForAdminMock.mockResolvedValue(expectedUser);
+
+    const client = createClient(ADMIN_SESSION, TEST_AUTH_ADMIN);
+    const result = await client.auth.saveManagedUser({
+      name: "Updated Name",
+      systemRole: "USER",
+      userId: "member-1",
+    });
+
+    expect(result).toEqual(expectedUser);
+    expect(saveManagedUserForAdminMock).toHaveBeenCalledWith({
+      actorUserId: "user-1",
+      authAdmin: TEST_AUTH_ADMIN,
+      input: {
+        name: "Updated Name",
+        systemRole: "USER",
+        userId: "member-1",
+      },
+    });
   });
 });

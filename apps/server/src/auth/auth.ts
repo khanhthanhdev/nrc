@@ -1,7 +1,7 @@
 import { account, db, user } from "@nrc-full/db";
 import { env } from "@nrc-full/env/server";
 import { and, eq, isNull } from "drizzle-orm";
-import { betterAuth } from "better-auth";
+import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { admin, organization } from "better-auth/plugins";
@@ -33,6 +33,7 @@ const adminAccessControl = createAccessControl({
     "set-role",
     "ban",
     "impersonate",
+    "impersonate-admins",
     "delete",
     "set-password",
     "get",
@@ -85,42 +86,62 @@ const teamMembershipRolePermissions = {
   }),
 } as const;
 
-const syncStaffRoleAssignmentForSession = async (userId: string): Promise<void> => {
-  const [existingUser] = await db
-    .select({
-      email: user.email,
-      id: user.id,
-      systemRole: user.systemRole,
-      userType: user.userType,
-    })
-    .from(user)
-    .where(and(eq(user.id, userId), isNull(user.deletedAt)))
-    .limit(1);
+interface AuthUser {
+  email: string;
+  emailVerified?: boolean;
+  id: string;
+  image?: string | null;
+  name: string;
+  systemRole?: string | null;
+  userType?: string | null;
+}
 
-  if (!existingUser) {
-    return;
-  }
+export interface AuthSession {
+  session: {
+    activeOrganizationId?: string | null;
+    createdAt?: Date;
+    expiresAt: Date;
+    id: string;
+    ipAddress?: string | null;
+    token?: string;
+    updatedAt?: Date;
+    userAgent?: string | null;
+    userId: string;
+  };
+  user: AuthUser & {
+    emailVerified: boolean;
+  };
+}
 
-  const staffRoleAssignment = resolveStaffRoleAssignmentForEmail(
-    existingUser.email,
-    staffRoleEmailConfig,
-  );
+interface ServerAuth {
+  api: {
+    adminUpdateUser(context: {
+      body: {
+        data: Record<string, unknown>;
+        userId: string;
+      };
+      headers: Headers;
+    }): Promise<AuthUser>;
+    createUser(context: {
+      body: {
+        data?: Record<string, unknown>;
+        email: string;
+        name: string;
+        password?: string;
+        role?: string | string[];
+      };
+      headers: Headers;
+    }): Promise<{
+      user: AuthUser;
+    }>;
+    getSession(context: {
+      headers: Headers | Record<string, string | string[] | undefined>;
+    }): Promise<{ session: Record<string, unknown>; user: Record<string, unknown> } | null>;
+  };
+  handler(request: Request): Promise<Response>;
+}
 
-  if (!staffRoleAssignment) {
-    return;
-  }
-
-  if (
-    existingUser.systemRole === staffRoleAssignment.systemRole &&
-    existingUser.userType === staffRoleAssignment.userType
-  ) {
-    return;
-  }
-
-  await db.update(user).set(staffRoleAssignment).where(eq(user.id, existingUser.id));
-};
-
-export const auth = betterAuth({
+const authOptions: BetterAuthOptions = {
   account: {
     accountLinking: {
       enabled: true,
@@ -132,13 +153,6 @@ export const auth = betterAuth({
     provider: "pg",
   }),
   databaseHooks: {
-    session: {
-      create: {
-        after: async (session) => {
-          await syncStaffRoleAssignmentForSession(session.userId);
-        },
-      },
-    },
     user: {
       create: {
         before: async (newUser) => {
@@ -224,7 +238,9 @@ export const auth = betterAuth({
   plugins: [
     admin({
       adminRoles: ["ADMIN"],
+      bannedUserMessage: "Your account has been suspended. Contact NRC support for assistance.",
       defaultRole: "USER",
+      impersonationSessionDuration: 60 * 15,
       roles: staffRolePermissions,
       schema: {
         user: {
@@ -268,8 +284,8 @@ export const auth = betterAuth({
       }) => {
         const invitationUrl = `${env.CORS_ORIGIN}/auth/accept-invitation?invitationId=${encodeURIComponent(id)}`;
         const organizationTeamNumber =
-          typeof (invitedOrganization as any).teamNumber === "string"
-            ? (invitedOrganization as any).teamNumber
+          typeof (invitedOrganization as Record<string, unknown>).teamNumber === "string"
+            ? ((invitedOrganization as Record<string, unknown>).teamNumber as string)
             : null;
 
         await sendOrganizationInvitationEmailViaSteamify({
@@ -293,6 +309,20 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: [env.CORS_ORIGIN, authOrigin],
-});
+  user: {
+    additionalFields: {
+      systemRole: {
+        input: false,
+        required: false,
+        type: "string",
+      },
+      userType: {
+        input: false,
+        required: false,
+        type: "string",
+      },
+    },
+  },
+};
 
-export type AuthSession = typeof auth.$Infer.Session;
+export const auth = betterAuth(authOptions) as unknown as ServerAuth;

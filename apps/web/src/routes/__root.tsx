@@ -25,14 +25,14 @@ const RootDocument = () => (
     </head>
     <body>
       <div className="nrc-shell min-h-svh">
-        <div className="mx-auto grid min-h-svh max-w-[1440px] grid-rows-[auto_1fr] px-4 pb-8 sm:px-6 lg:px-8">
+        <div className="mx-auto grid min-h-svh max-w-[1440px] grid-rows-[auto_1fr] px-4 pb-12 sm:px-6 lg:px-8">
           <Header />
-          <main className="py-6 sm:py-8">
+          <main className="py-8 sm:py-10">
             <Outlet />
           </main>
         </div>
       </div>
-      <Toaster richColors />
+      <Toaster />
 
       <TanStackRouterDevtools position="bottom-left" />
       <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />

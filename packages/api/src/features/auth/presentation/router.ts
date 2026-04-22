@@ -5,6 +5,18 @@ import {
   completeOnboardingByUserId,
   getOnboardingProfileByUserId,
 } from "../application/onboarding.js";
+import {
+  createManagedUserForAdmin,
+  getManagedUserForAdmin,
+  listManagedUsersForAdmin,
+  saveManagedUserForAdmin,
+} from "../application/managed-users.js";
+import {
+  createManagedUserInputSchema,
+  getManagedUserInputSchema,
+  getManagedUsersInputSchema,
+  saveManagedUserInputSchema,
+} from "../schemas/managed-users.js";
 import { completeOnboardingInputSchema } from "../schemas/onboarding.js";
 
 const requireUserId = (session: { session: { userId: string } } | null): string => {
@@ -15,6 +27,24 @@ const requireUserId = (session: { session: { userId: string } } | null): string 
   }
 
   return session.session.userId;
+};
+
+const requireAdminSession = (
+  session: { session: { userId: string }; user: { systemRole?: string | null } } | null,
+) => {
+  if (!session) {
+    throw new ORPCError("UNAUTHORIZED", {
+      message: "You must be signed in to access this resource.",
+    });
+  }
+
+  if (session.user.systemRole !== "ADMIN") {
+    throw new ORPCError("FORBIDDEN", {
+      message: "You must be an admin to access this resource.",
+    });
+  }
+
+  return session;
 };
 
 export const authRouter = {
@@ -38,5 +68,35 @@ export const authRouter = {
     }
 
     return profile;
+  }),
+
+  getManagedUsers: publicProcedure.input(getManagedUsersInputSchema).handler(({ context, input }) => {
+    requireAdminSession(context.session);
+
+    return listManagedUsersForAdmin(input);
+  }),
+
+  getManagedUser: publicProcedure.input(getManagedUserInputSchema).handler(({ context, input }) => {
+    requireAdminSession(context.session);
+
+    return getManagedUserForAdmin(input);
+  }),
+
+  createManagedUser: publicProcedure
+    .input(createManagedUserInputSchema)
+    .handler(({ context, input }) => {
+      requireAdminSession(context.session);
+
+      return createManagedUserForAdmin(context.authAdmin, input);
+    }),
+
+  saveManagedUser: publicProcedure.input(saveManagedUserInputSchema).handler(({ context, input }) => {
+    const currentSession = requireAdminSession(context.session);
+
+    return saveManagedUserForAdmin({
+      actorUserId: currentSession.session.userId,
+      authAdmin: context.authAdmin,
+      input,
+    });
   }),
 };

@@ -120,6 +120,17 @@ const completeOnboardingForm = async (page: Page): Promise<void> => {
   await page.getByRole("button", { name: "Save and continue" }).click();
 };
 
+const expectHomePageLoaded = async (page: Page): Promise<void> => {
+  await expect(page).toHaveURL(/\/$/);
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: "Competition operations built with a public-facing calm.",
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open public event" })).toBeVisible();
+};
+
 const getTestUser = async (
   request: APIRequestContext,
   email: string,
@@ -334,17 +345,13 @@ test.describe("Authentication Production Flows", () => {
     await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
 
     await completeOnboardingForm(page);
-
-    await expect(page).toHaveURL(/\/$/);
-    await expect(
-      page.getByRole("heading", { level: 1, name: /National Robotics Competition/ }),
-    ).toBeVisible();
+    await expectHomePageLoaded(page);
 
     const user = await getTestUser(page.request, email);
     expect(user.onboardingCompleted).toBe(true);
 
     await page.goto("/");
-    await expect(page).toHaveURL(/\/$/);
+    await expectHomePageLoaded(page);
   });
 
   test("unverified credential user cannot sign in via API", async ({ page }) => {
@@ -422,7 +429,7 @@ test.describe("Authentication Production Flows", () => {
     await ensureOk(signInResponse, "sign-in-email");
 
     await page.goto("/");
-    await expect(page).toHaveURL(/\/$/);
+    await expectHomePageLoaded(page);
   });
 
   test("credential-first account retains credential provider after verification", async ({
@@ -484,29 +491,23 @@ test.describe("Authentication Production Flows", () => {
     await createSessionForUser(page.request, email);
 
     await page.goto("/");
-    await expect(page).toHaveURL(/\/$/);
-    await expect(
-      page.getByRole("heading", { level: 1, name: /National Robotics Competition/ }),
-    ).toBeVisible();
+    await expectHomePageLoaded(page);
   });
 
   test("forgot password UI page renders and submits", async ({ page }) => {
     await page.goto("/auth/forgot-password");
+    await page.waitForLoadState("networkidle");
     await expect(page.getByRole("heading", { level: 1, name: "Forgot password" })).toBeVisible();
     await expect(page.getByLabel("Email")).toBeVisible();
     await expect(page.getByRole("button", { name: "Send reset email" })).toBeVisible();
 
     await page.getByLabel("Email").fill("nonexistent@example.com");
-    const [forgotPasswordResponse] = await Promise.all([
-      page.waitForResponse(
-        (response) =>
-          response.url().includes("/api/auth/request-password-reset") &&
-          response.request().method() === "POST",
-      ),
-      page.getByRole("button", { name: "Send reset email" }).click(),
-    ]);
-
-    expect(forgotPasswordResponse.ok()).toBe(true);
+    await page.getByRole("button", { name: "Send reset email" }).click();
+    await expect(
+      page.getByRole("status").filter({
+        hasText: "If the email exists, a reset link has been sent.",
+      }),
+    ).toBeVisible();
     await expect(page.getByRole("button", { name: "Send reset email" })).toBeEnabled();
   });
 
