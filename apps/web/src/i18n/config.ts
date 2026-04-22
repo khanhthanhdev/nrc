@@ -1,25 +1,33 @@
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import HttpBackend from "i18next-http-backend";
+import { initReactI18next } from "react-i18next";
+
+import enCommon from "../../public/locales/en/common.json";
+import viCommon from "../../public/locales/vi/common.json";
 
 i18n
-  .use(HttpBackend)
+  .use(initReactI18next)
   .use(LanguageDetector)
   .init({
-    backend: {
-      loadPath: "/locales//.json",
-    },
     defaultNS: "common",
     detection: {
       caches: ["localStorage"],
-      order: ["navigator", "htmlTag"],
+      order: ["localStorage", "navigator", "htmlTag"],
     },
     fallbackLng: "en",
     interpolation: {
       escapeValue: false,
     },
     ns: ["common"],
-    supportedLngs: ["en", "en"],
+    resources: {
+      en: {
+        common: enCommon,
+      },
+      vi: {
+        common: viCommon,
+      },
+    },
+    supportedLngs: ["en", "vi"],
   });
 
 export default i18n;

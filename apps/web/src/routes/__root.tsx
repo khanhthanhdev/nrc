@@ -2,7 +2,13 @@ import type { QueryClient } from "@tanstack/react-query";
 import type { RequestLogger } from "evlog";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRouteWithContext,
+  useRouterState,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createMiddleware } from "@tanstack/react-start";
 import { createError } from "evlog";
@@ -10,6 +16,8 @@ import { createError } from "evlog";
 import type { orpc } from "@/utils/orpc";
 
 import { Toaster } from "@/components/ui/sonner";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { isStaffPath } from "@/lib/navigation";
 
 import Header from "../components/header";
 import appCss from "../index.css?url";
@@ -18,28 +26,41 @@ export interface RouterAppContext {
   queryClient: QueryClient;
 }
 
-const RootDocument = () => (
-  <html lang="en">
-    <head>
-      <HeadContent />
-    </head>
-    <body>
-      <div className="nrc-shell min-h-svh">
-        <div className="mx-auto grid min-h-svh max-w-[1440px] grid-rows-[auto_1fr] px-4 pb-12 sm:px-6 lg:px-8">
-          <Header />
-          <main className="py-8 sm:py-10">
-            <Outlet />
-          </main>
-        </div>
-      </div>
-      <Toaster />
+const RootDocument = () => {
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+  const staffRoute = isStaffPath(pathname);
 
-      <TanStackRouterDevtools position="bottom-left" />
-      <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
-      <Scripts />
-    </body>
-  </html>
-);
+  return (
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <SidebarProvider defaultOpen>
+          <div className="nrc-shell min-h-svh">
+            <Header />
+            {staffRoute ? (
+              <Outlet />
+            ) : (
+              <div className="mx-auto w-full max-w-[1440px] px-4 pb-12 sm:px-6 lg:px-8">
+                <main className="py-8 sm:py-10">
+                  <Outlet />
+                </main>
+              </div>
+            )}
+          </div>
+        </SidebarProvider>
+        <Toaster />
+
+        <TanStackRouterDevtools position="bottom-left" />
+        <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
+        <Scripts />
+      </body>
+    </html>
+  );
+};
 
 const evlogMiddleware = createMiddleware().server(async (options) => {
   const { evlogErrorHandler } = await import("evlog/nitro/v3");

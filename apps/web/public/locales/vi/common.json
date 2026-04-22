@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "events": "Su kien",
+    "home": "Trang chu",
+    "register": "Dang ky",
+    "teams": "Nhom"
+  },
+  "header": {
+    "account": {
+      "accountSettings": "Cai dat tai khoan",
+      "createTeam": "Tao nhom",
+      "signOut": "Dang xuat"
+    },
+    "feedback": {
+      "signedOut": "Da dang xuat",
+      "stopImpersonating": "Da quay lai phien quan tri."
+    },
+    "getStarted": "Bat dau",
+    "mobile": {
+      "accountLabel": "Tai khoan",
+      "description": "Di chuyen giua cac trang cong khai va thao tac tai khoan tren mot bang dieu huong gon.",
+      "openMenu": "Mo menu dieu huong",
+      "openStaffMenu": "Mo thanh dieu huong staff",
+      "title": "Dieu huong"
+    },
+    "signIn": "Dang nhap",
+    "stopImpersonating": "Dung gia lap",
+    "stopShort": "Dung"
+  },
+  "languageSwitcher": {
+    "label": "Ngon ngu"
+  },
+  "staffSidebar": {
+    "backToSite": "Quay ve trang chinh",
+    "events": "Su kien",
+    "kicker": "Che do staff",
+    "overview": "Tong quan",
+    "registrations": "Dang ky",
+    "seasons": "Mua giai",
+    "section": {
+      "admin": "Quan tri",
+      "content": "Noi dung",
+      "panel": "Bang staff"
+    },
+    "settings": "Cai dat",
+    "sync": "Nhat ky dong bo",
+    "title": "Khung van hanh",
+    "users": "Nguoi dung"
+  }
+}

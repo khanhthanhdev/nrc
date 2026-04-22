@@ -391,7 +391,7 @@ const updateManagedUsersPageBanState = (
   };
 };
 
-const UsersPage = () => {
+export const UsersPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const session = authClient.useSession();
@@ -1916,6 +1916,20 @@ const UsersPage = () => {
   );
 };
 
+const LegacyUsersRedirectPage = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    void navigate({ replace: true, to: "/staff/users" });
+  }, [navigate]);
+
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-8">
+      <p className="text-muted-foreground text-sm">Redirecting to the staff user console...</p>
+    </div>
+  );
+};
+
 export const Route = createFileRoute("/users")({
-  component: UsersPage,
+  component: LegacyUsersRedirectPage,
 });

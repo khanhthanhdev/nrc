@@ -1,5 +1,50 @@
 {
-  "welcome": "Welcome to {{projectName}}",
-  "description": "Get started by editing this page",
-  "language": "Language"
+  "nav": {
+    "events": "Events",
+    "home": "Home",
+    "register": "Register",
+    "teams": "Teams"
+  },
+  "header": {
+    "account": {
+      "accountSettings": "Account settings",
+      "createTeam": "Create team",
+      "signOut": "Sign out"
+    },
+    "feedback": {
+      "signedOut": "Signed out",
+      "stopImpersonating": "Returned to your admin session."
+    },
+    "getStarted": "Get started",
+    "mobile": {
+      "accountLabel": "Account",
+      "description": "Move between public pages and account actions from one compact surface.",
+      "openMenu": "Open navigation menu",
+      "openStaffMenu": "Open staff sidebar",
+      "title": "Navigation"
+    },
+    "signIn": "Sign in",
+    "stopImpersonating": "Stop impersonating",
+    "stopShort": "Stop"
+  },
+  "languageSwitcher": {
+    "label": "Language"
+  },
+  "staffSidebar": {
+    "backToSite": "Back to site",
+    "events": "Events",
+    "kicker": "Staff mode",
+    "overview": "Overview",
+    "registrations": "Registrations",
+    "seasons": "Seasons",
+    "section": {
+      "admin": "Administration",
+      "content": "Content",
+      "panel": "Staff panel"
+    },
+    "settings": "Settings",
+    "sync": "Sync logs",
+    "title": "Operations shell",
+    "users": "Users"
+  }
 }

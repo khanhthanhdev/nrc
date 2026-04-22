@@ -14,12 +14,17 @@ import { Route as TeamsRouteImport } from './routes/teams'
 import { Route as StaffRouteImport } from './routes/staff'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as SeasonRouteImport } from './routes/$season'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TeamsNewRouteImport } from './routes/teams.new'
+import { Route as StaffUsersRouteImport } from './routes/staff.users'
+import { Route as StaffSyncRouteImport } from './routes/staff.sync'
+import { Route as StaffSettingsRouteImport } from './routes/staff.settings'
 import { Route as StaffSeasonsRouteImport } from './routes/staff.seasons'
+import { Route as StaffRegistrationsRouteImport } from './routes/staff.registrations'
 import { Route as StaffEventsRouteImport } from './routes/staff.events'
 import { Route as RegisterEventIdRouteImport } from './routes/register.$eventId'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
@@ -63,6 +68,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -88,9 +98,29 @@ const TeamsNewRoute = TeamsNewRouteImport.update({
   path: '/new',
   getParentRoute: () => TeamsRoute,
 } as any)
+const StaffUsersRoute = StaffUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => StaffRoute,
+} as any)
+const StaffSyncRoute = StaffSyncRouteImport.update({
+  id: '/sync',
+  path: '/sync',
+  getParentRoute: () => StaffRoute,
+} as any)
+const StaffSettingsRoute = StaffSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => StaffRoute,
+} as any)
 const StaffSeasonsRoute = StaffSeasonsRouteImport.update({
   id: '/seasons',
   path: '/seasons',
+  getParentRoute: () => StaffRoute,
+} as any)
+const StaffRegistrationsRoute = StaffRegistrationsRouteImport.update({
+  id: '/registrations',
+  path: '/registrations',
   getParentRoute: () => StaffRoute,
 } as any)
 const StaffEventsRoute = StaffEventsRouteImport.update({
@@ -188,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/$season': typeof SeasonRouteWithChildren
   '/account': typeof AccountRoute
   '/auth': typeof AuthRouteWithChildren
+  '/events': typeof EventsRoute
   '/onboarding': typeof OnboardingRoute
   '/register': typeof RegisterRouteWithChildren
   '/staff': typeof StaffRouteWithChildren
@@ -200,7 +231,11 @@ export interface FileRoutesByFullPath {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/register/$eventId': typeof RegisterEventIdRouteWithChildren
   '/staff/events': typeof StaffEventsRouteWithChildren
+  '/staff/registrations': typeof StaffRegistrationsRoute
   '/staff/seasons': typeof StaffSeasonsRouteWithChildren
+  '/staff/settings': typeof StaffSettingsRoute
+  '/staff/sync': typeof StaffSyncRoute
+  '/staff/users': typeof StaffUsersRoute
   '/teams/new': typeof TeamsNewRoute
   '/$season/$eventId/awards': typeof SeasonEventIdAwardsRoute
   '/$season/$eventId/playoffs': typeof SeasonEventIdPlayoffsRoute
@@ -218,6 +253,7 @@ export interface FileRoutesByTo {
   '/$season': typeof SeasonRouteWithChildren
   '/account': typeof AccountRoute
   '/auth': typeof AuthRouteWithChildren
+  '/events': typeof EventsRoute
   '/onboarding': typeof OnboardingRoute
   '/register': typeof RegisterRouteWithChildren
   '/staff': typeof StaffRouteWithChildren
@@ -230,7 +266,11 @@ export interface FileRoutesByTo {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/register/$eventId': typeof RegisterEventIdRouteWithChildren
   '/staff/events': typeof StaffEventsRouteWithChildren
+  '/staff/registrations': typeof StaffRegistrationsRoute
   '/staff/seasons': typeof StaffSeasonsRouteWithChildren
+  '/staff/settings': typeof StaffSettingsRoute
+  '/staff/sync': typeof StaffSyncRoute
+  '/staff/users': typeof StaffUsersRoute
   '/teams/new': typeof TeamsNewRoute
   '/$season/$eventId/awards': typeof SeasonEventIdAwardsRoute
   '/$season/$eventId/playoffs': typeof SeasonEventIdPlayoffsRoute
@@ -249,6 +289,7 @@ export interface FileRoutesById {
   '/$season': typeof SeasonRouteWithChildren
   '/account': typeof AccountRoute
   '/auth': typeof AuthRouteWithChildren
+  '/events': typeof EventsRoute
   '/onboarding': typeof OnboardingRoute
   '/register': typeof RegisterRouteWithChildren
   '/staff': typeof StaffRouteWithChildren
@@ -261,7 +302,11 @@ export interface FileRoutesById {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/register/$eventId': typeof RegisterEventIdRouteWithChildren
   '/staff/events': typeof StaffEventsRouteWithChildren
+  '/staff/registrations': typeof StaffRegistrationsRoute
   '/staff/seasons': typeof StaffSeasonsRouteWithChildren
+  '/staff/settings': typeof StaffSettingsRoute
+  '/staff/sync': typeof StaffSyncRoute
+  '/staff/users': typeof StaffUsersRoute
   '/teams/new': typeof TeamsNewRoute
   '/$season/$eventId/awards': typeof SeasonEventIdAwardsRoute
   '/$season/$eventId/playoffs': typeof SeasonEventIdPlayoffsRoute
@@ -281,6 +326,7 @@ export interface FileRouteTypes {
     | '/$season'
     | '/account'
     | '/auth'
+    | '/events'
     | '/onboarding'
     | '/register'
     | '/staff'
@@ -293,7 +339,11 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/register/$eventId'
     | '/staff/events'
+    | '/staff/registrations'
     | '/staff/seasons'
+    | '/staff/settings'
+    | '/staff/sync'
+    | '/staff/users'
     | '/teams/new'
     | '/$season/$eventId/awards'
     | '/$season/$eventId/playoffs'
@@ -311,6 +361,7 @@ export interface FileRouteTypes {
     | '/$season'
     | '/account'
     | '/auth'
+    | '/events'
     | '/onboarding'
     | '/register'
     | '/staff'
@@ -323,7 +374,11 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/register/$eventId'
     | '/staff/events'
+    | '/staff/registrations'
     | '/staff/seasons'
+    | '/staff/settings'
+    | '/staff/sync'
+    | '/staff/users'
     | '/teams/new'
     | '/$season/$eventId/awards'
     | '/$season/$eventId/playoffs'
@@ -341,6 +396,7 @@ export interface FileRouteTypes {
     | '/$season'
     | '/account'
     | '/auth'
+    | '/events'
     | '/onboarding'
     | '/register'
     | '/staff'
@@ -353,7 +409,11 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/register/$eventId'
     | '/staff/events'
+    | '/staff/registrations'
     | '/staff/seasons'
+    | '/staff/settings'
+    | '/staff/sync'
+    | '/staff/users'
     | '/teams/new'
     | '/$season/$eventId/awards'
     | '/$season/$eventId/playoffs'
@@ -372,6 +432,7 @@ export interface RootRouteChildren {
   SeasonRoute: typeof SeasonRouteWithChildren
   AccountRoute: typeof AccountRoute
   AuthRoute: typeof AuthRouteWithChildren
+  EventsRoute: typeof EventsRoute
   OnboardingRoute: typeof OnboardingRoute
   RegisterRoute: typeof RegisterRouteWithChildren
   StaffRoute: typeof StaffRouteWithChildren
@@ -416,6 +477,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -451,11 +519,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamsNewRouteImport
       parentRoute: typeof TeamsRoute
     }
+    '/staff/users': {
+      id: '/staff/users'
+      path: '/users'
+      fullPath: '/staff/users'
+      preLoaderRoute: typeof StaffUsersRouteImport
+      parentRoute: typeof StaffRoute
+    }
+    '/staff/sync': {
+      id: '/staff/sync'
+      path: '/sync'
+      fullPath: '/staff/sync'
+      preLoaderRoute: typeof StaffSyncRouteImport
+      parentRoute: typeof StaffRoute
+    }
+    '/staff/settings': {
+      id: '/staff/settings'
+      path: '/settings'
+      fullPath: '/staff/settings'
+      preLoaderRoute: typeof StaffSettingsRouteImport
+      parentRoute: typeof StaffRoute
+    }
     '/staff/seasons': {
       id: '/staff/seasons'
       path: '/seasons'
       fullPath: '/staff/seasons'
       preLoaderRoute: typeof StaffSeasonsRouteImport
+      parentRoute: typeof StaffRoute
+    }
+    '/staff/registrations': {
+      id: '/staff/registrations'
+      path: '/registrations'
+      fullPath: '/staff/registrations'
+      preLoaderRoute: typeof StaffRegistrationsRouteImport
       parentRoute: typeof StaffRoute
     }
     '/staff/events': {
@@ -695,12 +791,20 @@ const StaffSeasonsRouteWithChildren = StaffSeasonsRoute._addFileChildren(
 
 interface StaffRouteChildren {
   StaffEventsRoute: typeof StaffEventsRouteWithChildren
+  StaffRegistrationsRoute: typeof StaffRegistrationsRoute
   StaffSeasonsRoute: typeof StaffSeasonsRouteWithChildren
+  StaffSettingsRoute: typeof StaffSettingsRoute
+  StaffSyncRoute: typeof StaffSyncRoute
+  StaffUsersRoute: typeof StaffUsersRoute
 }
 
 const StaffRouteChildren: StaffRouteChildren = {
   StaffEventsRoute: StaffEventsRouteWithChildren,
+  StaffRegistrationsRoute: StaffRegistrationsRoute,
   StaffSeasonsRoute: StaffSeasonsRouteWithChildren,
+  StaffSettingsRoute: StaffSettingsRoute,
+  StaffSyncRoute: StaffSyncRoute,
+  StaffUsersRoute: StaffUsersRoute,
 }
 
 const StaffRouteWithChildren = StaffRoute._addFileChildren(StaffRouteChildren)
@@ -720,6 +824,7 @@ const rootRouteChildren: RootRouteChildren = {
   SeasonRoute: SeasonRouteWithChildren,
   AccountRoute: AccountRoute,
   AuthRoute: AuthRouteWithChildren,
+  EventsRoute: EventsRoute,
   OnboardingRoute: OnboardingRoute,
   RegisterRoute: RegisterRouteWithChildren,
   StaffRoute: StaffRouteWithChildren,
