@@ -8,7 +8,7 @@ const API_URL = process.env.PLAYWRIGHT_API_URL ?? process.env.BETTER_AUTH_URL ??
 
 export default defineConfig({
   forbidOnly: !!process.env.CI,
-  fullyParallel: true,
+  fullyParallel: false,
   projects: [
     {
       name: "chromium",
@@ -45,5 +45,5 @@ export default defineConfig({
     timeout: 120_000,
     url: BASE_URL,
   },
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
 });

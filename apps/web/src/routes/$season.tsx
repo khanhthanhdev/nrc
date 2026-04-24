@@ -1,7 +1,16 @@
-import { Link, Outlet, createFileRoute, useParams, useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Outlet, createFileRoute, useParams, useRouterState } from "@tanstack/react-router";
 
-import { Button } from "@/components/ui/button";
+import {
+  PublicSeasonLoadErrorState,
+  PublicSeasonNotFoundState,
+  PublicSeasonPage,
+  PublicSeasonPageSkeleton,
+  SeasonInvalidParamState,
+} from "@/features/seasons/public-season-page";
+import { isSeasonNotFoundError } from "@/features/seasons/helpers";
 import { isValidSeason } from "@/lib/route-policy";
+import { orpc } from "@/utils/orpc";
 
 const SeasonPage = () => {
   const pathname = useRouterState({
@@ -9,58 +18,41 @@ const SeasonPage = () => {
   });
   const { season } = useParams({ from: "/$season" });
 
+  const seasonQuery = useQuery({
+    ...orpc.season.getPublicSeasonPage.queryOptions({ input: { year: season } }),
+    enabled: isValidSeason(season),
+    retry: false,
+  });
+
   if (!isValidSeason(season)) {
-    return (
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        <h1 className="text-2xl font-semibold">Invalid season</h1>
-        <p className="text-muted-foreground text-sm">Season must be a 4-digit year.</p>
-      </div>
-    );
+    return <SeasonInvalidParamState />;
   }
 
   if (pathname !== `/${season}`) {
     return <Outlet />;
   }
 
-  return (
-    <section className="space-y-8">
-      <div className="-mx-4 sm:-mx-6 lg:-mx-8">
-        <div className="nrc-hero px-6 py-10 sm:px-8 sm:py-12 lg:px-12">
-          <div className="max-w-3xl space-y-3">
-            <p className="text-sm uppercase tracking-[0.22em] text-white/65">Season</p>
-            <h1 className="text-4xl font-semibold tracking-[-0.04em] text-white">{season}</h1>
-            <p className="max-w-2xl text-sm leading-6 text-white/76">
-              Old seasons stay in database. Public event info lives under `/:season/:eventId`.
-            </p>
-          </div>
-        </div>
-      </div>
+  if (seasonQuery.isLoading) {
+    return <PublicSeasonPageSkeleton />;
+  }
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="nrc-card-subtle p-4">
-          <h2 className="text-lg font-semibold">Public event sample</h2>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Open a season event page with FTC-style slugs.
-          </p>
-          <Button asChild className="mt-4">
-            <Link params={{ eventId: "VNCMP", season }} to="/$season/$eventId">
-              Open VNCMP
-            </Link>
-          </Button>
-        </div>
+  if (seasonQuery.error) {
+    return isSeasonNotFoundError(seasonQuery.error) ? (
+      <PublicSeasonNotFoundState season={season} />
+    ) : (
+      <PublicSeasonLoadErrorState
+        onRetry={async () => {
+          await seasonQuery.refetch();
+        }}
+      />
+    );
+  }
 
-        <div className="nrc-card-subtle p-4">
-          <h2 className="text-lg font-semibold">Team access</h2>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Team create, view, manage lives under the teams namespace.
-          </p>
-          <Button asChild className="mt-4" variant="secondary">
-            <Link to="/teams">Go to teams</Link>
-          </Button>
-        </div>
-      </div>
-    </section>
-  );
+  if (!seasonQuery.data) {
+    return <PublicSeasonNotFoundState season={season} />;
+  }
+
+  return <PublicSeasonPage data={seasonQuery.data} />;
 };
 
 export const Route = createFileRoute("/$season")({

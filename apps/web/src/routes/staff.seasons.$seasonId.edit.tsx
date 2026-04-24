@@ -1,33 +1,38 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 
-import { authClient } from "@/utils/auth-client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  AdminSeasonEditorPage,
+  AdminSeasonEditorSkeleton,
+  AdminSeasonInvalidState,
+  AdminSeasonLoadErrorState,
+  AdminSeasonNotFoundState,
+} from "@/features/seasons/admin-season-pages";
+import { isSeasonNotFoundError } from "@/features/seasons/helpers";
 import { isValidSeason } from "@/lib/route-policy";
-import { useRequireStaff } from "@/lib/route-guards";
+import { useRequireAdmin } from "@/lib/route-guards";
+import { authClient } from "@/utils/auth-client";
+import { orpc } from "@/utils/orpc";
 
 const StaffSeasonEditPage = () => {
   const navigate = useNavigate();
   const session = authClient.useSession();
   const { seasonId } = useParams({ from: "/staff/seasons/$seasonId/edit" });
 
-  useRequireStaff(session);
+  useRequireAdmin(session);
+
+  const seasonQuery = useQuery({
+    ...orpc.season.getAdminSeason.queryOptions({ input: { year: seasonId } }),
+    enabled: Boolean(session.data) && isValidSeason(seasonId),
+    retry: false,
+  });
 
   if (!isValidSeason(seasonId)) {
-    return (
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        <h1 className="text-2xl font-semibold">Invalid season</h1>
-      </div>
-    );
+    return <AdminSeasonInvalidState />;
   }
 
   if (session.isPending) {
-    return (
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        <p className="text-muted-foreground text-sm">Loading season editor...</p>
-      </div>
-    );
+    return <AdminSeasonEditorSkeleton />;
   }
 
   if (!session.data) {
@@ -40,24 +45,27 @@ const StaffSeasonEditPage = () => {
     );
   }
 
-  return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-8">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-semibold">Edit season {seasonId}</h1>
-        <p className="text-muted-foreground text-sm">CRUD scaffold only. Hook backend later.</p>
-      </div>
+  if (seasonQuery.isLoading) {
+    return <AdminSeasonEditorSkeleton />;
+  }
 
-      <div className="space-y-4 rounded-2xl border p-4">
-        <div className="space-y-2">
-          <Label htmlFor="season-name">Season name</Label>
-          <Input disabled id="season-name" placeholder="2026 Championship" />
-        </div>
-        <Button disabled type="button">
-          Save changes
-        </Button>
-      </div>
-    </div>
-  );
+  if (seasonQuery.error) {
+    return isSeasonNotFoundError(seasonQuery.error) ? (
+      <AdminSeasonNotFoundState seasonYear={seasonId} />
+    ) : (
+      <AdminSeasonLoadErrorState
+        onRetry={async () => {
+          await seasonQuery.refetch();
+        }}
+      />
+    );
+  }
+
+  if (!seasonQuery.data) {
+    return <AdminSeasonNotFoundState seasonYear={seasonId} />;
+  }
+
+  return <AdminSeasonEditorPage data={seasonQuery.data} />;
 };
 
 export const Route = createFileRoute("/staff/seasons/$seasonId/edit")({

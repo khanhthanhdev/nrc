@@ -50,7 +50,9 @@ export const getStaffNavigation = (systemRole?: SystemRole) => {
     },
     {
       items: [
-        { icon: CalendarRange, labelKey: "staffSidebar.seasons", to: "/staff/seasons" },
+        ...(isAdmin
+          ? [{ icon: CalendarRange, labelKey: "staffSidebar.seasons", to: "/staff/seasons" } satisfies StaffNavigationItem]
+          : []),
         { icon: Trophy, labelKey: "staffSidebar.events", to: "/staff/events" },
         {
           icon: ClipboardCheck,

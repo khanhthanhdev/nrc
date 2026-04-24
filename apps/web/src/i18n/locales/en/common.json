@@ -1,0 +1,276 @@
+{
+  "nav": {
+    "events": "Events",
+    "home": "Home",
+    "register": "Register",
+    "teams": "Teams"
+  },
+  "header": {
+    "account": {
+      "accountSettings": "Account settings",
+      "createTeam": "Create team",
+      "staffPanel": "Staff panel",
+      "signOut": "Sign out"
+    },
+    "feedback": {
+      "signedOut": "Signed out",
+      "stopImpersonating": "Returned to your admin session."
+    },
+    "getStarted": "Get started",
+    "mobile": {
+      "accountLabel": "Account",
+      "description": "Move between public pages and account actions from one compact surface.",
+      "openMenu": "Open navigation menu",
+      "openStaffMenu": "Open staff sidebar",
+      "title": "Navigation"
+    },
+    "signIn": "Sign in",
+    "stopImpersonating": "Stop impersonating",
+    "stopShort": "Stop"
+  },
+  "languageSwitcher": {
+    "label": "Language"
+  },
+  "season": {
+    "admin": {
+      "actions": {
+        "cancel": "Cancel",
+        "confirmDelete": "Delete season",
+        "create": "Create season",
+        "creating": "Creating...",
+        "delete": "Delete",
+        "deleteSeason": "Delete season",
+        "deleting": "Deleting...",
+        "save": "Save changes",
+        "saving": "Saving..."
+      },
+      "announcements": {
+        "add": "Create announcement",
+        "description": "Publish updates for teams and mentors without leaving the season editor.",
+        "empty": {
+          "description": "Create the first announcement for this season.",
+          "title": "No announcements yet"
+        },
+        "title": "Announcements"
+      },
+      "basic": {
+        "activeHint": "Active seasons stay highlighted across the public website.",
+        "description": "Adjust the core season record without changing the backend contract.",
+        "eventsDescription": "Linked public events stay read-only here for this tranche.",
+        "eventsTitle": "Season events"
+      },
+      "create": {
+        "activeHint": "New seasons can be published immediately or kept archived until ready.",
+        "description": "Create the shell first, then add documents and announcements from the editor.",
+        "formDescription": "Fields map directly to the existing season API.",
+        "formTitle": "Season details",
+        "kicker": "Season management",
+        "title": "Create a new season"
+      },
+      "delete": {
+        "description": "This hides season {{year}} and its nested content from the app. Existing linked records are soft deleted.",
+        "title": "Delete this season?"
+      },
+      "documents": {
+        "add": "Add document",
+        "description": "Use numeric sort order for v1 so documents stay predictable in the public hero and document list.",
+        "empty": {
+          "description": "Add the first manual, FAQ, or supporting link for this season.",
+          "title": "No documents yet"
+        },
+        "open": "Open document",
+        "selectedFile": "Selected file: {{name}}",
+        "source": {
+          "upload": "Upload document",
+          "uploadHint": "Upload a file to S3 and save the generated in-app document link.",
+          "url": "External URL",
+          "urlHint": "Paste a direct document link hosted elsewhere."
+        },
+        "sourceLabel": "Document source",
+        "title": "Documents",
+        "upload": "Upload file",
+        "uploadField": "Document file",
+        "uploadPending": "Upload a file before saving this document.",
+        "uploadReady": "Uploaded file is ready.",
+        "uploading": "Uploading...",
+        "validation": {
+          "uploadRequired": "Upload a document file before saving.",
+          "urlRequired": "Enter a document URL before saving."
+        }
+      },
+      "editor": {
+        "createdAt": "Created:",
+        "description": "Edit the season shell and the public content that sits behind the season landing page.",
+        "eventCount": "Events:",
+        "kicker": "Season editor",
+        "updatedAt": "Updated:"
+      },
+      "feedback": {
+        "announcementCreateError": "Unable to create the season announcement.",
+        "announcementCreateSuccess": "Announcement created.",
+        "announcementDeleteError": "Unable to delete the season announcement.",
+        "announcementDeleteSuccess": "Announcement deleted.",
+        "announcementUpdateError": "Unable to update the season announcement.",
+        "announcementUpdateSuccess": "Announcement saved.",
+        "createError": "Unable to create the season.",
+        "createSuccess": "Created season {{year}}.",
+        "deleteError": "Unable to delete the season.",
+        "deleteSuccess": "Deleted season {{year}}.",
+        "documentCreateError": "Unable to create the season document.",
+        "documentCreateSuccess": "Document created.",
+        "documentDeleteError": "Unable to delete the season document.",
+        "documentDeleteSuccess": "Document deleted.",
+        "documentUploadError": "Unable to upload the document file.",
+        "documentUploadSuccess": "Document file uploaded.",
+        "documentUpdateError": "Unable to update the season document.",
+        "documentUpdateSuccess": "Document saved.",
+        "updateError": "Unable to save the season.",
+        "updateSuccess": "Season saved."
+      },
+      "fields": {
+        "actions": "Actions",
+        "body": "Body",
+        "description": "Description",
+        "gameCode": "Game code",
+        "isActive": "Active season",
+        "isPinned": "Pin this announcement",
+        "kind": "Kind",
+        "pinned": "Pinned",
+        "publishedAt": "Published at",
+        "sortOrder": "Sort order",
+        "status": "Status",
+        "theme": "Theme",
+        "title": "Title",
+        "updatedAt": "Last updated",
+        "url": "URL",
+        "year": "Year"
+      },
+      "lifecycle": {
+        "active": "Active",
+        "archived": "Archived"
+      },
+      "list": {
+        "create": "Create new season",
+        "description": "Review every configured season and jump straight into the editor for documents and announcements.",
+        "edit": "Edit",
+        "empty": {
+          "action": "Create the first season",
+          "description": "The admin API is live. Create the first season record to populate this workspace.",
+          "title": "No seasons yet"
+        },
+        "kicker": "Season management",
+        "loadError": {
+          "description": "The season list could not be loaded from the admin API.",
+          "retry": "Retry",
+          "title": "Unable to load seasons"
+        },
+        "tableDescription": "Newest seasons stay at the top so current operations are easy to reach.",
+        "tableTitle": "All seasons",
+        "title": "Manage seasons"
+      },
+      "loadError": {
+        "description": "The season editor could not load its latest data.",
+        "retry": "Retry",
+        "title": "Unable to load this season"
+      },
+      "notFound": {
+        "action": "Back to seasons",
+        "description": "The requested season does not exist or has already been removed.",
+        "title": "Season {{year}} was not found"
+      },
+      "placeholders": {
+        "description": "Describe the game, challenge, or season narrative.",
+        "theme": "Into the Deep"
+      },
+      "tabs": {
+        "announcements": "Announcements",
+        "basic": "Basic info",
+        "documents": "Documents"
+      }
+    },
+    "invalid": {
+      "description": "Season routes must use a 4-digit year.",
+      "title": "Invalid season"
+    },
+    "public": {
+      "announcements": {
+        "description": "Pinned updates rise to the top so teams can catch the latest changes fast.",
+        "emptyDescription": "Season news and reminders will appear here once published.",
+        "emptyTitle": "No announcements published yet",
+        "pinned": "Pinned",
+        "title": "Announcements"
+      },
+      "documents": {
+        "description": "Manuals, links, and support files stay together in one compact section.",
+        "emptyDescription": "Season resources have not been published yet.",
+        "emptyTitle": "No documents available",
+        "open": "Open document",
+        "sortOrder": "Display order: {{order}}",
+        "title": "Documents"
+      },
+      "events": {
+        "description": "Each public event links directly into its detailed public route.",
+        "emptyDescription": "The season shell is live, but event records have not been published yet.",
+        "emptyTitle": "No public events yet",
+        "locationFallback": "Venue details coming soon",
+        "register": "Register",
+        "title": "{{year}} season events",
+        "viewDetails": "View details"
+      },
+      "hero": {
+        "descriptionFallback": "Season details will appear here once the record is fully published.",
+        "kicker": "NRC season",
+        "primaryCta": "Download game manual",
+        "secondaryCta": "Open {{title}}"
+      },
+      "loadError": {
+        "description": "The season page could not be loaded from the public API.",
+        "retry": "Retry",
+        "title": "Unable to load this season"
+      },
+      "notFound": {
+        "action": "Browse events",
+        "description": "This season has not been published yet or no longer exists.",
+        "title": "Season {{season}} was not found"
+      },
+      "switcher": {
+        "description": "Jump between published years without leaving the season hub.",
+        "empty": "No seasons matched your search.",
+        "label": "Season switcher",
+        "searchPlaceholder": "Search season, theme, or game code"
+      },
+      "tabs": {
+        "announcements": "Announcements",
+        "documents": "Documents",
+        "events": "Events"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "archived": "Archived",
+      "completed": "Completed",
+      "draft": "Draft",
+      "published": "Published",
+      "registrationClosed": "Registration closed",
+      "registrationOpen": "Registration open",
+      "unknown": "Unknown"
+    }
+  },
+  "staffSidebar": {
+    "backToSite": "Back to site",
+    "events": "Events",
+    "kicker": "Staff mode",
+    "overview": "Overview",
+    "registrations": "Registrations",
+    "seasons": "Seasons",
+    "section": {
+      "admin": "Administration",
+      "content": "Content",
+      "panel": "Staff panel"
+    },
+    "settings": "Settings",
+    "sync": "Sync logs",
+    "title": "Operations shell",
+    "users": "Users"
+  }
+}

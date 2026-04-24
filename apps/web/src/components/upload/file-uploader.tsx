@@ -18,8 +18,10 @@ const formatFileSize = (bytes: number): string => {
 
 interface FileUploaderProps {
   accept?: string;
+  inputId?: string;
   maxFiles?: number;
   maxFileSize?: number;
+  multiple?: boolean;
   onError?: (error: Error) => void;
   onSuccess?: (urls: string[]) => void;
   route?: UploadRoute;
@@ -28,8 +30,10 @@ interface FileUploaderProps {
 const FileUploader = ({
   route = "files",
   accept,
+  inputId = "file-input",
   maxFiles = 10,
   maxFileSize = 50 * 1024 * 1024,
+  multiple = true,
   onSuccess,
   onError,
 }: FileUploaderProps) => {
@@ -91,17 +95,17 @@ const FileUploader = ({
     <div className="mx-auto w-full max-w-lg space-y-4">
       <div className="rounded-lg border-2 border-dashed border-gray-300 p-6">
         <input
-          id="file-input"
+          id={inputId}
           accept={accept}
           className="hidden"
           disabled={isPending}
-          multiple
+          multiple={multiple}
           type="file"
           onChange={handleFileChange}
         />
         <label
           className="flex cursor-pointer flex-col items-center justify-center"
-          htmlFor="file-input"
+          htmlFor={inputId}
         >
           <svg
             className="h-12 w-12 text-gray-400"

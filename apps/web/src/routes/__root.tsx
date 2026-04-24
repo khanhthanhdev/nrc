@@ -33,11 +33,11 @@ const RootDocument = () => {
   const staffRoute = isStaffPath(pathname);
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <SidebarProvider defaultOpen>
           <div className="nrc-shell min-h-svh">
             <Header />

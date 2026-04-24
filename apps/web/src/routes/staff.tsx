@@ -61,27 +61,29 @@ const StaffOverviewPage = () => {
               </section>
 
               <section className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-                <div className="nrc-card space-y-4 p-6">
-                  <div>
-                    <p className="text-muted-foreground text-xs font-semibold uppercase tracking-[0.18em]">
-                      Active today
-                    </p>
-                    <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-foreground">
-                      Seasons
-                    </h2>
-                    <p className="text-muted-foreground mt-2 text-sm leading-6">
-                      Create and revise yearly shells for public and staff event operations.
-                    </p>
+                {isAdmin ? (
+                  <div className="nrc-card space-y-4 p-6">
+                    <div>
+                      <p className="text-muted-foreground text-xs font-semibold uppercase tracking-[0.18em]">
+                        Admin only
+                      </p>
+                      <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-foreground">
+                        Seasons
+                      </h2>
+                      <p className="text-muted-foreground mt-2 text-sm leading-6">
+                        Create and revise yearly shells for public and staff event operations.
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button asChild size="sm">
+                        <Link to="/staff/seasons">Open</Link>
+                      </Button>
+                      <Button asChild size="sm" variant="secondary">
+                        <Link to="/staff/seasons/new">New</Link>
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Button asChild size="sm">
-                      <Link to="/staff/seasons">Open</Link>
-                    </Button>
-                    <Button asChild size="sm" variant="secondary">
-                      <Link to="/staff/seasons/new">New</Link>
-                    </Button>
-                  </div>
-                </div>
+                ) : null}
 
                 <div className="nrc-card space-y-4 p-6">
                   <div>

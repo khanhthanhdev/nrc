@@ -1,9 +1,9 @@
 /* ─── Google Fonts ──────────────────────────────────────────────────────── */
-@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap");
 
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
+/* @import "shadcn/tailwind.css"; */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -45,11 +45,6 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-info: var(--info);
-  --color-success: var(--success);
-  --color-warning: var(--warning);
-  --color-danger-soft: var(--danger-soft);
-  --color-surface-strong: var(--surface-strong);
 
   /* Design-token palette utilities */
   --color-purple-500: var(--dt-color-purple-500);
@@ -86,38 +81,21 @@
   --spacing-4: var(--dt-spacing-4);
   --spacing-5: var(--dt-spacing-5);
   --spacing-6: var(--dt-spacing-6);
-  --spacing-7: var(--dt-spacing-7);
   --spacing-8: var(--dt-spacing-8);
   --spacing-10: var(--dt-spacing-10);
   --spacing-12: var(--dt-spacing-12);
   --spacing-16: var(--dt-spacing-16);
   --spacing-20: var(--dt-spacing-20);
   --spacing-24: var(--dt-spacing-24);
-
-  /* Sidebar compatibility */
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-
-  /* Extra radii used by shared UI */
-  --radius-xl: 24px;
-  --radius-2xl: 28px;
-  --radius-3xl: 32px;
-  --radius-4xl: 40px;
 }
 
 /* ─── Design System Tokens (Source of Truth) ─────────────────────────────── */
-/* Reference: output/steamforvietnam.org/2026-04-21T16-49-46-225Z.json */
 :root {
   /* ──── Typography ──────────────────────────────────────────────────────── */
   --font-sans:
-    "Quicksand", Arial, Helvetica, ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    "Plus Jakarta Sans", "Plus Jakarta Sans Fallback", Arial, Helvetica,
+    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
@@ -130,7 +108,7 @@
   --dt-font-size-xl: 20px;
   --dt-font-size-2xl: 24px;
   --dt-font-size-3xl: 32px;
-  --dt-font-size-4xl: 44px;
+  --dt-font-size-4xl: 40px;
   --dt-font-size-5xl: 56px;
   --dt-font-size-6xl: 96px;
 
@@ -142,46 +120,47 @@
   --dt-font-weight-bold: 700;
 
   /* Line heights */
-  --dt-line-height-tight: 1.18;
+  --dt-line-height-tight: 0.8;
   --dt-line-height-snug: 0.95;
   --dt-line-height-normal: 1;
-  --dt-line-height-relaxed: 1.5;
-  --dt-line-height-loose: 1.56;
+  --dt-line-height-relaxed: 1.11;
+  --dt-line-height-loose: 1.2;
   --dt-line-height-extra-loose: 1.33;
   --dt-line-height-double: 1.5;
 
   /* ──── Color Palette ───────────────────────────────────────────────────── */
   --dt-color-white: #ffffff;
   --dt-color-black: #000000;
-  --dt-color-gray-300: #c1c7d0;
-  --dt-color-gray-400: #97a0af;
+  --dt-color-gray-300: #d0d5dd;
+  --dt-color-gray-400: #98a2b3;
   --dt-color-purple-500: #7a5af8;
   --dt-color-purple-700: #5925dc;
   --dt-color-pink-500: #ee46bc;
-  --dt-color-blue-500: #447aff;
-  --dt-color-navy-700: #172b4d;
-  --dt-color-navy-900: #060e38;
-  --dt-color-surface-50: #f7faff;
-  --dt-color-surface-100: #eef4ff;
-  --dt-color-surface-200: #d6e1ff;
-  --dt-color-teal-500: #54c9c2;
-  --dt-color-info-600: #2c4ab8;
-  --dt-color-success-500: #22a861;
-  --dt-color-warning-500: #ffab00;
-  --dt-color-danger-500: #d0021b;
+  --dt-color-blue-500: #2e90fa;
 
   /* ──── Border Radius ───────────────────────────────────────────────────── */
-  --dt-radius-sm: 4px;
-  --dt-radius-md: 8px;
-  --dt-radius-lg: 16px;
+  --dt-radius-sm: 18px;
+  --dt-radius-md: 30px;
+  --dt-radius-lg: 48px;
   --dt-radius-full: 9999px;
-  --radius: var(--dt-radius-sm);
 
   /* ──── Shadows ─────────────────────────────────────────────────────────── */
-  --dt-shadow-elevation: none;
-  --dt-shadow-glass: none;
-  --dt-shadow-soft: none;
-  --dt-shadow-subtle: none;
+  --dt-shadow-elevation:
+    rgba(41, 41, 41, 0.5) 0px 27.765px 27.765px -20.193px,
+    rgba(41, 41, 41, 0.26) 0px 53.005px 42.909px -15.144px;
+  --dt-shadow-glass:
+    rgba(255, 255, 255, 0.8) -2.422px -2.422px 2.422px 0px inset,
+    rgba(255, 255, 255, 0.8) 2.422px 2.422px 2.422px 0px inset,
+    rgba(255, 255, 255, 0.5) -2.422px -2.422px 12.109px 0px inset,
+    rgba(255, 255, 255, 0.5) 2.422px 2.422px 12.109px 0px inset,
+    rgba(0, 0, 0, 0.03) -7.266px -7.266px 14.531px 0px inset,
+    rgba(0, 0, 0, 0.03) 7.266px 7.266px 14.531px 0px inset,
+    rgba(0, 0, 0, 0.12) 0px 29.063px 58.125px 0px;
+  --dt-shadow-soft:
+    rgba(31, 38, 135, 0.2) 0px 8px 32px 0px, rgba(255, 255, 255, 0.3) 0px 4px
+    20px 0px inset;
+  --dt-shadow-subtle:
+    rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
 
   /* ──── Spacing ─────────────────────────────────────────────────────────── */
   --dt-spacing-0: 0px;
@@ -191,7 +170,6 @@
   --dt-spacing-4: 16px;
   --dt-spacing-5: 20px;
   --dt-spacing-6: 24px;
-  --dt-spacing-7: 32px;
   --dt-spacing-8: 32px;
   --dt-spacing-10: 40px;
   --dt-spacing-12: 48px;
@@ -200,52 +178,30 @@
   --dt-spacing-24: 96px;
 
   /* ──── Semantic Colors (light) ─────────────────────────────────────────── */
-  --background: #ffffff;
-  --foreground: #172b4d;
-  --card: #ffffff;
-  --card-foreground: #172b4d;
-  --popover: #ffffff;
-  --popover-foreground: #172b4d;
-  --primary: #447aff;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #7a5af8;
   --primary-foreground: #ffffff;
-  --secondary: #eef4ff;
-  --secondary-foreground: #172b4d;
-  --muted: #f7faff;
-  --muted-foreground: #6b7a99;
-  --accent: #edf3ff;
-  --accent-foreground: #172b4d;
+  --secondary: #5925dc;
+  --secondary-foreground: #ffffff;
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: #98a2b3;
+  --accent: #ee46bc;
+  --accent-foreground: #ffffff;
   --destructive: oklch(0.58 0.22 27);
   --destructive-foreground: oklch(0.97 0 0);
-  --border: #dbe4f2;
-  --input: #dbe4f2;
-  --ring: #447aff;
-  --chart-1: #447aff;
+  --border: #d0d5dd;
+  --input: #d0d5dd;
+  --ring: #7a5af8;
+  --chart-1: #2e90fa;
   --chart-2: #7a5af8;
   --chart-3: #5925dc;
-  --chart-4: #98a2b3;
+  --chart-4: #ee46bc;
   --chart-5: #98a2b3;
-  --brand-hero: #060e38;
-  --brand-hero-foreground: #ffffff;
-  --info: #2c4ab8;
-  --info-foreground: #ffffff;
-  --success: #22a861;
-  --success-foreground: #ffffff;
-  --warning: #ffab00;
-  --warning-foreground: #172b4d;
-  --danger-soft: #ffd2d8;
-  --focus-primary: rgb(255 171 0 / 0.2);
-  --focus-information: rgb(55 93 231 / 0.2);
-  --surface-strong: #d6e1ff;
-
-  /* Sidebar compatibility */
-  --sidebar: var(--card);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: rgb(68 122 255 / 0.08);
-  --sidebar-accent-foreground: var(--foreground);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--ring);
 }
 
 /* ─── Dark Mode ──────────────────────────────────────────────────────────── */
@@ -256,56 +212,39 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.14 0.025 265);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: #447aff;
+  --primary: #7a5af8;
   --primary-foreground: #ffffff;
-  --secondary: oklch(0.22 0.015 265);
-  --secondary-foreground: oklch(0.985 0 0);
+  --secondary: #5925dc;
+  --secondary-foreground: #ffffff;
   --muted: oklch(0.22 0.015 265);
   --muted-foreground: #98a2b3;
-  --accent: oklch(0.24 0.02 255);
-  --accent-foreground: oklch(0.985 0 0);
+  --accent: #ee46bc;
+  --accent-foreground: #ffffff;
   --destructive: oklch(0.704 0.191 22.216);
   --destructive-foreground: oklch(0.985 0 0);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: #447aff;
-  --chart-1: #447aff;
+  --ring: #7a5af8;
+  --chart-1: #2e90fa;
   --chart-2: #7a5af8;
   --chart-3: #5925dc;
   --chart-4: #ee46bc;
   --chart-5: #98a2b3;
-  --sidebar: var(--card);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: rgb(68 122 255 / 0.18);
-  --sidebar-accent-foreground: var(--foreground);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--ring);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-
-  html {
-    @apply font-sans antialiased;
-  }
-
   body {
     @apply bg-background text-foreground;
-    min-height: 100svh;
     font-family: var(--font-sans);
     font-size: var(--dt-font-size-base);
     line-height: var(--dt-line-height-relaxed);
     font-weight: var(--dt-font-weight-normal);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background:
-      linear-gradient(180deg, #ffffff 0%, #f9fbff 42%, #ffffff 100%);
   }
-
   h1,
   h2,
   h3,
@@ -314,130 +253,5 @@
   h6 {
     font-weight: var(--dt-font-weight-semibold);
     line-height: var(--dt-line-height-tight);
-  }
-
-  ::selection {
-    background: rgb(68 122 255 / 0.18);
-    color: var(--foreground);
-  }
-}
-
-@layer utilities {
-  .nrc-shell {
-    background:
-      linear-gradient(180deg, #ffffff 0%, #f9fbff 42%, #ffffff 100%);
-    min-width: 0;
-    width: 100%;
-  }
-
-  .nrc-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--dt-radius-md);
-  }
-
-  .nrc-card-subtle {
-    background: var(--muted);
-    border: 1px solid var(--border);
-    border-radius: var(--dt-radius-md);
-  }
-
-  .nrc-shell-panel {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--dt-radius-md);
-  }
-
-  .nrc-pill {
-    border-radius: var(--dt-radius-full);
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--foreground);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition:
-      background-color 160ms ease,
-      border-color 160ms ease,
-      color 160ms ease;
-  }
-
-  .nrc-pill:hover {
-    background: var(--accent);
-  }
-
-  .nrc-nav-link {
-    align-items: center;
-    border: 1px solid transparent;
-    border-radius: var(--dt-radius-full);
-    color: var(--muted-foreground);
-    display: inline-flex;
-    font-size: var(--dt-font-size-sm);
-    font-weight: var(--dt-font-weight-medium);
-    padding: 0.625rem 0.9rem;
-    transition:
-      background-color 160ms ease,
-      color 160ms ease,
-      border-color 160ms ease;
-  }
-
-  .nrc-nav-link:hover {
-    color: var(--primary);
-  }
-
-  .nrc-nav-link-active {
-    box-shadow: inset 0 -2px 0 0 var(--primary);
-    color: var(--primary);
-  }
-
-  .nrc-note {
-    background: var(--muted);
-    border: 1px solid var(--border);
-    border-radius: var(--dt-radius-md);
-    color: var(--muted-foreground);
-  }
-
-  .nrc-note-danger {
-    background: rgb(254 242 242);
-    border: 1px solid rgb(254 226 226);
-    border-radius: var(--dt-radius-md);
-    color: rgb(185 28 28);
-  }
-
-  .nrc-hero {
-    background: var(--brand-hero);
-    border-radius: var(--radius-4xl);
-    color: var(--brand-hero-foreground);
-  }
-
-  .nrc-hero-tab {
-    align-items: center;
-    border: 1px solid rgb(255 255 255 / 0.22);
-    border-radius: var(--dt-radius-full);
-    color: rgb(255 255 255 / 0.8);
-    display: inline-flex;
-    font-size: var(--dt-font-size-sm);
-    font-weight: var(--dt-font-weight-medium);
-    justify-content: center;
-    padding: 0.65rem 1rem;
-    transition:
-      background-color 160ms ease,
-      border-color 160ms ease,
-      color 160ms ease;
-  }
-
-  .nrc-hero-tab:hover {
-    background: rgb(255 255 255 / 0.08);
-    color: var(--brand-hero-foreground);
-  }
-
-  .nrc-hero-tab-active {
-    background: var(--card);
-    border-color: var(--card);
-    color: var(--foreground);
-  }
-
-  .nrc-focus-ring {
-    box-shadow: 0 0 0 3px rgb(68 122 255 / 0.2);
   }
 }

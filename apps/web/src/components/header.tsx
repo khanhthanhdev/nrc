@@ -5,6 +5,7 @@ import { ChevronDown, Menu, ShieldAlert } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { getSystemRole, isStaffSystemRole } from "@/lib/route-policy";
 import { authClient } from "@/utils/auth-client";
 import { isStaffPath, publicNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,8 @@ export default function Header() {
     select: (state) => state.location.pathname,
   });
   const session = authClient.useSession();
+  const systemRole = getSystemRole(session.data);
+  const canAccessStaffPanel = isStaffSystemRole(systemRole);
   const isStaffRoute = isStaffPath(pathname);
   const isImpersonating = Boolean(
     (
@@ -161,6 +164,11 @@ export default function Header() {
                   <DropdownMenuItem asChild>
                     <Link to="/teams/new">{t("header.account.createTeam")}</Link>
                   </DropdownMenuItem>
+                  {canAccessStaffPanel && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/staff">{t("header.account.staffPanel")}</Link>
+                    </DropdownMenuItem>
+                  )}
                   {isImpersonating && (
                     <DropdownMenuItem onSelect={() => void onStopImpersonating()}>
                       {t("header.stopImpersonating")}
@@ -221,6 +229,16 @@ export default function Header() {
                     <Button asChild className="justify-start" onClick={() => setMobileMenuOpen(false)} variant="ghost">
                       <Link to="/teams/new">{t("header.account.createTeam")}</Link>
                     </Button>
+                    {canAccessStaffPanel && (
+                      <Button
+                        asChild
+                        className="justify-start"
+                        onClick={() => setMobileMenuOpen(false)}
+                        variant="ghost"
+                      >
+                        <Link to="/staff">{t("header.account.staffPanel")}</Link>
+                      </Button>
+                    )}
                     {isImpersonating && (
                       <Button className="justify-start" onClick={() => void onStopImpersonating()} variant="ghost">
                         {t("header.stopImpersonating")}

@@ -79,6 +79,7 @@ test.describe("website navigation", () => {
 
     await expect(page).toHaveURL(/\/staff\/users$/);
     await expect(page.getByRole("heading", { name: /Manage every account/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Seasons" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Users" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Settings" })).toBeVisible();
   });
@@ -95,13 +96,26 @@ test.describe("website navigation", () => {
     await page.goto("/staff");
 
     await expect(page.getByRole("heading", { name: /Manage operations without leaving/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Seasons" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Users" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Settings" })).toHaveCount(0);
 
     await page.getByRole("button", { name: "Open staff sidebar" }).click();
 
     await expect(page.getByRole("link", { name: "Overview" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Seasons" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Sync logs" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Users" })).toHaveCount(0);
+  });
+
+  test("manager users are redirected away from admin-only season routes", async ({ page }) => {
+    const email = createTestEmail("manager-season-guard");
+
+    await seedUser(page.request, { email, onboardingCompleted: true, systemRole: "MANAGER" });
+    await createSessionForUser(page.request, email);
+
+    await page.goto("/staff/seasons");
+
+    await expect(page).toHaveURL(/\/teams$/);
   });
 });

@@ -131,6 +131,11 @@ const expectHomePageLoaded = async (page: Page): Promise<void> => {
   await expect(page.getByRole("link", { name: "Open public event" })).toBeVisible();
 };
 
+const expectOnboardingPageLoaded = async (page: Page): Promise<void> => {
+  await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+  await expect(page.getByRole("heading", { level: 1, name: "Complete onboarding" })).toBeVisible();
+};
+
 const getTestUser = async (
   request: APIRequestContext,
   email: string,
@@ -202,10 +207,7 @@ test.describe("Authentication Production Flows", () => {
     const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
     await page.goto(verificationEmail.url);
 
-    await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
-    await expect(
-      page.getByRole("heading", { level: 1, name: "Complete onboarding" }),
-    ).toBeVisible();
+    await expectOnboardingPageLoaded(page);
   });
 
   test("google-authenticated users are routed through onboarding gate", async ({ page }) => {
@@ -218,7 +220,7 @@ test.describe("Authentication Production Flows", () => {
     await createSessionForUser(page.request, email);
 
     await page.goto("/");
-    await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+    await expectOnboardingPageLoaded(page);
 
     const user = await getTestUser(page.request, email);
     expect(user.providers).toContain("google");
@@ -265,7 +267,7 @@ test.describe("Authentication Production Flows", () => {
 
     const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
     await page.goto(verificationEmail.url);
-    await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+    await expectOnboardingPageLoaded(page);
 
     await page.context().clearCookies();
 
@@ -342,7 +344,7 @@ test.describe("Authentication Production Flows", () => {
 
     const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
     await page.goto(verificationEmail.url);
-    await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+    await expectOnboardingPageLoaded(page);
 
     await completeOnboardingForm(page);
     await expectHomePageLoaded(page);
@@ -566,12 +568,8 @@ test.describe("Authentication Production Flows", () => {
 
     const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
     await page.goto(verificationEmail.url);
-    await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
-
+    await expectOnboardingPageLoaded(page);
     await page.reload();
-    await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
-    await expect(
-      page.getByRole("heading", { level: 1, name: "Complete onboarding" }),
-    ).toBeVisible();
+    await expectOnboardingPageLoaded(page);
   });
 });

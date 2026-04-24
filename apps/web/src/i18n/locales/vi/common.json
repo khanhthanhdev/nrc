@@ -1,0 +1,276 @@
+{
+  "nav": {
+    "events": "Su kien",
+    "home": "Trang chu",
+    "register": "Dang ky",
+    "teams": "Nhom"
+  },
+  "header": {
+    "account": {
+      "accountSettings": "Cai dat tai khoan",
+      "createTeam": "Tao nhom",
+      "staffPanel": "Bang staff",
+      "signOut": "Dang xuat"
+    },
+    "feedback": {
+      "signedOut": "Da dang xuat",
+      "stopImpersonating": "Da quay lai phien quan tri."
+    },
+    "getStarted": "Bat dau",
+    "mobile": {
+      "accountLabel": "Tai khoan",
+      "description": "Di chuyen giua cac trang cong khai va thao tac tai khoan tren mot bang dieu huong gon.",
+      "openMenu": "Mo menu dieu huong",
+      "openStaffMenu": "Mo thanh dieu huong staff",
+      "title": "Dieu huong"
+    },
+    "signIn": "Dang nhap",
+    "stopImpersonating": "Dung gia lap",
+    "stopShort": "Dung"
+  },
+  "languageSwitcher": {
+    "label": "Ngon ngu"
+  },
+  "season": {
+    "admin": {
+      "actions": {
+        "cancel": "Huy",
+        "confirmDelete": "Xoa mua giai",
+        "create": "Tao mua giai",
+        "creating": "Dang tao...",
+        "delete": "Xoa",
+        "deleteSeason": "Xoa mua giai",
+        "deleting": "Dang xoa...",
+        "save": "Luu thay doi",
+        "saving": "Dang luu..."
+      },
+      "announcements": {
+        "add": "Tao thong bao",
+        "description": "Dang cap nhat cho doi va mentor ngay trong trang sua mua giai.",
+        "empty": {
+          "description": "Tao thong bao dau tien cho mua giai nay.",
+          "title": "Chua co thong bao"
+        },
+        "title": "Thong bao"
+      },
+      "basic": {
+        "activeHint": "Mua giai dang hoat dong se duoc nhan manh tren website cong khai.",
+        "description": "Dieu chinh ban ghi mua giai ma khong thay doi hop dong backend.",
+        "eventsDescription": "Danh sach su kien lien ket hien chi doc trong tranche nay.",
+        "eventsTitle": "Su kien trong mua giai"
+      },
+      "create": {
+        "activeHint": "Co the dang ngay mua giai moi hoac giu archived den khi san sang.",
+        "description": "Tao shell truoc, sau do them tai lieu va thong bao trong trang sua.",
+        "formDescription": "Cac truong map truc tiep vao season API hien tai.",
+        "formTitle": "Thong tin mua giai",
+        "kicker": "Quan ly mua giai",
+        "title": "Tao mua giai moi"
+      },
+      "delete": {
+        "description": "Hanh dong nay se an mua giai {{year}} va noi dung ben trong khoi ung dung. Cac ban ghi lien ket se bi soft delete.",
+        "title": "Xoa mua giai nay?"
+      },
+      "documents": {
+        "add": "Them tai lieu",
+        "description": "Dung sort order dang so cho v1 de thu tu tai lieu on dinh tren hero va danh sach cong khai.",
+        "empty": {
+          "description": "Them manual, FAQ, hoac lien ket ho tro dau tien cho mua giai nay.",
+          "title": "Chua co tai lieu"
+        },
+        "open": "Mo tai lieu",
+        "selectedFile": "File da chon: {{name}}",
+        "source": {
+          "upload": "Tai file len",
+          "uploadHint": "Tai file len S3 va luu lien ket tai lieu duoc tao boi he thong.",
+          "url": "URL ngoai",
+          "urlHint": "Dan lien ket tai lieu duoc luu tru o he thong khac."
+        },
+        "sourceLabel": "Nguon tai lieu",
+        "title": "Tai lieu",
+        "upload": "Tai file",
+        "uploadField": "File tai lieu",
+        "uploadPending": "Hay tai file len truoc khi luu tai lieu nay.",
+        "uploadReady": "File da san sang.",
+        "uploading": "Dang tai len...",
+        "validation": {
+          "uploadRequired": "Hay tai file tai lieu len truoc khi luu.",
+          "urlRequired": "Hay nhap URL tai lieu truoc khi luu."
+        }
+      },
+      "editor": {
+        "createdAt": "Tao luc:",
+        "description": "Sua shell mua giai va noi dung cong khai dung sau trang season landing.",
+        "eventCount": "So su kien:",
+        "kicker": "Trinh sua mua giai",
+        "updatedAt": "Cap nhat luc:"
+      },
+      "feedback": {
+        "announcementCreateError": "Khong the tao thong bao mua giai.",
+        "announcementCreateSuccess": "Da tao thong bao.",
+        "announcementDeleteError": "Khong the xoa thong bao mua giai.",
+        "announcementDeleteSuccess": "Da xoa thong bao.",
+        "announcementUpdateError": "Khong the cap nhat thong bao mua giai.",
+        "announcementUpdateSuccess": "Da luu thong bao.",
+        "createError": "Khong the tao mua giai.",
+        "createSuccess": "Da tao mua giai {{year}}.",
+        "deleteError": "Khong the xoa mua giai.",
+        "deleteSuccess": "Da xoa mua giai {{year}}.",
+        "documentCreateError": "Khong the tao tai lieu mua giai.",
+        "documentCreateSuccess": "Da tao tai lieu.",
+        "documentDeleteError": "Khong the xoa tai lieu mua giai.",
+        "documentDeleteSuccess": "Da xoa tai lieu.",
+        "documentUploadError": "Khong the tai len file tai lieu.",
+        "documentUploadSuccess": "Da tai len file tai lieu.",
+        "documentUpdateError": "Khong the cap nhat tai lieu mua giai.",
+        "documentUpdateSuccess": "Da luu tai lieu.",
+        "updateError": "Khong the luu mua giai.",
+        "updateSuccess": "Da luu mua giai."
+      },
+      "fields": {
+        "actions": "Thao tac",
+        "body": "Noi dung",
+        "description": "Mo ta",
+        "gameCode": "Ma game",
+        "isActive": "Mua giai dang hoat dong",
+        "isPinned": "Ghim thong bao nay",
+        "kind": "Loai",
+        "pinned": "Ghim",
+        "publishedAt": "Xuat ban luc",
+        "sortOrder": "Thu tu",
+        "status": "Trang thai",
+        "theme": "Chu de",
+        "title": "Tieu de",
+        "updatedAt": "Cap nhat gan nhat",
+        "url": "URL",
+        "year": "Nam"
+      },
+      "lifecycle": {
+        "active": "Dang hoat dong",
+        "archived": "Luu tru"
+      },
+      "list": {
+        "create": "Tao mua giai moi",
+        "description": "Xem tat ca mua giai da cau hinh va vao thang trinh sua de quan ly tai lieu va thong bao.",
+        "edit": "Sua",
+        "empty": {
+          "action": "Tao mua giai dau tien",
+          "description": "Admin API da san sang. Tao ban ghi mua giai dau tien de bat dau.",
+          "title": "Chua co mua giai"
+        },
+        "kicker": "Quan ly mua giai",
+        "loadError": {
+          "description": "Khong the tai danh sach mua giai tu admin API.",
+          "retry": "Thu lai",
+          "title": "Khong the tai danh sach mua giai"
+        },
+        "tableDescription": "Mua giai moi nhat nam tren cung de thao tac hien tai de tiep can hon.",
+        "tableTitle": "Tat ca mua giai",
+        "title": "Quan ly mua giai"
+      },
+      "loadError": {
+        "description": "Khong the tai du lieu moi nhat cho trinh sua mua giai.",
+        "retry": "Thu lai",
+        "title": "Khong the tai mua giai nay"
+      },
+      "notFound": {
+        "action": "Quay lai danh sach mua giai",
+        "description": "Mua giai yeu cau khong ton tai hoac da bi go bo.",
+        "title": "Khong tim thay mua giai {{year}}"
+      },
+      "placeholders": {
+        "description": "Mo ta game, thu thach, hoac cau chuyen mua giai.",
+        "theme": "Into the Deep"
+      },
+      "tabs": {
+        "announcements": "Thong bao",
+        "basic": "Thong tin co ban",
+        "documents": "Tai lieu"
+      }
+    },
+    "invalid": {
+      "description": "Route mua giai phai dung dinh dang nam 4 chu so.",
+      "title": "Mua giai khong hop le"
+    },
+    "public": {
+      "announcements": {
+        "description": "Thong bao ghim luon len tren de doi thi cap nhat thay doi moi nhat nhanh hon.",
+        "emptyDescription": "Tin tuc va nhac nho cua mua giai se xuat hien tai day khi duoc dang.",
+        "emptyTitle": "Chua co thong bao nao",
+        "pinned": "Ghim",
+        "title": "Thong bao"
+      },
+      "documents": {
+        "description": "Manual, lien ket, va file ho tro duoc gom trong mot khu vuc gon.",
+        "emptyDescription": "Tai nguyen cua mua giai chua duoc xuat ban.",
+        "emptyTitle": "Chua co tai lieu",
+        "open": "Mo tai lieu",
+        "sortOrder": "Thu tu hien thi: {{order}}",
+        "title": "Tai lieu"
+      },
+      "events": {
+        "description": "Moi su kien cong khai lien ket truc tiep toi route chi tiet cong khai.",
+        "emptyDescription": "Season shell da san sang, nhung su kien cong khai chua duoc dang.",
+        "emptyTitle": "Chua co su kien cong khai",
+        "locationFallback": "Thong tin dia diem se cap nhat sau",
+        "register": "Dang ky",
+        "title": "Su kien mua giai {{year}}",
+        "viewDetails": "Xem chi tiet"
+      },
+      "hero": {
+        "descriptionFallback": "Thong tin mua giai se hien tai day khi ban ghi duoc xuat ban day du.",
+        "kicker": "Mua giai NRC",
+        "primaryCta": "Tai game manual",
+        "secondaryCta": "Mo {{title}}"
+      },
+      "loadError": {
+        "description": "Khong the tai trang mua giai tu public API.",
+        "retry": "Thu lai",
+        "title": "Khong the tai mua giai nay"
+      },
+      "notFound": {
+        "action": "Xem danh sach su kien",
+        "description": "Mua giai nay chua duoc xuat ban hoac khong con ton tai.",
+        "title": "Khong tim thay mua giai {{season}}"
+      },
+      "switcher": {
+        "description": "Chuyen giua cac nam da dang ma khong roi khoi season hub.",
+        "empty": "Khong co mua giai nao khop tim kiem.",
+        "label": "Bo chuyen mua giai",
+        "searchPlaceholder": "Tim theo nam, chu de, hoac ma game"
+      },
+      "tabs": {
+        "announcements": "Thong bao",
+        "documents": "Tai lieu",
+        "events": "Su kien"
+      }
+    },
+    "status": {
+      "active": "Dang dien ra",
+      "archived": "Luu tru",
+      "completed": "Da ket thuc",
+      "draft": "Ban nhap",
+      "published": "Da dang",
+      "registrationClosed": "Da dong dang ky",
+      "registrationOpen": "Mo dang ky",
+      "unknown": "Khong ro"
+    }
+  },
+  "staffSidebar": {
+    "backToSite": "Quay ve trang chinh",
+    "events": "Su kien",
+    "kicker": "Che do staff",
+    "overview": "Tong quan",
+    "registrations": "Dang ky",
+    "seasons": "Mua giai",
+    "section": {
+      "admin": "Quan tri",
+      "content": "Noi dung",
+      "panel": "Bang staff"
+    },
+    "settings": "Cai dat",
+    "sync": "Nhat ky dong bo",
+    "title": "Khung van hanh",
+    "users": "Nguoi dung"
+  }
+}

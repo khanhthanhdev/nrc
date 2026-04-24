@@ -23,9 +23,11 @@ describe("navigation", () => {
     );
 
     expect(managerSections).toContain("/staff/sync");
+    expect(managerSections).not.toContain("/staff/seasons");
     expect(managerSections).not.toContain("/staff/users");
     expect(managerSections).not.toContain("/staff/settings");
 
+    expect(adminSections).toContain("/staff/seasons");
     expect(adminSections).toContain("/staff/users");
     expect(adminSections).toContain("/staff/settings");
   });
