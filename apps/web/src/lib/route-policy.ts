@@ -48,3 +48,12 @@ export const canReadRegistration = ({
   membershipRole?: string | null;
   systemRole?: string | null;
 }) => isStaffSystemRole(systemRole) || Boolean(membershipRole);
+
+export const canManageTeam = (membershipRole?: string | null): boolean =>
+  membershipRole === "TEAM_MENTOR" || membershipRole === "TEAM_LEADER";
+
+export const canInviteToTeam = (membershipRole?: string | null): boolean =>
+  membershipRole === "TEAM_MENTOR" || membershipRole === "TEAM_LEADER";
+
+export const canRemoveMember = (membershipRole?: string | null): boolean =>
+  membershipRole === "TEAM_MENTOR";

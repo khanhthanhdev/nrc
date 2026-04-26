@@ -12,3 +12,20 @@ export const useCurrentTeamSummary = () => {
     retry: false,
   });
 };
+
+export const usePublicTeamList = (page: number, search?: string) =>
+  useQuery({
+    ...orpc.team.listPublicTeams.queryOptions({
+      input: { limit: 20, page, search: search || undefined },
+    }),
+    retry: false,
+  });
+
+export const usePublicTeamProfile = (teamNumber: string) =>
+  useQuery({
+    ...orpc.team.getPublicTeam.queryOptions({
+      input: { teamNumber },
+    }),
+    enabled: teamNumber.length > 0,
+    retry: false,
+  });

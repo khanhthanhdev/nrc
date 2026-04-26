@@ -19,6 +19,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as SeasonRouteImport } from './routes/$season'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TeamsTeamNumberRouteImport } from './routes/teams.$teamNumber'
 import { Route as TeamsNewRouteImport } from './routes/teams.new'
 import { Route as StaffUsersRouteImport } from './routes/staff.users'
 import { Route as StaffSyncRouteImport } from './routes/staff.sync'
@@ -92,6 +93,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const TeamsTeamNumberRoute = TeamsTeamNumberRouteImport.update({
+  id: '/$teamNumber',
+  path: '/$teamNumber',
+  getParentRoute: () => TeamsRoute,
 } as any)
 const TeamsNewRoute = TeamsNewRouteImport.update({
   id: '/new',
@@ -237,6 +243,7 @@ export interface FileRoutesByFullPath {
   '/staff/settings': typeof StaffSettingsRoute
   '/staff/sync': typeof StaffSyncRoute
   '/staff/users': typeof StaffUsersRoute
+  '/teams/$teamNumber': typeof TeamsTeamNumberRoute
   '/teams/new': typeof TeamsNewRoute
   '/$season/$eventId/awards': typeof SeasonEventIdAwardsRoute
   '/$season/$eventId/playoffs': typeof SeasonEventIdPlayoffsRoute
@@ -272,6 +279,7 @@ export interface FileRoutesByTo {
   '/staff/settings': typeof StaffSettingsRoute
   '/staff/sync': typeof StaffSyncRoute
   '/staff/users': typeof StaffUsersRoute
+  '/teams/$teamNumber': typeof TeamsTeamNumberRoute
   '/teams/new': typeof TeamsNewRoute
   '/$season/$eventId/awards': typeof SeasonEventIdAwardsRoute
   '/$season/$eventId/playoffs': typeof SeasonEventIdPlayoffsRoute
@@ -308,6 +316,7 @@ export interface FileRoutesById {
   '/staff/settings': typeof StaffSettingsRoute
   '/staff/sync': typeof StaffSyncRoute
   '/staff/users': typeof StaffUsersRoute
+  '/teams/$teamNumber': typeof TeamsTeamNumberRoute
   '/teams/new': typeof TeamsNewRoute
   '/$season/$eventId/awards': typeof SeasonEventIdAwardsRoute
   '/$season/$eventId/playoffs': typeof SeasonEventIdPlayoffsRoute
@@ -345,6 +354,7 @@ export interface FileRouteTypes {
     | '/staff/settings'
     | '/staff/sync'
     | '/staff/users'
+    | '/teams/$teamNumber'
     | '/teams/new'
     | '/$season/$eventId/awards'
     | '/$season/$eventId/playoffs'
@@ -380,6 +390,7 @@ export interface FileRouteTypes {
     | '/staff/settings'
     | '/staff/sync'
     | '/staff/users'
+    | '/teams/$teamNumber'
     | '/teams/new'
     | '/$season/$eventId/awards'
     | '/$season/$eventId/playoffs'
@@ -415,6 +426,7 @@ export interface FileRouteTypes {
     | '/staff/settings'
     | '/staff/sync'
     | '/staff/users'
+    | '/teams/$teamNumber'
     | '/teams/new'
     | '/$season/$eventId/awards'
     | '/$season/$eventId/playoffs'
@@ -512,6 +524,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/teams/$teamNumber': {
+      id: '/teams/$teamNumber'
+      path: '/$teamNumber'
+      fullPath: '/teams/$teamNumber'
+      preLoaderRoute: typeof TeamsTeamNumberRouteImport
+      parentRoute: typeof TeamsRoute
     }
     '/teams/new': {
       id: '/teams/new'
@@ -811,10 +830,12 @@ const StaffRouteChildren: StaffRouteChildren = {
 const StaffRouteWithChildren = StaffRoute._addFileChildren(StaffRouteChildren)
 
 interface TeamsRouteChildren {
+  TeamsTeamNumberRoute: typeof TeamsTeamNumberRoute
   TeamsNewRoute: typeof TeamsNewRoute
 }
 
 const TeamsRouteChildren: TeamsRouteChildren = {
+  TeamsTeamNumberRoute: TeamsTeamNumberRoute,
   TeamsNewRoute: TeamsNewRoute,
 }
 
