@@ -510,51 +510,53 @@ export const updateTeamProfile = async (
 ): Promise<TeamSummary> => {
   const { organizationId } = await requireTeamManagementRole(userId, input.teamId);
 
-  const updateData: Record<string, unknown> = {};
+  return db.transaction(async (tx) => {
+    const updateData: Record<string, unknown> = {};
 
-  if (input.name !== undefined) updateData.name = input.name;
-  if (input.description !== undefined) updateData.description = input.description;
-  if (input.schoolOrOrganization !== undefined) updateData.schoolOrOrganization = input.schoolOrOrganization;
-  if (input.cityOrProvince !== undefined) updateData.cityOrProvince = input.cityOrProvince;
-  if (input.avatarUrl !== undefined) updateData.avatarUrl = input.avatarUrl;
-  if (input.coverImageUrl !== undefined) updateData.coverImageUrl = input.coverImageUrl;
+    if (input.name !== undefined) updateData.name = input.name;
+    if (input.description !== undefined) updateData.description = input.description;
+    if (input.schoolOrOrganization !== undefined) updateData.schoolOrOrganization = input.schoolOrOrganization;
+    if (input.cityOrProvince !== undefined) updateData.cityOrProvince = input.cityOrProvince;
+    if (input.avatarUrl !== undefined) updateData.avatarUrl = input.avatarUrl;
+    if (input.coverImageUrl !== undefined) updateData.coverImageUrl = input.coverImageUrl;
 
-  if (Object.keys(updateData).length > 0) {
-    await db.update(team).set(updateData).where(eq(team.id, input.teamId));
-  }
+    if (Object.keys(updateData).length > 0) {
+      await tx.update(team).set(updateData).where(eq(team.id, input.teamId));
+    }
 
-  if (input.name !== undefined) {
-    await db.update(organization).set({ name: input.name }).where(eq(organization.id, organizationId));
-  }
+    if (input.name !== undefined) {
+      await tx.update(organization).set({ name: input.name }).where(eq(organization.id, organizationId));
+    }
 
-  const [updatedMembership] = await db
-    .select({ role: member.role })
-    .from(member)
-    .where(and(eq(member.organizationId, organizationId), eq(member.userId, userId)))
-    .limit(1);
+    const [updatedMembership] = await tx
+      .select({ role: member.role })
+      .from(member)
+      .where(and(eq(member.organizationId, organizationId), eq(member.userId, userId)))
+      .limit(1);
 
-  const [updatedTeam] = await db
-    .select({
-      cityOrProvince: team.cityOrProvince,
-      description: team.description,
-      id: team.id,
-      name: team.name,
-      organizationId: team.organizationId,
-      schoolOrOrganization: team.schoolOrOrganization,
-      teamNumber: team.teamNumber,
-    })
-    .from(team)
-    .where(eq(team.id, input.teamId))
-    .limit(1);
+    const [updatedTeam] = await tx
+      .select({
+        cityOrProvince: team.cityOrProvince,
+        description: team.description,
+        id: team.id,
+        name: team.name,
+        organizationId: team.organizationId,
+        schoolOrOrganization: team.schoolOrOrganization,
+        teamNumber: team.teamNumber,
+      })
+      .from(team)
+      .where(eq(team.id, input.teamId))
+      .limit(1);
 
-  if (!updatedTeam) {
-    throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Failed to read updated team." });
-  }
+    if (!updatedTeam) {
+      throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Failed to read updated team." });
+    }
 
-  return {
-    ...updatedTeam,
-    membershipRole: updatedMembership?.role ?? "TEAM_MENTOR",
-  };
+    return {
+      ...updatedTeam,
+      membershipRole: updatedMembership?.role ?? "TEAM_MENTOR",
+    };
+  });
 };
 
 const INVITATION_EXPIRY_DAYS = 7;
@@ -767,12 +769,31 @@ export const removeTeamMember = async (
     }
   }
 
-  await db
-    .update(teamMembership)
-    .set({
-      deletedAt: new Date(),
-      deletedByUserId: userId,
-      isActive: false,
-    })
-    .where(eq(teamMembership.id, input.membershipId));
+  const [teamRecord] = await db
+    .select({ organizationId: team.organizationId })
+    .from(team)
+    .where(eq(team.id, membership.teamId))
+    .limit(1);
+
+  await db.transaction(async (tx) => {
+    await tx
+      .update(teamMembership)
+      .set({
+        deletedAt: new Date(),
+        deletedByUserId: userId,
+        isActive: false,
+      })
+      .where(eq(teamMembership.id, input.membershipId));
+
+    if (teamRecord) {
+      await tx
+        .delete(member)
+        .where(
+          and(
+            eq(member.organizationId, teamRecord.organizationId),
+            eq(member.userId, membership.userId),
+          ),
+        );
+    }
+  });
 };
