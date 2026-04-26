@@ -1,118 +1,105 @@
-import { Outlet, createFileRoute, Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useState } from "react";
+
+import { Outlet, createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 
 import { authClient } from "@/utils/auth-client";
 import { Button } from "@/components/ui/button";
-import { useCurrentTeamSummary } from "@/lib/team-access";
-import { useRequireAuth } from "@/lib/route-guards";
+import { Input } from "@/components/ui/input";
+import { usePublicTeamList } from "@/lib/team-access";
+import { TeamPublicCard } from "@/features/teams/team-public-card";
 
 const TeamsPage = () => {
-  const navigate = useNavigate();
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
   const session = authClient.useSession();
-  const teamQuery = useCurrentTeamSummary();
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const isListingPage = pathname === "/teams";
+  const teamsQuery = usePublicTeamList(page, search, isListingPage);
 
-  useRequireAuth(session);
-
-  if (pathname !== "/teams") {
+  if (!isListingPage) {
     return <Outlet />;
   }
 
-  if (session.isPending || teamQuery.isLoading) {
-    return (
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        <p className="text-muted-foreground text-sm">Loading team...</p>
-      </div>
-    );
-  }
-
-  if (!session.data) {
-    void navigate({ to: "/auth" });
-
-    return (
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        <p className="text-muted-foreground text-sm">Redirecting to sign in...</p>
-      </div>
-    );
-  }
-
-  if (teamQuery.error) {
-    return (
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        <p className="text-destructive text-sm">{teamQuery.error.message}</p>
-      </div>
-    );
-  }
-
-  if (!teamQuery.data) {
-    return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-8">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold">Teams</h1>
-          <p className="text-muted-foreground text-sm">
-            Create, view, and manage team data from this namespace.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border p-4">
-          <p className="text-sm">You are not assigned to a team yet.</p>
-          <Button asChild className="mt-4">
-            <Link to="/teams/new">Create team</Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-4 py-8">
-      <section className="space-y-4">
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8">
+      <div className="flex items-start justify-between gap-4">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold">Teams</h1>
           <p className="text-muted-foreground text-sm">
-            Team management is sourced from Better Auth organization membership.
+            Browse registered competition teams.
           </p>
         </div>
 
-        <div className="rounded-2xl border p-4">
-          <dl className="grid gap-3 text-sm md:grid-cols-2">
-            <div>
-              <dt className="text-muted-foreground">Team name</dt>
-              <dd className="font-medium">{teamQuery.data.name}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Team number</dt>
-              <dd className="font-medium">{teamQuery.data.teamNumber}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Membership role</dt>
-              <dd className="font-medium">{teamQuery.data.membershipRole}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">City / Province</dt>
-              <dd className="font-medium">{teamQuery.data.cityOrProvince ?? "-"}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">School / Organization</dt>
-              <dd className="font-medium">{teamQuery.data.schoolOrOrganization ?? "-"}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Description</dt>
-              <dd className="font-medium">{teamQuery.data.description ?? "-"}</dd>
-            </div>
-          </dl>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
+        {session.data && (
           <Button asChild>
             <Link to="/teams/new">Create team</Link>
           </Button>
-          <Button asChild variant="secondary">
-            <Link to="/register">Register event</Link>
-          </Button>
+        )}
+      </div>
+
+      <div className="flex gap-2">
+        <Input
+          className="max-w-sm"
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          placeholder="Search teams..."
+          value={search}
+        />
+      </div>
+
+      {teamsQuery.isLoading && (
+        <p className="text-muted-foreground text-sm">Loading teams...</p>
+      )}
+
+      {teamsQuery.error && (
+        <p className="text-destructive text-sm">{teamsQuery.error.message}</p>
+      )}
+
+      {teamsQuery.data && teamsQuery.data.teams.length === 0 && (
+        <div className="rounded-2xl border border-dashed p-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            {search ? "No teams match your search." : "No teams registered yet."}
+          </p>
         </div>
-      </section>
+      )}
+
+      {teamsQuery.data && teamsQuery.data.teams.length > 0 && (
+        <>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {teamsQuery.data.teams.map((t) => (
+              <TeamPublicCard key={t.id} team={t} />
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground">
+              {teamsQuery.data.total} team{teamsQuery.data.total === 1 ? "" : "s"}
+            </p>
+            <div className="flex gap-2">
+              <Button
+                disabled={page <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                size="sm"
+                variant="outline"
+              >
+                Previous
+              </Button>
+              <Button
+                disabled={page * 20 >= teamsQuery.data.total}
+                onClick={() => setPage((p) => p + 1)}
+                size="sm"
+                variant="outline"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
