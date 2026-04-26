@@ -15,9 +15,10 @@ const TeamsPage = () => {
   const session = authClient.useSession();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const teamsQuery = usePublicTeamList(page, search);
+  const isListingPage = pathname === "/teams";
+  const teamsQuery = usePublicTeamList(page, search, isListingPage);
 
-  if (pathname !== "/teams") {
+  if (!isListingPage) {
     return <Outlet />;
   }
 

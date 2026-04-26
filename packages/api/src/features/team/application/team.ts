@@ -567,52 +567,54 @@ export const inviteTeamMember = async (
 ): Promise<TeamInvitationRecord> => {
   await requireTeamManagementRole(userId, input.teamId);
 
-  await db
-    .update(teamInvitation)
-    .set({ status: "EXPIRED" })
-    .where(
-      and(
-        eq(teamInvitation.teamId, input.teamId),
-        eq(teamInvitation.email, input.email),
-        eq(teamInvitation.status, "PENDING"),
-        lt(teamInvitation.expiresAt, new Date()),
-        isNull(teamInvitation.deletedAt),
-      ),
-    );
-
-  const [existingPendingInvite] = await db
-    .select({ id: teamInvitation.id })
-    .from(teamInvitation)
-    .where(
-      and(
-        eq(teamInvitation.teamId, input.teamId),
-        eq(teamInvitation.email, input.email),
-        eq(teamInvitation.status, "PENDING"),
-        isNull(teamInvitation.deletedAt),
-      ),
-    )
-    .limit(1);
-
-  if (existingPendingInvite) {
-    throw new ORPCError("CONFLICT", {
-      message: "A pending invitation already exists for this email.",
-    });
-  }
-
   const now = new Date();
   const expiresAt = new Date(now.getTime() + INVITATION_EXPIRY_DAYS * 24 * 60 * 60 * 1000);
   const invitationId = crypto.randomUUID();
 
-  await db.insert(teamInvitation).values({
-    createdAt: now,
-    email: input.email,
-    expiresAt,
-    id: invitationId,
-    invitedByUserId: userId,
-    role: input.role,
-    status: "PENDING",
-    teamId: input.teamId,
-    updatedAt: now,
+  await db.transaction(async (tx) => {
+    await tx
+      .update(teamInvitation)
+      .set({ status: "EXPIRED" })
+      .where(
+        and(
+          eq(teamInvitation.teamId, input.teamId),
+          eq(teamInvitation.email, input.email),
+          eq(teamInvitation.status, "PENDING"),
+          lt(teamInvitation.expiresAt, now),
+          isNull(teamInvitation.deletedAt),
+        ),
+      );
+
+    const [existingPendingInvite] = await tx
+      .select({ id: teamInvitation.id })
+      .from(teamInvitation)
+      .where(
+        and(
+          eq(teamInvitation.teamId, input.teamId),
+          eq(teamInvitation.email, input.email),
+          eq(teamInvitation.status, "PENDING"),
+          isNull(teamInvitation.deletedAt),
+        ),
+      )
+      .limit(1);
+
+    if (existingPendingInvite) {
+      throw new ORPCError("CONFLICT", {
+        message: "A pending invitation already exists for this email.",
+      });
+    }
+
+    await tx.insert(teamInvitation).values({
+      createdAt: now,
+      email: input.email,
+      expiresAt,
+      id: invitationId,
+      invitedByUserId: userId,
+      role: input.role,
+      status: "PENDING",
+      teamId: input.teamId,
+      updatedAt: now,
+    });
   });
 
   return {
@@ -757,6 +759,12 @@ export const removeTeamMember = async (
   if (membershipRole !== "TEAM_MENTOR") {
     throw new ORPCError("FORBIDDEN", {
       message: "Only team mentors can remove members.",
+    });
+  }
+
+  if (membership.userId === userId) {
+    throw new ORPCError("BAD_REQUEST", {
+      message: "You cannot remove yourself from the team.",
     });
   }
 
