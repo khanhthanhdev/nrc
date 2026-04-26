@@ -43,11 +43,17 @@ export interface PublicSeasonEvent {
   name: string;
   registrationEndsAt: string | null;
   registrationStartsAt: string | null;
-  slug: string;
   status: EventRecord["status"];
   summary: string | null;
   timezone: string | null;
   venue: string | null;
+}
+
+export interface AdminCurrentSeason {
+  gameCode: string;
+  id: string;
+  theme: string;
+  year: string;
 }
 
 export interface PublicSeasonDocument {
@@ -175,7 +181,6 @@ const mapPublicSeasonEvent = (record: EventRecord): PublicSeasonEvent => ({
   name: record.name,
   registrationEndsAt: toIsoString(record.registrationEndsAt),
   registrationStartsAt: toIsoString(record.registrationStartsAt),
-  slug: record.slug,
   status: record.status,
   summary: record.summary ?? null,
   timezone: record.timezone ?? null,
@@ -433,6 +438,36 @@ export const listAdminSeasons = async (
     : await db.select().from(seasonTable);
 
   return buildAdminSeasonSummaries(seasons);
+};
+
+export const getCurrentAdminSeason = async (): Promise<AdminCurrentSeason> => {
+  const activeSeasons = await db
+    .select()
+    .from(seasonTable)
+    .where(and(eq(seasonTable.isActive, true), isNull(seasonTable.deletedAt)));
+
+  if (activeSeasons.length !== 1) {
+    throw new ORPCError("FAILED_PRECONDITION", {
+      message:
+        activeSeasons.length === 0
+          ? "Event management requires exactly one active season, but none are active."
+          : "Event management requires exactly one active season, but multiple active seasons were found.",
+    });
+  }
+
+  const [season] = activeSeasons;
+  if (!season) {
+    throw new ORPCError("FAILED_PRECONDITION", {
+      message: "Event management requires exactly one active season.",
+    });
+  }
+
+  return {
+    gameCode: season.gameCode,
+    id: season.id,
+    theme: season.theme,
+    year: season.year,
+  };
 };
 
 export const getAdminSeasonByYear = async (year: string): Promise<AdminSeasonDetail> => {

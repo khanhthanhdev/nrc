@@ -37,7 +37,9 @@ export const getAdminSeasonInputSchema = v.object({
   year: seasonYearSchema,
 });
 
-export const createSeasonInputSchema = v.object({
+// Note: Database enforces unique constraint on year (season).
+// This prevents creating duplicate seasons with the same year.
+export const createSeasonInputSchema = v.strictObject({
   description: optionalTrimmedNullableString(4000),
   gameCode: trimmedString(50),
   isActive: v.optional(v.boolean(), true),

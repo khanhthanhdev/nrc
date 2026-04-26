@@ -41,9 +41,9 @@
     "db:watch": "turbo run db:watch --filter=@nrc-full/db",
     "db:stop": "turbo run db:stop --filter=@nrc-full/db",
     "db:down": "turbo run db:down --filter=@nrc-full/db",
-    "test:unit": "NODE_ENV=test BETTER_AUTH_SECRET=test BETTER_AUTH_URL=http://localhost CORS_ORIGIN=http://localhost DATABASE_URL=postgresql://localhost/test GOOGLE_CLIENT_ID=test GOOGLE_CLIENT_SECRET=test bun x vitest run apps/server/src/auth/duplicate-email-policy.unit.test.ts packages/api/src/features/auth/schemas/onboarding.unit.test.ts packages/api/src/features/season/schemas/season.unit.test.ts packages/api/src/features/season/application/season.unit.test.ts",
+    "test:unit": "NODE_ENV=test BETTER_AUTH_SECRET=test BETTER_AUTH_URL=http://localhost CORS_ORIGIN=http://localhost DATABASE_URL=postgresql://localhost/test GOOGLE_CLIENT_ID=test GOOGLE_CLIENT_SECRET=test bun x vitest run apps/server/src/auth/duplicate-email-policy.unit.test.ts packages/api/src/features/auth/schemas/onboarding.unit.test.ts packages/api/src/features/season/schemas/season.unit.test.ts packages/api/src/features/season/application/season.unit.test.ts packages/api/src/features/event/schemas/event.unit.test.ts packages/api/src/features/event/application/event.unit.test.ts",
     "test:e2e": "bun x playwright test",
-    "test:e2e:api": "NODE_ENV=test BETTER_AUTH_SECRET=test BETTER_AUTH_URL=http://localhost CORS_ORIGIN=http://localhost DATABASE_URL=postgresql://localhost/test GOOGLE_CLIENT_ID=test GOOGLE_CLIENT_SECRET=test bun x vitest run packages/api/src/features/auth/presentation/auth-router.e2e.test.ts packages/api/src/features/season/presentation/season-router.e2e.test.ts",
+    "test:e2e:api": "NODE_ENV=test BETTER_AUTH_SECRET=test BETTER_AUTH_URL=http://localhost CORS_ORIGIN=http://localhost DATABASE_URL=postgresql://localhost/test GOOGLE_CLIENT_ID=test GOOGLE_CLIENT_SECRET=test bun x vitest run packages/api/src/features/auth/presentation/auth-router.e2e.test.ts packages/api/src/features/season/presentation/season-router.e2e.test.ts packages/api/src/features/event/presentation/event-router.e2e.test.ts",
     "test:e2e:install": "bun x playwright install --with-deps",
     "check": "ultracite check",
     "fix": "ultracite fix"

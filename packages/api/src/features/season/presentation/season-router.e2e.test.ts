@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AppRouter } from "../../../app-router";
 import type { AuthContextSession } from "../../../shared/context";
 import type {
+  AdminCurrentSeason,
   AdminSeasonAnnouncement,
   AdminSeasonDetail,
   AdminSeasonDocument,
@@ -23,6 +24,7 @@ const deleteSeasonForAdminMock = vi.fn();
 const deleteSeasonAnnouncementForAdminMock = vi.fn();
 const deleteSeasonDocumentForAdminMock = vi.fn();
 const getAdminSeasonByYearMock = vi.fn();
+const getCurrentAdminSeasonMock = vi.fn();
 const getPublicSeasonPageByYearMock = vi.fn();
 const listAdminSeasonsMock = vi.fn();
 const updateSeasonForAdminMock = vi.fn();
@@ -37,6 +39,7 @@ vi.mock("../application/season.js", () => ({
   deleteSeasonDocumentForAdmin: deleteSeasonDocumentForAdminMock,
   deleteSeasonForAdmin: deleteSeasonForAdminMock,
   getAdminSeasonByYear: getAdminSeasonByYearMock,
+  getCurrentAdminSeason: getCurrentAdminSeasonMock,
   getPublicSeasonPageByYear: getPublicSeasonPageByYearMock,
   listAdminSeasons: listAdminSeasonsMock,
   updateSeasonAnnouncementForAdmin: updateSeasonAnnouncementForAdminMock,
@@ -140,6 +143,13 @@ const ADMIN_SUMMARIES: AdminSeasonSummary[] = [
   },
 ];
 
+const CURRENT_ADMIN_SEASON: AdminCurrentSeason = {
+  gameCode: "ITD-2026",
+  id: "season-2026",
+  theme: "Into the Deep",
+  year: "2026",
+};
+
 const ADMIN_DOCUMENT: AdminSeasonDocument = {
   createdAt: "2026-01-01T00:00:00.000Z",
   id: "document-1",
@@ -186,6 +196,7 @@ describe("seasonRouter e2e", () => {
     deleteSeasonAnnouncementForAdminMock.mockReset();
     deleteSeasonDocumentForAdminMock.mockReset();
     getAdminSeasonByYearMock.mockReset();
+    getCurrentAdminSeasonMock.mockReset();
     getPublicSeasonPageByYearMock.mockReset();
     listAdminSeasonsMock.mockReset();
     updateSeasonForAdminMock.mockReset();
@@ -256,6 +267,16 @@ describe("seasonRouter e2e", () => {
 
     expect(getAdminSeasonByYearMock).toHaveBeenCalledWith("2026");
     expect(result).toEqual(ADMIN_DETAIL);
+  });
+
+  it("forwards current active season lookup for admins", async () => {
+    getCurrentAdminSeasonMock.mockResolvedValue(CURRENT_ADMIN_SEASON);
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.season.getCurrentAdminSeason();
+
+    expect(getCurrentAdminSeasonMock).toHaveBeenCalledWith();
+    expect(result).toEqual(CURRENT_ADMIN_SEASON);
   });
 
   it("forwards admin season listings", async () => {
@@ -334,5 +355,43 @@ describe("seasonRouter e2e", () => {
       code: "CONFLICT",
       message: "Season 2026 already exists.",
     });
+  });
+
+  it("surfaces conflicts when creating a duplicate 2025 season", async () => {
+    createSeasonForAdminMock.mockRejectedValue(
+      new ORPCError("CONFLICT", {
+        message: "Season 2025 already exists.",
+      }),
+    );
+
+    const client = createClient(ADMIN_SESSION);
+
+    await expect(
+      client.season.createSeason({
+        gameCode: "CTR-2025",
+        isActive: true,
+        theme: "Centerstage",
+        year: "2025",
+      }),
+    ).rejects.toMatchObject({
+      code: "CONFLICT",
+      message: "Season 2025 already exists.",
+    });
+  });
+
+  it("rejects unknown keys on createSeason input (strict object)", async () => {
+    const client = createClient(ADMIN_SESSION);
+
+    await expect(
+      client.season.createSeason({
+        gameCode: "ITD-2026",
+        isActive: true,
+        theme: "Into the Deep",
+        year: "2026",
+        // @ts-expect-error - unknown property must be rejected by strictObject
+        unexpected: "nope",
+      }),
+    ).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    expect(createSeasonForAdminMock).not.toHaveBeenCalled();
   });
 });

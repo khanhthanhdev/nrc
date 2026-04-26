@@ -29,6 +29,19 @@ vi.mock("../application/managed-users.js", () => ({
   saveManagedUserForAdmin: saveManagedUserForAdminMock,
 }));
 
+const TEST_ENV_DEFAULTS = {
+  BETTER_AUTH_SECRET: "test",
+  BETTER_AUTH_URL: "http://localhost",
+  CORS_ORIGIN: "http://localhost",
+  DATABASE_URL: "postgresql://localhost/test",
+  GOOGLE_CLIENT_ID: "test",
+  GOOGLE_CLIENT_SECRET: "test",
+} as const;
+
+for (const [key, value] of Object.entries(TEST_ENV_DEFAULTS)) {
+  process.env[key] ??= value;
+}
+
 const { appRouter } = await import("../../../app-router.js");
 
 const TEST_SESSION: AuthContextSession = {

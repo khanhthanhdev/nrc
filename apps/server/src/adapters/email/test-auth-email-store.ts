@@ -66,3 +66,7 @@ export const getCapturedAuthEmails = (email: string): CapturedAuthEmails | null 
 export const clearCapturedAuthEmails = (email: string): void => {
   capturedAuthEmails.delete(normalizeEmail(email));
 };
+
+export const clearAllCapturedAuthEmails = (): void => {
+  capturedAuthEmails.clear();
+};

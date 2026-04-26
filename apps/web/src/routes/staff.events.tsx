@@ -1,8 +1,10 @@
-import { Outlet, createFileRoute, Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Outlet, createFileRoute, useNavigate, useRouterState } from "@tanstack/react-router";
 
+import { AdminEventListPage, AdminEventListSkeleton } from "@/features/events/admin-event-pages";
+import { useRequireAdmin } from "@/lib/route-guards";
 import { authClient } from "@/utils/auth-client";
-import { Button } from "@/components/ui/button";
-import { useRequireStaff } from "@/lib/route-guards";
+import { orpc } from "@/utils/orpc";
 
 const StaffEventsPage = () => {
   const navigate = useNavigate();
@@ -11,18 +13,20 @@ const StaffEventsPage = () => {
   });
   const session = authClient.useSession();
 
-  useRequireStaff(session);
+  useRequireAdmin(session);
+
+  const eventsQuery = useQuery({
+    ...orpc.event.listAdminEvents.queryOptions(),
+    enabled: Boolean(session.data),
+    retry: false,
+  });
 
   if (pathname !== "/staff/events") {
     return <Outlet />;
   }
 
   if (session.isPending) {
-    return (
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        <p className="text-muted-foreground text-sm">Loading events...</p>
-      </div>
-    );
+    return <AdminEventListSkeleton />;
   }
 
   if (!session.data) {
@@ -36,23 +40,14 @@ const StaffEventsPage = () => {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-8">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-semibold">Staff events</h1>
-        <p className="text-muted-foreground text-sm">Create and edit event records.</p>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        <Button asChild>
-          <Link to="/staff/events/new">Create event</Link>
-        </Button>
-        <Button asChild variant="secondary">
-          <Link params={{ eventId: "VNCMP" }} to="/staff/events/$eventId/edit">
-            Edit VNCMP
-          </Link>
-        </Button>
-      </div>
-    </div>
+    <AdminEventListPage
+      error={eventsQuery.error}
+      events={eventsQuery.data}
+      isLoading={eventsQuery.isLoading}
+      onRetry={async () => {
+        await eventsQuery.refetch();
+      }}
+    />
   );
 };
 

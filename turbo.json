@@ -19,6 +19,17 @@
     "dev": {
       "cache": false,
       "env": ["ENABLE_E2E_TEST_HELPERS"],
+      "passThroughEnv": [
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "CORS_ORIGIN",
+        "DATABASE_URL",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "NODE_ENV",
+        "PLAYWRIGHT_API_URL",
+        "PLAYWRIGHT_BASE_URL"
+      ],
       "persistent": true
     },
     "db:push": {

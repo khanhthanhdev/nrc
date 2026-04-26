@@ -12,11 +12,12 @@ import {
   user,
 } from "@nrc-full/db";
 import { env } from "@nrc-full/env/server";
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { setCookie } from "hono/cookie";
 import { createHmac } from "node:crypto";
 
 import {
+  clearAllCapturedAuthEmails,
   clearCapturedAuthEmails,
   getCapturedAuthEmails,
 } from "../../adapters/email/test-auth-email-store";
@@ -58,7 +59,6 @@ interface SeedSeasonPagePayload {
     name: string;
     registrationEndsAt?: string | null;
     registrationStartsAt?: string | null;
-    slug?: string;
     status?:
       | "draft"
       | "published"
@@ -99,12 +99,16 @@ const parseEmailPayload = (payload: unknown): string | null => {
   return normalizedEmail.length > 0 ? normalizedEmail : null;
 };
 
-const slugify = (value: string): string =>
-  value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+const quoteIdentifier = (value: string): string => `"${value.replaceAll('"', '""')}"`;
+
+const resolveDatabaseName = (databaseUrl: string): string => {
+  try {
+    const parsed = new URL(databaseUrl);
+    return parsed.pathname.replace(/^\/+/, "");
+  } catch {
+    return "";
+  }
+};
 
 const findUserByEmail = async (email: string) => {
   const [existingUser] = await db
@@ -319,12 +323,21 @@ export const registerE2ETestRoute = (app: Hono<EvlogVariables>): void => {
     await db.delete(eventTable).where(eq(eventTable.season, year));
     await db.delete(seasonTable).where(eq(seasonTable.year, year));
 
+    const isActive = body?.isActive ?? true;
+
+    if (isActive) {
+      await db
+        .update(seasonTable)
+        .set({ isActive: false, updatedAt: now })
+        .where(eq(seasonTable.isActive, true));
+    }
+
     await db.insert(seasonTable).values({
       createdAt: now,
       description: body?.description?.trim() || null,
       gameCode,
       id: crypto.randomUUID(),
-      isActive: body?.isActive ?? true,
+      isActive,
       theme,
       updatedAt: now,
       year,
@@ -379,7 +392,6 @@ export const registerE2ETestRoute = (app: Hono<EvlogVariables>): void => {
             ? new Date(event.registrationStartsAt)
             : null,
           season: year,
-          slug: event.slug?.trim() || slugify(`${year}-${event.name}`),
           status: event.status ?? "published",
           summary: event.summary?.trim() || null,
           timezone: event.timezone?.trim() || "Asia/Ho_Chi_Minh",
@@ -395,6 +407,50 @@ export const registerE2ETestRoute = (app: Hono<EvlogVariables>): void => {
         documents: body?.documents?.length ?? 0,
         events: body?.events?.length ?? 0,
         season: year,
+      },
+      200,
+    );
+  });
+
+  app.post("/api/test/data/reset-database", async (c) => {
+    const databaseName = resolveDatabaseName(env.DATABASE_URL);
+
+    if (!/(test|e2e)/i.test(databaseName)) {
+      return c.json(
+        {
+          error:
+            "Refusing to reset database because DATABASE_URL is not a dedicated test database.",
+        },
+        400,
+      );
+    }
+
+    const tableRows = await db.execute(sql`
+      SELECT tablename
+      FROM pg_tables
+      WHERE schemaname = 'public'
+      AND tablename <> '__drizzle_migrations'
+    `);
+
+    const tableNames = tableRows.rows
+      .map((row) => ("tablename" in row ? row.tablename : null))
+      .filter((tableName): tableName is string => typeof tableName === "string");
+
+    if (tableNames.length > 0) {
+      const qualifiedTableNames = tableNames
+        .map((tableName) => `${quoteIdentifier("public")}.${quoteIdentifier(tableName)}`)
+        .join(", ");
+
+      await db.execute(sql.raw(`TRUNCATE TABLE ${qualifiedTableNames} RESTART IDENTITY CASCADE;`));
+    }
+
+    clearAllCapturedAuthEmails();
+
+    return c.json(
+      {
+        database: databaseName,
+        reset: true,
+        tables: tableNames.length,
       },
       200,
     );

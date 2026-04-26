@@ -4,7 +4,7 @@ export type SystemRole = "USER" | "MANAGER" | "ADMIN";
 export type TeamMembershipRole = "TEAM_MENTOR" | "TEAM_LEADER" | "TEAM_MEMBER";
 
 export const SEASON_PATTERN = /^\d{4}$/;
-export const EVENT_ID_PATTERN = /^[A-Z0-9_-]{3,20}$/;
+export const EVENT_ID_PATTERN = /^[A-Z0-9][A-Z0-9_-]{1,49}$/;
 export const MATCH_NUMBER_PATTERN = /^[1-9]\d*$/;
 export const REGISTRATION_ID_PATTERN = /^[A-Za-z0-9_-]{6,64}$/;
 

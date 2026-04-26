@@ -40,7 +40,7 @@ import { Route as SeasonEventIdQualificationsRouteImport } from './routes/$seaso
 import { Route as SeasonEventIdPlayoffsRouteImport } from './routes/$season.$eventId.playoffs'
 import { Route as SeasonEventIdAwardsRouteImport } from './routes/$season.$eventId.awards'
 import { Route as StaffSeasonsSeasonIdEditRouteImport } from './routes/staff.seasons.$seasonId.edit'
-import { Route as StaffEventsEventIdEditRouteImport } from './routes/staff.events.$eventId.edit'
+import { Route as StaffEventsEventRecordIdEditRouteImport } from './routes/staff.events.$eventRecordId.edit'
 import { Route as SeasonEventIdQualificationsMatchNumberRouteImport } from './routes/$season.$eventId.qualifications.$matchNumber'
 
 const UsersRoute = UsersRouteImport.update({
@@ -201,11 +201,12 @@ const StaffSeasonsSeasonIdEditRoute =
     path: '/$seasonId/edit',
     getParentRoute: () => StaffSeasonsRoute,
   } as any)
-const StaffEventsEventIdEditRoute = StaffEventsEventIdEditRouteImport.update({
-  id: '/$eventId/edit',
-  path: '/$eventId/edit',
-  getParentRoute: () => StaffEventsRoute,
-} as any)
+const StaffEventsEventRecordIdEditRoute =
+  StaffEventsEventRecordIdEditRouteImport.update({
+    id: '/$eventRecordId/edit',
+    path: '/$eventRecordId/edit',
+    getParentRoute: () => StaffEventsRoute,
+  } as any)
 const SeasonEventIdQualificationsMatchNumberRoute =
   SeasonEventIdQualificationsMatchNumberRouteImport.update({
     id: '/$matchNumber',
@@ -245,7 +246,7 @@ export interface FileRoutesByFullPath {
   '/staff/events/new': typeof StaffEventsNewRoute
   '/staff/seasons/new': typeof StaffSeasonsNewRoute
   '/$season/$eventId/qualifications/$matchNumber': typeof SeasonEventIdQualificationsMatchNumberRoute
-  '/staff/events/$eventId/edit': typeof StaffEventsEventIdEditRoute
+  '/staff/events/$eventRecordId/edit': typeof StaffEventsEventRecordIdEditRoute
   '/staff/seasons/$seasonId/edit': typeof StaffSeasonsSeasonIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -280,7 +281,7 @@ export interface FileRoutesByTo {
   '/staff/events/new': typeof StaffEventsNewRoute
   '/staff/seasons/new': typeof StaffSeasonsNewRoute
   '/$season/$eventId/qualifications/$matchNumber': typeof SeasonEventIdQualificationsMatchNumberRoute
-  '/staff/events/$eventId/edit': typeof StaffEventsEventIdEditRoute
+  '/staff/events/$eventRecordId/edit': typeof StaffEventsEventRecordIdEditRoute
   '/staff/seasons/$seasonId/edit': typeof StaffSeasonsSeasonIdEditRoute
 }
 export interface FileRoutesById {
@@ -316,7 +317,7 @@ export interface FileRoutesById {
   '/staff/events/new': typeof StaffEventsNewRoute
   '/staff/seasons/new': typeof StaffSeasonsNewRoute
   '/$season/$eventId/qualifications/$matchNumber': typeof SeasonEventIdQualificationsMatchNumberRoute
-  '/staff/events/$eventId/edit': typeof StaffEventsEventIdEditRoute
+  '/staff/events/$eventRecordId/edit': typeof StaffEventsEventRecordIdEditRoute
   '/staff/seasons/$seasonId/edit': typeof StaffSeasonsSeasonIdEditRoute
 }
 export interface FileRouteTypes {
@@ -353,7 +354,7 @@ export interface FileRouteTypes {
     | '/staff/events/new'
     | '/staff/seasons/new'
     | '/$season/$eventId/qualifications/$matchNumber'
-    | '/staff/events/$eventId/edit'
+    | '/staff/events/$eventRecordId/edit'
     | '/staff/seasons/$seasonId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -388,7 +389,7 @@ export interface FileRouteTypes {
     | '/staff/events/new'
     | '/staff/seasons/new'
     | '/$season/$eventId/qualifications/$matchNumber'
-    | '/staff/events/$eventId/edit'
+    | '/staff/events/$eventRecordId/edit'
     | '/staff/seasons/$seasonId/edit'
   id:
     | '__root__'
@@ -423,7 +424,7 @@ export interface FileRouteTypes {
     | '/staff/events/new'
     | '/staff/seasons/new'
     | '/$season/$eventId/qualifications/$matchNumber'
-    | '/staff/events/$eventId/edit'
+    | '/staff/events/$eventRecordId/edit'
     | '/staff/seasons/$seasonId/edit'
   fileRoutesById: FileRoutesById
 }
@@ -659,11 +660,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaffSeasonsSeasonIdEditRouteImport
       parentRoute: typeof StaffSeasonsRoute
     }
-    '/staff/events/$eventId/edit': {
-      id: '/staff/events/$eventId/edit'
-      path: '/$eventId/edit'
-      fullPath: '/staff/events/$eventId/edit'
-      preLoaderRoute: typeof StaffEventsEventIdEditRouteImport
+    '/staff/events/$eventRecordId/edit': {
+      id: '/staff/events/$eventRecordId/edit'
+      path: '/$eventRecordId/edit'
+      fullPath: '/staff/events/$eventRecordId/edit'
+      preLoaderRoute: typeof StaffEventsEventRecordIdEditRouteImport
       parentRoute: typeof StaffEventsRoute
     }
     '/$season/$eventId/qualifications/$matchNumber': {
@@ -763,12 +764,12 @@ const RegisterRouteWithChildren = RegisterRoute._addFileChildren(
 
 interface StaffEventsRouteChildren {
   StaffEventsNewRoute: typeof StaffEventsNewRoute
-  StaffEventsEventIdEditRoute: typeof StaffEventsEventIdEditRoute
+  StaffEventsEventRecordIdEditRoute: typeof StaffEventsEventRecordIdEditRoute
 }
 
 const StaffEventsRouteChildren: StaffEventsRouteChildren = {
   StaffEventsNewRoute: StaffEventsNewRoute,
-  StaffEventsEventIdEditRoute: StaffEventsEventIdEditRoute,
+  StaffEventsEventRecordIdEditRoute: StaffEventsEventRecordIdEditRoute,
 }
 
 const StaffEventsRouteWithChildren = StaffEventsRoute._addFileChildren(

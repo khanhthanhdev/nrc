@@ -161,7 +161,6 @@ export const eventTable = pgTable(
     registrationEndsAt: timestamp("registration_ends_at"),
     registrationStartsAt: timestamp("registration_starts_at"),
     season: varchar("season", { length: 10 }).notNull(),
-    slug: varchar("slug", { length: 160 }).notNull(),
     status: eventStatusEnum("status").default("draft").notNull(),
     summary: text("summary"),
     timezone: text("timezone").default("UTC"),
@@ -174,9 +173,6 @@ export const eventTable = pgTable(
   (table) => [
     uniqueIndex("event_key_unique")
       .on(table.eventKey)
-      .where(sql`${table.deletedAt} IS NULL`),
-    uniqueIndex("event_slug_unique")
-      .on(table.slug)
       .where(sql`${table.deletedAt} IS NULL`),
     uniqueIndex("event_season_event_code_unique")
       .on(table.season, table.eventCode)

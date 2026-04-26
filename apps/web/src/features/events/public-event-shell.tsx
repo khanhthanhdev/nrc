@@ -2,8 +2,11 @@ import type { ReactNode } from "react";
 
 import { Link } from "@tanstack/react-router";
 
+import type { PublicEventDetailData } from "./types";
+
 interface PublicEventShellProps {
   children: ReactNode;
+  data: PublicEventDetailData;
   eventId: string;
   season: string;
 }
@@ -12,7 +15,7 @@ const tabClassName = "nrc-hero-tab";
 
 const activeTabClassName = "nrc-hero-tab-active";
 
-export function PublicEventShell({ children, eventId, season }: PublicEventShellProps) {
+export function PublicEventShell({ children, data, eventId, season }: PublicEventShellProps) {
   const tabs = [
     { label: "rankings", to: "/$season/$eventId/rankings" },
     { label: "qualifications", to: "/$season/$eventId/qualifications" },
@@ -28,11 +31,10 @@ export function PublicEventShell({ children, eventId, season }: PublicEventShell
             <div className="space-y-2">
               <p className="text-sm uppercase tracking-[0.22em] text-white/65">Public event</p>
               <h1 className="text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">
-                {season} / {eventId}
+                {data.event.name}
               </h1>
               <p className="max-w-2xl text-sm leading-6 text-white/76">
-                FTC-like public information route. Read-only. Season-specific behavior comes from the
-                shared adapter layer.
+                {data.event.summary ?? `${season} / ${eventId}`}
               </p>
             </div>
 

@@ -8,6 +8,7 @@ import {
   deleteSeasonAnnouncementForAdmin,
   deleteSeasonDocumentForAdmin,
   deleteSeasonForAdmin,
+  getCurrentAdminSeason,
   getAdminSeasonByYear,
   getPublicSeasonPageByYear,
   listAdminSeasons,
@@ -97,6 +98,12 @@ export const seasonRouter = {
     requireAdminSession(context.session);
 
     return getAdminSeasonByYear(input.year);
+  }),
+
+  getCurrentAdminSeason: publicProcedure.handler(({ context }) => {
+    requireAdminSession(context.session);
+
+    return getCurrentAdminSeason();
   }),
 
   getPublicSeasonPage: publicProcedure

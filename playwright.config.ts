@@ -5,10 +5,30 @@ loadEnv({ path: ".env.test" });
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? process.env.CORS_ORIGIN ?? "http://localhost:3001";
 const API_URL = process.env.PLAYWRIGHT_API_URL ?? process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
+const DATABASE_URL = process.env.DATABASE_URL ?? "";
+
+const resolveDatabaseName = (databaseUrl: string): string => {
+  try {
+    const parsed = new URL(databaseUrl);
+    return parsed.pathname.replace(/^\/+/, "");
+  } catch {
+    return "";
+  }
+};
+
+const DATABASE_NAME = resolveDatabaseName(DATABASE_URL);
+
+if (!/(test|e2e)/i.test(DATABASE_NAME)) {
+  throw new Error(
+    `Refusing to run Playwright E2E with unsafe DATABASE_URL (${DATABASE_NAME || "unknown"}). ` +
+      "Use a dedicated test database name containing 'test' or 'e2e'.",
+  );
+}
 
 export default defineConfig({
   forbidOnly: !!process.env.CI,
   fullyParallel: false,
+  globalTeardown: "./apps/web/e2e/global-teardown.ts",
   projects: [
     {
       name: "chromium",
