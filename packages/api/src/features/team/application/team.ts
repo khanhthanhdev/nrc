@@ -760,28 +760,6 @@ export const removeTeamMember = async (
     });
   }
 
-  if (membership.userId === userId && membership.role === "TEAM_MENTOR") {
-    const [otherMentor] = await db
-      .select({ id: teamMembership.id })
-      .from(teamMembership)
-      .where(
-        and(
-          eq(teamMembership.teamId, membership.teamId),
-          eq(teamMembership.role, "TEAM_MENTOR"),
-          eq(teamMembership.isActive, true),
-          isNull(teamMembership.deletedAt),
-          sql`${teamMembership.id} != ${membership.id}`,
-        ),
-      )
-      .limit(1);
-
-    if (!otherMentor) {
-      throw new ORPCError("BAD_REQUEST", {
-        message: "Cannot remove the last mentor from the team.",
-      });
-    }
-  }
-
   const [teamRecord] = await db
     .select({ organizationId: team.organizationId })
     .from(team)
@@ -789,6 +767,28 @@ export const removeTeamMember = async (
     .limit(1);
 
   await db.transaction(async (tx) => {
+    if (membership.role === "TEAM_MENTOR") {
+      const [otherMentor] = await tx
+        .select({ id: teamMembership.id })
+        .from(teamMembership)
+        .where(
+          and(
+            eq(teamMembership.teamId, membership.teamId),
+            eq(teamMembership.role, "TEAM_MENTOR"),
+            eq(teamMembership.isActive, true),
+            isNull(teamMembership.deletedAt),
+            sql`${teamMembership.id} != ${membership.id}`,
+          ),
+        )
+        .limit(1);
+
+      if (!otherMentor) {
+        throw new ORPCError("BAD_REQUEST", {
+          message: "Cannot remove the last mentor from the team.",
+        });
+      }
+    }
+
     await tx
       .update(teamMembership)
       .set({
