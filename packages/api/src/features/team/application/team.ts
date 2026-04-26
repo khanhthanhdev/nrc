@@ -651,14 +651,21 @@ export const listTeamInvitations = async (
     )
     .orderBy(desc(teamInvitation.createdAt));
 
-  return invitations.map((inv) => ({
-    createdAt: inv.createdAt.toISOString(),
-    email: inv.email,
-    expiresAt: inv.expiresAt.toISOString(),
-    id: inv.id,
-    role: inv.role,
-    status: inv.status,
-  }));
+  return invitations.map((inv) => {
+    const effectiveStatus =
+      inv.status === "PENDING" && inv.expiresAt < new Date()
+        ? "EXPIRED"
+        : inv.status;
+
+    return {
+      createdAt: inv.createdAt.toISOString(),
+      email: inv.email,
+      expiresAt: inv.expiresAt.toISOString(),
+      id: inv.id,
+      role: inv.role,
+      status: effectiveStatus,
+    };
+  });
 };
 
 export const revokeTeamInvitation = async (
@@ -667,6 +674,7 @@ export const revokeTeamInvitation = async (
 ): Promise<void> => {
   const [inv] = await db
     .select({
+      expiresAt: teamInvitation.expiresAt,
       id: teamInvitation.id,
       status: teamInvitation.status,
       teamId: teamInvitation.teamId,
@@ -681,7 +689,7 @@ export const revokeTeamInvitation = async (
 
   await requireTeamManagementRole(userId, inv.teamId);
 
-  if (inv.status !== "PENDING") {
+  if (inv.status !== "PENDING" || inv.expiresAt < new Date()) {
     throw new ORPCError("BAD_REQUEST", {
       message: "Only pending invitations can be revoked.",
     });
