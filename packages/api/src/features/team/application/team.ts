@@ -171,6 +171,16 @@ export const createTeamForUser = async (
       updatedAt: now,
     });
 
+    await tx.insert(teamMembership).values({
+      createdAt: now,
+      id: crypto.randomUUID(),
+      isActive: true,
+      role: "TEAM_MENTOR",
+      teamId,
+      updatedAt: now,
+      userId,
+    });
+
     if (currentUser.userType === "PARTICIPANT") {
       await tx
         .update(user)
@@ -310,13 +320,14 @@ export const listPublicTeams = async (
   const offset = (page - 1) * limit;
 
   const baseWhere = isNull(team.deletedAt);
-  const searchWhere = input.search
+  const escapedSearch = input.search?.replace(/[%_\\]/g, "\\$&");
+  const searchWhere = escapedSearch
     ? and(
         baseWhere,
         or(
-          ilike(team.name, `%${input.search}%`),
-          ilike(team.teamNumber, `%${input.search}%`),
-          ilike(team.schoolOrOrganization, `%${input.search}%`),
+          ilike(team.name, `%${escapedSearch}%`),
+          ilike(team.teamNumber, `%${escapedSearch}%`),
+          ilike(team.schoolOrOrganization, `%${escapedSearch}%`),
         ),
       )
     : baseWhere;
