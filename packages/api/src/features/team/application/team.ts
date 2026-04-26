@@ -1,6 +1,6 @@
 import { db, member, organization, session, team, teamInvitation, teamMembership, user } from "@nrc-full/db";
 import { ORPCError } from "@orpc/server";
-import { and, asc, count, desc, eq, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, isNull, lt, or, sql } from "drizzle-orm";
 
 import type {
   CreateTeamInput,
@@ -566,6 +566,19 @@ export const inviteTeamMember = async (
   input: InviteTeamMemberInput,
 ): Promise<TeamInvitationRecord> => {
   await requireTeamManagementRole(userId, input.teamId);
+
+  await db
+    .update(teamInvitation)
+    .set({ status: "EXPIRED" })
+    .where(
+      and(
+        eq(teamInvitation.teamId, input.teamId),
+        eq(teamInvitation.email, input.email),
+        eq(teamInvitation.status, "PENDING"),
+        lt(teamInvitation.expiresAt, new Date()),
+        isNull(teamInvitation.deletedAt),
+      ),
+    );
 
   const [existingPendingInvite] = await db
     .select({ id: teamInvitation.id })
