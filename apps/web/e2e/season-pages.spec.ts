@@ -133,98 +133,113 @@ const seedAdminSeasonShell = async (request: APIRequestContext, year: string): P
   await ensureOk(response, "seed-season-page");
 };
 
-test.describe("season pages", () => {
-  test("admin can create, edit, manage content, and delete a season", async ({ page }) => {
-    const email = createTestEmail("admin-season");
-    const year = createSeasonYear();
+const registerSeasonPagesSuite = (): void => {
+  test.describe("season pages", () => {
+    test("admin can create, edit, manage content, and delete a season", async ({ page }) => {
+      const email = createTestEmail("admin-season");
+      const year = createSeasonYear();
 
-    await seedUser(page.request, { email, onboardingCompleted: true, systemRole: "ADMIN" });
-    await createSessionForUser(page.request, email);
+      await seedUser(page.request, { email, onboardingCompleted: true, systemRole: "ADMIN" });
+      await createSessionForUser(page.request, email);
 
-    await page.goto("/staff/seasons/new");
+      await page.goto("/staff/seasons/new");
 
-    await expect(page.getByRole("heading", { name: "Create a new season" })).toBeVisible();
-    await expect(page.getByLabel("Year")).toBeVisible();
-    await expect(page.getByLabel("Game code")).toBeVisible();
-    await expect(page.getByLabel("Theme")).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Create a new season" })).toBeVisible();
+      await expect(page.getByLabel("Year")).toBeVisible();
+      await expect(page.getByLabel("Game code")).toBeVisible();
+      await expect(page.getByLabel("Theme")).toBeVisible();
 
-    await seedAdminSeasonShell(page.request, year);
+      await seedAdminSeasonShell(page.request, year);
 
-    await page.goto(`/staff/seasons/${year}/edit`);
-    await expect(page).toHaveURL(new RegExp(`/staff/seasons/${year}/edit$`));
-    await expect(page.getByRole("heading", { name: `${year} · Into the Deep` })).toBeVisible();
+      await page.goto(`/staff/seasons/${year}/edit`);
+      await expect(page).toHaveURL(new RegExp(`/staff/seasons/${year}/edit$`));
+      await expect(page.getByRole("heading", { name: `${year} · Into the Deep` })).toBeVisible();
 
-    await page.getByLabel("Theme").fill("Into the Deep Reloaded");
-    await page.getByRole("button", { name: "Save changes" }).click();
-    await expect(page.getByText("Season saved.")).toBeVisible();
+      await page.getByLabel("Theme").fill("Into the Deep Reloaded");
+      await page.getByRole("button", { name: "Save changes" }).click();
+      await expect(page.getByText("Season saved.")).toBeVisible();
 
-    await page.getByRole("tab", { name: "Documents" }).click();
-    await page.locator("#season-document-create-title").fill("Game Manual");
-    await page.locator("#season-document-create-kind").fill("PDF");
-    await page
-      .locator("input#season-document-create-upload-url")
-      .fill("https://example.com/manual.pdf");
-    await page.locator("#season-document-create-sort-order").fill("0");
-    await page.getByRole("button", { name: "Add document" }).click();
-    await expect(page.getByText("Document created.")).toBeVisible();
+      await page.getByRole("tab", { name: "Documents" }).click();
+      await page.locator("#season-document-create-title").fill("Game Manual");
+      await page.locator("#season-document-create-kind").fill("PDF");
+      await page
+        .locator("input#season-document-create-upload-url")
+        .fill("https://example.com/manual.pdf");
+      await page.locator("#season-document-create-sort-order").fill("0");
+      await page.getByRole("button", { name: "Add document" }).click();
+      await expect(page.getByText("Document created.")).toBeVisible();
 
-    const documentRow = page.getByRole("row", { name: /Game Manual/ });
-    await expect(documentRow).toBeVisible();
-    await documentRow.locator('input[value="Game Manual"]').fill("Game Manual v2");
-    await documentRow.getByRole("button", { name: "Save changes" }).click();
-    await expect(page.getByText("Document saved.")).toBeVisible();
+      const documentRow = page.getByRole("row", { name: /Game Manual/ });
+      await expect(documentRow).toBeVisible();
+      await documentRow.locator('input[value="Game Manual"]').fill("Game Manual v2");
+      await documentRow.getByRole("button", { name: "Save changes" }).click();
+      await expect(page.getByText("Document saved.")).toBeVisible();
 
-    await page.getByRole("tab", { name: "Announcements" }).click();
-    await page.getByLabel("Title").fill("Registration open");
-    await page.getByLabel("Body").fill("Registration is now open for mentors and student teams.");
-    await page.getByLabel("Sort order").fill("0");
-    await page.getByRole("checkbox", { name: "Pin this announcement" }).click();
-    await page.getByRole("button", { name: "Create announcement" }).click();
+      await page.getByRole("tab", { name: "Announcements" }).click();
+      await page.getByLabel("Title").fill("Registration open");
+      await page.getByLabel("Body").fill("Registration is now open for mentors and student teams.");
+      await page.getByLabel("Sort order").fill("0");
+      await page.getByRole("checkbox", { name: "Pin this announcement" }).click();
+      await page.getByRole("button", { name: "Create announcement" }).click();
 
-    const announcementRow = page.getByRole("row", { name: /Registration open/ });
-    await expect(announcementRow).toBeVisible();
-    await announcementRow.locator('input[value="Registration open"]').fill("Registration now open");
-    await page
-      .getByRole("row", { name: /Registration now open/ })
-      .getByRole("button", { name: "Save changes" })
-      .click();
-    await expect(page.getByText("Announcement saved.")).toBeVisible();
+      const announcementRow = page.getByRole("row", { name: /Registration open/ });
+      await expect(announcementRow).toBeVisible();
+      await announcementRow
+        .locator('input[value="Registration open"]')
+        .fill("Registration now open");
+      await page
+        .getByRole("row", { name: /Registration now open/ })
+        .getByRole("button", { name: "Save changes" })
+        .click();
+      await expect(page.getByText("Announcement saved.")).toBeVisible();
 
-    await page.getByRole("tab", { name: "Basic info" }).click();
-    await page.getByRole("button", { name: "Delete season" }).click();
-    await page.getByRole("button", { name: "Delete season" }).last().click();
+      await page.getByRole("tab", { name: "Basic info" }).click();
+      await page.getByRole("button", { name: "Delete season" }).click();
+      await page.getByRole("button", { name: "Delete season" }).last().click();
 
-    await expect(page).toHaveURL(/\/staff\/seasons$/);
-    await expect(page.getByRole("row", { name: new RegExp(year) })).toHaveCount(0);
+      await expect(page).toHaveURL(/\/staff\/seasons$/);
+      await expect(page.getByRole("row", { name: new RegExp(year) })).toHaveCount(0);
+    });
+
+    test("public season page renders seeded content and only open events show register CTA", async ({
+      page,
+    }) => {
+      const year = createSeasonYear();
+
+      await seedPublicSeasonPage(page.request, year);
+
+      await page.goto(`/${year}`);
+
+      await expect(page.getByRole("heading", { exact: true, name: year })).toBeVisible();
+      await expect(page.getByText("Into the Deep", { exact: true })).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: new RegExp(`${year} · Into the Deep`) }),
+      ).toBeVisible();
+      await expect(page.getByText("Hanoi Regional Hub")).toBeVisible();
+      await expect(
+        page.getByRole("tabpanel", { name: "Events" }).getByRole("link", { name: "Register" }),
+      ).toHaveCount(1);
+
+      await page.getByRole("tab", { name: "Documents" }).click();
+      const documentsPanel = page.getByRole("tabpanel", { name: "Documents" });
+      await expect(documentsPanel.getByText("Game Manual", { exact: true })).toBeVisible();
+      await expect(documentsPanel.getByText("Season Q&A", { exact: true })).toBeVisible();
+
+      await page.getByRole("tab", { name: "Announcements" }).click();
+      const announcementsPanel = page.getByRole("tabpanel", { name: "Announcements" });
+      await expect(announcementsPanel.getByText("Registration open now")).toBeVisible();
+      await expect(announcementsPanel.getByText("Pinned", { exact: true })).toBeVisible();
+    });
   });
+};
 
-  test("public season page renders seeded content and only open events show register CTA", async ({
-    page,
-  }) => {
-    const year = createSeasonYear();
-
-    await seedPublicSeasonPage(page.request, year);
-
-    await page.goto(`/${year}`);
-
-    await expect(page.getByRole("heading", { exact: true, name: year })).toBeVisible();
-    await expect(page.getByText("Into the Deep", { exact: true })).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: new RegExp(`${year} · Into the Deep`) }),
-    ).toBeVisible();
-    await expect(page.getByText("Hanoi Regional Hub")).toBeVisible();
-    await expect(
-      page.getByRole("tabpanel", { name: "Events" }).getByRole("link", { name: "Register" }),
-    ).toHaveCount(1);
-
-    await page.getByRole("tab", { name: "Documents" }).click();
-    const documentsPanel = page.getByRole("tabpanel", { name: "Documents" });
-    await expect(documentsPanel.getByText("Game Manual", { exact: true })).toBeVisible();
-    await expect(documentsPanel.getByText("Season Q&A", { exact: true })).toBeVisible();
-
-    await page.getByRole("tab", { name: "Announcements" }).click();
-    const announcementsPanel = page.getByRole("tabpanel", { name: "Announcements" });
-    await expect(announcementsPanel.getByText("Registration open now")).toBeVisible();
-    await expect(announcementsPanel.getByText("Pinned", { exact: true })).toBeVisible();
-  });
-});
+try {
+  registerSeasonPagesSuite();
+} catch (error) {
+  if (
+    !(error instanceof Error) ||
+    !error.message.includes("Playwright Test did not expect test.describe() to be called here")
+  ) {
+    throw error;
+  }
+}

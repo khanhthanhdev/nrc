@@ -45,175 +45,175 @@ import { Route as StaffEventsEventRecordIdEditRouteImport } from "./routes/staff
 import { Route as SeasonEventIdQualificationsMatchNumberRouteImport } from "./routes/$season.$eventId.qualifications.$matchNumber";
 
 const UsersRoute = UsersRouteImport.update({
-  getParentRoute: () => rootRouteImport,
   id: "/users",
   path: "/users",
+  getParentRoute: () => rootRouteImport,
 } as any);
 const TeamsRoute = TeamsRouteImport.update({
-  getParentRoute: () => rootRouteImport,
   id: "/teams",
   path: "/teams",
+  getParentRoute: () => rootRouteImport,
 } as any);
 const StaffRoute = StaffRouteImport.update({
-  getParentRoute: () => rootRouteImport,
   id: "/staff",
   path: "/staff",
+  getParentRoute: () => rootRouteImport,
 } as any);
 const RegisterRoute = RegisterRouteImport.update({
-  getParentRoute: () => rootRouteImport,
   id: "/register",
   path: "/register",
+  getParentRoute: () => rootRouteImport,
 } as any);
 const OnboardingRoute = OnboardingRouteImport.update({
-  getParentRoute: () => rootRouteImport,
   id: "/onboarding",
   path: "/onboarding",
+  getParentRoute: () => rootRouteImport,
 } as any);
 const EventsRoute = EventsRouteImport.update({
-  getParentRoute: () => rootRouteImport,
   id: "/events",
   path: "/events",
+  getParentRoute: () => rootRouteImport,
 } as any);
 const AuthRoute = AuthRouteImport.update({
-  getParentRoute: () => rootRouteImport,
   id: "/auth",
   path: "/auth",
+  getParentRoute: () => rootRouteImport,
 } as any);
 const AccountRoute = AccountRouteImport.update({
-  getParentRoute: () => rootRouteImport,
   id: "/account",
   path: "/account",
+  getParentRoute: () => rootRouteImport,
 } as any);
 const SeasonRoute = SeasonRouteImport.update({
-  getParentRoute: () => rootRouteImport,
   id: "/$season",
   path: "/$season",
+  getParentRoute: () => rootRouteImport,
 } as any);
 const IndexRoute = IndexRouteImport.update({
-  getParentRoute: () => rootRouteImport,
   id: "/",
   path: "/",
+  getParentRoute: () => rootRouteImport,
 } as any);
 const TeamsNewRoute = TeamsNewRouteImport.update({
-  getParentRoute: () => TeamsRoute,
   id: "/new",
   path: "/new",
+  getParentRoute: () => TeamsRoute,
 } as any);
 const TeamsTeamNumberRoute = TeamsTeamNumberRouteImport.update({
-  getParentRoute: () => TeamsRoute,
   id: "/$teamNumber",
   path: "/$teamNumber",
+  getParentRoute: () => TeamsRoute,
 } as any);
 const StaffUsersRoute = StaffUsersRouteImport.update({
-  getParentRoute: () => StaffRoute,
   id: "/users",
   path: "/users",
+  getParentRoute: () => StaffRoute,
 } as any);
 const StaffSyncRoute = StaffSyncRouteImport.update({
-  getParentRoute: () => StaffRoute,
   id: "/sync",
   path: "/sync",
+  getParentRoute: () => StaffRoute,
 } as any);
 const StaffSettingsRoute = StaffSettingsRouteImport.update({
-  getParentRoute: () => StaffRoute,
   id: "/settings",
   path: "/settings",
+  getParentRoute: () => StaffRoute,
 } as any);
 const StaffSeasonsRoute = StaffSeasonsRouteImport.update({
-  getParentRoute: () => StaffRoute,
   id: "/seasons",
   path: "/seasons",
+  getParentRoute: () => StaffRoute,
 } as any);
 const StaffRegistrationsRoute = StaffRegistrationsRouteImport.update({
-  getParentRoute: () => StaffRoute,
   id: "/registrations",
   path: "/registrations",
+  getParentRoute: () => StaffRoute,
 } as any);
 const StaffEventsRoute = StaffEventsRouteImport.update({
-  getParentRoute: () => StaffRoute,
   id: "/events",
   path: "/events",
+  getParentRoute: () => StaffRoute,
 } as any);
 const RegisterEventIdRoute = RegisterEventIdRouteImport.update({
-  getParentRoute: () => RegisterRoute,
   id: "/$eventId",
   path: "/$eventId",
+  getParentRoute: () => RegisterRoute,
 } as any);
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
-  getParentRoute: () => AuthRoute,
   id: "/reset-password",
   path: "/reset-password",
+  getParentRoute: () => AuthRoute,
 } as any);
 const AuthPostVerifyRoute = AuthPostVerifyRouteImport.update({
-  getParentRoute: () => AuthRoute,
   id: "/post-verify",
   path: "/post-verify",
+  getParentRoute: () => AuthRoute,
 } as any);
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
-  getParentRoute: () => AuthRoute,
   id: "/forgot-password",
   path: "/forgot-password",
+  getParentRoute: () => AuthRoute,
 } as any);
 const AuthAcceptInvitationRoute = AuthAcceptInvitationRouteImport.update({
-  getParentRoute: () => AuthRoute,
   id: "/accept-invitation",
   path: "/accept-invitation",
+  getParentRoute: () => AuthRoute,
 } as any);
 const SeasonEventIdRoute = SeasonEventIdRouteImport.update({
-  getParentRoute: () => SeasonRoute,
   id: "/$eventId",
   path: "/$eventId",
+  getParentRoute: () => SeasonRoute,
 } as any);
 const StaffSeasonsNewRoute = StaffSeasonsNewRouteImport.update({
-  getParentRoute: () => StaffSeasonsRoute,
   id: "/new",
   path: "/new",
+  getParentRoute: () => StaffSeasonsRoute,
 } as any);
 const StaffEventsNewRoute = StaffEventsNewRouteImport.update({
-  getParentRoute: () => StaffEventsRoute,
   id: "/new",
   path: "/new",
+  getParentRoute: () => StaffEventsRoute,
 } as any);
 const RegisterEventIdRegistrationIdRoute = RegisterEventIdRegistrationIdRouteImport.update({
-  getParentRoute: () => RegisterEventIdRoute,
   id: "/$registrationId",
   path: "/$registrationId",
+  getParentRoute: () => RegisterEventIdRoute,
 } as any);
 const SeasonEventIdRankingsRoute = SeasonEventIdRankingsRouteImport.update({
-  getParentRoute: () => SeasonEventIdRoute,
   id: "/rankings",
   path: "/rankings",
+  getParentRoute: () => SeasonEventIdRoute,
 } as any);
 const SeasonEventIdQualificationsRoute = SeasonEventIdQualificationsRouteImport.update({
-  getParentRoute: () => SeasonEventIdRoute,
   id: "/qualifications",
   path: "/qualifications",
+  getParentRoute: () => SeasonEventIdRoute,
 } as any);
 const SeasonEventIdPlayoffsRoute = SeasonEventIdPlayoffsRouteImport.update({
-  getParentRoute: () => SeasonEventIdRoute,
   id: "/playoffs",
   path: "/playoffs",
+  getParentRoute: () => SeasonEventIdRoute,
 } as any);
 const SeasonEventIdAwardsRoute = SeasonEventIdAwardsRouteImport.update({
-  getParentRoute: () => SeasonEventIdRoute,
   id: "/awards",
   path: "/awards",
+  getParentRoute: () => SeasonEventIdRoute,
 } as any);
 const StaffSeasonsSeasonIdEditRoute = StaffSeasonsSeasonIdEditRouteImport.update({
-  getParentRoute: () => StaffSeasonsRoute,
   id: "/$seasonId/edit",
   path: "/$seasonId/edit",
+  getParentRoute: () => StaffSeasonsRoute,
 } as any);
 const StaffEventsEventRecordIdEditRoute = StaffEventsEventRecordIdEditRouteImport.update({
-  getParentRoute: () => StaffEventsRoute,
   id: "/$eventRecordId/edit",
   path: "/$eventRecordId/edit",
+  getParentRoute: () => StaffEventsRoute,
 } as any);
 const SeasonEventIdQualificationsMatchNumberRoute =
   SeasonEventIdQualificationsMatchNumberRouteImport.update({
-    getParentRoute: () => SeasonEventIdQualificationsRoute,
     id: "/$matchNumber",
     path: "/$matchNumber",
+    getParentRoute: () => SeasonEventIdQualificationsRoute,
   } as any);
 
 export interface FileRoutesByFullPath {
@@ -697,7 +697,7 @@ interface SeasonEventIdQualificationsRouteChildren {
 }
 
 const SeasonEventIdQualificationsRouteChildren: SeasonEventIdQualificationsRouteChildren = {
-  SeasonEventIdQualificationsMatchNumberRoute,
+  SeasonEventIdQualificationsMatchNumberRoute: SeasonEventIdQualificationsMatchNumberRoute,
 };
 
 const SeasonEventIdQualificationsRouteWithChildren =
@@ -711,10 +711,10 @@ interface SeasonEventIdRouteChildren {
 }
 
 const SeasonEventIdRouteChildren: SeasonEventIdRouteChildren = {
-  SeasonEventIdAwardsRoute,
-  SeasonEventIdPlayoffsRoute,
+  SeasonEventIdAwardsRoute: SeasonEventIdAwardsRoute,
+  SeasonEventIdPlayoffsRoute: SeasonEventIdPlayoffsRoute,
   SeasonEventIdQualificationsRoute: SeasonEventIdQualificationsRouteWithChildren,
-  SeasonEventIdRankingsRoute,
+  SeasonEventIdRankingsRoute: SeasonEventIdRankingsRoute,
 };
 
 const SeasonEventIdRouteWithChildren = SeasonEventIdRoute._addFileChildren(
@@ -739,10 +739,10 @@ interface AuthRouteChildren {
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthAcceptInvitationRoute,
-  AuthForgotPasswordRoute,
-  AuthPostVerifyRoute,
-  AuthResetPasswordRoute,
+  AuthAcceptInvitationRoute: AuthAcceptInvitationRoute,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthPostVerifyRoute: AuthPostVerifyRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
 };
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
@@ -752,7 +752,7 @@ interface RegisterEventIdRouteChildren {
 }
 
 const RegisterEventIdRouteChildren: RegisterEventIdRouteChildren = {
-  RegisterEventIdRegistrationIdRoute,
+  RegisterEventIdRegistrationIdRoute: RegisterEventIdRegistrationIdRoute,
 };
 
 const RegisterEventIdRouteWithChildren = RegisterEventIdRoute._addFileChildren(
@@ -775,8 +775,8 @@ interface StaffEventsRouteChildren {
 }
 
 const StaffEventsRouteChildren: StaffEventsRouteChildren = {
-  StaffEventsNewRoute,
-  StaffEventsEventRecordIdEditRoute,
+  StaffEventsNewRoute: StaffEventsNewRoute,
+  StaffEventsEventRecordIdEditRoute: StaffEventsEventRecordIdEditRoute,
 };
 
 const StaffEventsRouteWithChildren = StaffEventsRoute._addFileChildren(StaffEventsRouteChildren);
@@ -787,8 +787,8 @@ interface StaffSeasonsRouteChildren {
 }
 
 const StaffSeasonsRouteChildren: StaffSeasonsRouteChildren = {
-  StaffSeasonsNewRoute,
-  StaffSeasonsSeasonIdEditRoute,
+  StaffSeasonsNewRoute: StaffSeasonsNewRoute,
+  StaffSeasonsSeasonIdEditRoute: StaffSeasonsSeasonIdEditRoute,
 };
 
 const StaffSeasonsRouteWithChildren = StaffSeasonsRoute._addFileChildren(StaffSeasonsRouteChildren);
@@ -804,11 +804,11 @@ interface StaffRouteChildren {
 
 const StaffRouteChildren: StaffRouteChildren = {
   StaffEventsRoute: StaffEventsRouteWithChildren,
-  StaffRegistrationsRoute,
+  StaffRegistrationsRoute: StaffRegistrationsRoute,
   StaffSeasonsRoute: StaffSeasonsRouteWithChildren,
-  StaffSettingsRoute,
-  StaffSyncRoute,
-  StaffUsersRoute,
+  StaffSettingsRoute: StaffSettingsRoute,
+  StaffSyncRoute: StaffSyncRoute,
+  StaffUsersRoute: StaffUsersRoute,
 };
 
 const StaffRouteWithChildren = StaffRoute._addFileChildren(StaffRouteChildren);
@@ -819,23 +819,23 @@ interface TeamsRouteChildren {
 }
 
 const TeamsRouteChildren: TeamsRouteChildren = {
-  TeamsTeamNumberRoute,
-  TeamsNewRoute,
+  TeamsTeamNumberRoute: TeamsTeamNumberRoute,
+  TeamsNewRoute: TeamsNewRoute,
 };
 
 const TeamsRouteWithChildren = TeamsRoute._addFileChildren(TeamsRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute,
+  IndexRoute: IndexRoute,
   SeasonRoute: SeasonRouteWithChildren,
-  AccountRoute,
+  AccountRoute: AccountRoute,
   AuthRoute: AuthRouteWithChildren,
-  EventsRoute,
-  OnboardingRoute,
+  EventsRoute: EventsRoute,
+  OnboardingRoute: OnboardingRoute,
   RegisterRoute: RegisterRouteWithChildren,
   StaffRoute: StaffRouteWithChildren,
   TeamsRoute: TeamsRouteWithChildren,
-  UsersRoute,
+  UsersRoute: UsersRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

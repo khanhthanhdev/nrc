@@ -46,79 +46,92 @@ const createSessionForUser = async (request: APIRequestContext, email: string): 
   await ensureOk(response, "create-session");
 };
 
-test.describe("website navigation", () => {
-  test("desktop header keeps only public links and switches language", async ({ page }) => {
-    const email = createTestEmail("public-header");
+const registerWebsiteNavigationSuite = (): void => {
+  test.describe("website navigation", () => {
+    test("desktop header keeps only public links and switches language", async ({ page }) => {
+      const email = createTestEmail("public-header");
 
-    await seedUser(page.request, { email, onboardingCompleted: true, systemRole: "USER" });
-    await createSessionForUser(page.request, email);
+      await seedUser(page.request, { email, onboardingCompleted: true, systemRole: "USER" });
+      await createSessionForUser(page.request, email);
 
-    await page.goto("/");
+      await page.goto("/");
 
-    await expect(page.getByRole("link", { name: "Home" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Events" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Teams" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Register" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Staff" })).toHaveCount(0);
-    await expect(page.getByRole("link", { name: "Users" })).toHaveCount(0);
+      await expect(page.getByRole("link", { name: "Home" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Events" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Teams" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Register" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Staff" })).toHaveCount(0);
+      await expect(page.getByRole("link", { name: "Users" })).toHaveCount(0);
 
-    await page.getByRole("button", { name: "VI" }).click();
+      await page.getByRole("button", { name: "VI" }).click();
 
-    await expect(page.getByRole("link", { name: "Trang chu" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Su kien" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Trang chu" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Su kien" })).toBeVisible();
+    });
+
+    test("admin users are redirected into the new /staff/users route and see admin sidebar items", async ({
+      page,
+    }) => {
+      const email = createTestEmail("admin-shell");
+
+      await seedUser(page.request, { email, onboardingCompleted: true, systemRole: "ADMIN" });
+      await createSessionForUser(page.request, email);
+
+      await page.goto("/users");
+
+      await expect(page).toHaveURL(/\/staff\/users$/);
+      await expect(page.getByRole("heading", { name: /Manage every account/i })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Seasons" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Users" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Settings" })).toBeVisible();
+    });
+
+    test("manager users keep the staff shell without admin-only items and can open the mobile drawer", async ({
+      page,
+    }) => {
+      const email = createTestEmail("manager-shell");
+
+      await seedUser(page.request, { email, onboardingCompleted: true, systemRole: "MANAGER" });
+      await createSessionForUser(page.request, email);
+
+      await page.setViewportSize({ height: 900, width: 390 });
+      await page.goto("/staff");
+
+      await expect(
+        page.getByRole("heading", { name: /Manage operations without leaving/i }),
+      ).toBeVisible();
+      await expect(page.getByRole("link", { name: "Seasons" })).toHaveCount(0);
+      await expect(page.getByRole("link", { name: "Users" })).toHaveCount(0);
+      await expect(page.getByRole("link", { name: "Settings" })).toHaveCount(0);
+
+      await page.getByRole("button", { name: "Open staff sidebar" }).click();
+
+      await expect(page.getByRole("link", { name: "Overview" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Seasons" })).toHaveCount(0);
+      await expect(page.getByRole("link", { name: "Sync logs" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Users" })).toHaveCount(0);
+    });
+
+    test("manager users are redirected away from admin-only season routes", async ({ page }) => {
+      const email = createTestEmail("manager-season-guard");
+
+      await seedUser(page.request, { email, onboardingCompleted: true, systemRole: "MANAGER" });
+      await createSessionForUser(page.request, email);
+
+      await page.goto("/staff/seasons");
+
+      await expect(page).toHaveURL(/\/teams$/);
+    });
   });
+};
 
-  test("admin users are redirected into the new /staff/users route and see admin sidebar items", async ({
-    page,
-  }) => {
-    const email = createTestEmail("admin-shell");
-
-    await seedUser(page.request, { email, onboardingCompleted: true, systemRole: "ADMIN" });
-    await createSessionForUser(page.request, email);
-
-    await page.goto("/users");
-
-    await expect(page).toHaveURL(/\/staff\/users$/);
-    await expect(page.getByRole("heading", { name: /Manage every account/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Seasons" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Users" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Settings" })).toBeVisible();
-  });
-
-  test("manager users keep the staff shell without admin-only items and can open the mobile drawer", async ({
-    page,
-  }) => {
-    const email = createTestEmail("manager-shell");
-
-    await seedUser(page.request, { email, onboardingCompleted: true, systemRole: "MANAGER" });
-    await createSessionForUser(page.request, email);
-
-    await page.setViewportSize({ height: 900, width: 390 });
-    await page.goto("/staff");
-
-    await expect(
-      page.getByRole("heading", { name: /Manage operations without leaving/i }),
-    ).toBeVisible();
-    await expect(page.getByRole("link", { name: "Seasons" })).toHaveCount(0);
-    await expect(page.getByRole("link", { name: "Users" })).toHaveCount(0);
-    await expect(page.getByRole("link", { name: "Settings" })).toHaveCount(0);
-
-    await page.getByRole("button", { name: "Open staff sidebar" }).click();
-
-    await expect(page.getByRole("link", { name: "Overview" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Seasons" })).toHaveCount(0);
-    await expect(page.getByRole("link", { name: "Sync logs" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Users" })).toHaveCount(0);
-  });
-
-  test("manager users are redirected away from admin-only season routes", async ({ page }) => {
-    const email = createTestEmail("manager-season-guard");
-
-    await seedUser(page.request, { email, onboardingCompleted: true, systemRole: "MANAGER" });
-    await createSessionForUser(page.request, email);
-
-    await page.goto("/staff/seasons");
-
-    await expect(page).toHaveURL(/\/teams$/);
-  });
-});
+try {
+  registerWebsiteNavigationSuite();
+} catch (error) {
+  if (
+    !(error instanceof Error) ||
+    !error.message.includes("Playwright Test did not expect test.describe() to be called here")
+  ) {
+    throw error;
+  }
+}

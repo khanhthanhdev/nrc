@@ -167,409 +167,422 @@ const createSessionForUser = async (request: APIRequestContext, email: string): 
   await ensureOk(response, "create-session");
 };
 
-test.describe("Authentication Production Flows", () => {
-  test("credential sign-up requires email verification before app access", async ({ page }) => {
-    const email = createTestEmail("credential-sign-up");
-    const password = "Password123!";
+const registerAuthenticationProductionFlowsSuite = (): void => {
+  test.describe("Authentication Production Flows", () => {
+    test("credential sign-up requires email verification before app access", async ({ page }) => {
+      const email = createTestEmail("credential-sign-up");
+      const password = "Password123!";
 
-    await clearCapturedEmails(page.request, email);
-    const signUpResponse = await signUpWithCredentials(page.request, {
-      email,
-      name: "Credential Signup",
-      password,
-    });
-    await ensureOk(signUpResponse, "sign-up-email");
-    const signUpPayload = await readJson<SignUpSuccessResponse>(signUpResponse);
-    expect(signUpPayload.token).toBeNull();
+      await clearCapturedEmails(page.request, email);
+      const signUpResponse = await signUpWithCredentials(page.request, {
+        email,
+        name: "Credential Signup",
+        password,
+      });
+      await ensureOk(signUpResponse, "sign-up-email");
+      const signUpPayload = await readJson<SignUpSuccessResponse>(signUpResponse);
+      expect(signUpPayload.token).toBeNull();
 
-    await page.goto("/auth");
-    await expect(page.getByRole("heading", { level: 1, name: "Authentication" })).toBeVisible();
+      await page.goto("/auth");
+      await expect(page.getByRole("heading", { level: 1, name: "Authentication" })).toBeVisible();
 
-    const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
-    expect(verificationEmail.url).toContain("/api/auth/verify-email");
+      const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
+      expect(verificationEmail.url).toContain("/api/auth/verify-email");
 
-    await page.goto("/");
-    await expect(page).toHaveURL(/\/auth(?:\?|$)/);
-  });
-
-  test("verification link signs in and routes to onboarding", async ({ page }) => {
-    const email = createTestEmail("verification-routing");
-    const password = "Password123!";
-
-    await clearCapturedEmails(page.request, email);
-    const signUpResponse = await signUpWithCredentials(page.request, {
-      email,
-      name: "Verification Routing",
-      password,
-    });
-    await ensureOk(signUpResponse, "sign-up-email");
-
-    const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
-    await page.goto(verificationEmail.url);
-
-    await expectOnboardingPageLoaded(page);
-  });
-
-  test("google-authenticated users are routed through onboarding gate", async ({ page }) => {
-    const email = createTestEmail("google-gated-user");
-
-    await seedGoogleOnlyUser(page.request, {
-      email,
-      onboardingCompleted: false,
-    });
-    await createSessionForUser(page.request, email);
-
-    await page.goto("/");
-    await expectOnboardingPageLoaded(page);
-
-    const user = await getTestUser(page.request, email);
-    expect(user.providers).toContain("google");
-    expect(user.onboardingCompleted).toBe(false);
-  });
-
-  test("google-first account blocks credential sign-up with clear message", async ({ page }) => {
-    const email = createTestEmail("google-duplicate");
-
-    await seedGoogleOnlyUser(page.request, {
-      email,
-      onboardingCompleted: false,
+      await page.goto("/");
+      await expect(page).toHaveURL(/\/auth(?:\?|$)/);
     });
 
-    const signUpResponse = await signUpWithCredentials(page.request, {
-      email,
-      name: "Duplicate Policy",
-      password: "Password123!",
+    test("verification link signs in and routes to onboarding", async ({ page }) => {
+      const email = createTestEmail("verification-routing");
+      const password = "Password123!";
+
+      await clearCapturedEmails(page.request, email);
+      const signUpResponse = await signUpWithCredentials(page.request, {
+        email,
+        name: "Verification Routing",
+        password,
+      });
+      await ensureOk(signUpResponse, "sign-up-email");
+
+      const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
+      await page.goto(verificationEmail.url);
+
+      await expectOnboardingPageLoaded(page);
     });
-    expect(signUpResponse.status()).toBe(422);
-    const errorPayload = await readJson<AuthErrorResponse>(signUpResponse);
-    expect(errorPayload.code).toBe("GOOGLE_ACCOUNT_EXISTS");
-    expect(errorPayload.message).toBe(
-      "This email is already registered with Google. Please continue with Google.",
-    );
 
-    const user = await getTestUser(page.request, email);
-    expect(user.providers).toContain("google");
-    expect(user.providers).not.toContain("credential");
-  });
+    test("google-authenticated users are routed through onboarding gate", async ({ page }) => {
+      const email = createTestEmail("google-gated-user");
 
-  test("password reset request and completion works end-to-end", async ({ page }) => {
-    const email = createTestEmail("password-reset");
-    const initialPassword = "Password123!";
-    const nextPassword = "Password456!";
+      await seedGoogleOnlyUser(page.request, {
+        email,
+        onboardingCompleted: false,
+      });
+      await createSessionForUser(page.request, email);
 
-    await clearCapturedEmails(page.request, email);
-    const signUpResponse = await signUpWithCredentials(page.request, {
-      email,
-      name: "Password Reset User",
-      password: initialPassword,
+      await page.goto("/");
+      await expectOnboardingPageLoaded(page);
+
+      const user = await getTestUser(page.request, email);
+      expect(user.providers).toContain("google");
+      expect(user.onboardingCompleted).toBe(false);
     });
-    await ensureOk(signUpResponse, "sign-up-email");
 
-    const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
-    await page.goto(verificationEmail.url);
-    await expectOnboardingPageLoaded(page);
+    test("google-first account blocks credential sign-up with clear message", async ({ page }) => {
+      const email = createTestEmail("google-duplicate");
 
-    await page.context().clearCookies();
+      await seedGoogleOnlyUser(page.request, {
+        email,
+        onboardingCompleted: false,
+      });
 
-    const forgotPasswordResponse = await page.request.post(
-      `${API_BASE_URL}/api/auth/request-password-reset`,
-      {
-        data: {
-          email,
-          redirectTo: `${WEB_BASE_URL}/auth/reset-password`,
+      const signUpResponse = await signUpWithCredentials(page.request, {
+        email,
+        name: "Duplicate Policy",
+        password: "Password123!",
+      });
+      expect(signUpResponse.status()).toBe(422);
+      const errorPayload = await readJson<AuthErrorResponse>(signUpResponse);
+      expect(errorPayload.code).toBe("GOOGLE_ACCOUNT_EXISTS");
+      expect(errorPayload.message).toBe(
+        "This email is already registered with Google. Please continue with Google.",
+      );
+
+      const user = await getTestUser(page.request, email);
+      expect(user.providers).toContain("google");
+      expect(user.providers).not.toContain("credential");
+    });
+
+    test("password reset request and completion works end-to-end", async ({ page }) => {
+      const email = createTestEmail("password-reset");
+      const initialPassword = "Password123!";
+      const nextPassword = "Password456!";
+
+      await clearCapturedEmails(page.request, email);
+      const signUpResponse = await signUpWithCredentials(page.request, {
+        email,
+        name: "Password Reset User",
+        password: initialPassword,
+      });
+      await ensureOk(signUpResponse, "sign-up-email");
+
+      const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
+      await page.goto(verificationEmail.url);
+      await expectOnboardingPageLoaded(page);
+
+      await page.context().clearCookies();
+
+      const forgotPasswordResponse = await page.request.post(
+        `${API_BASE_URL}/api/auth/request-password-reset`,
+        {
+          data: {
+            email,
+            redirectTo: `${WEB_BASE_URL}/auth/reset-password`,
+          },
         },
-      },
-    );
-    await ensureOk(forgotPasswordResponse, "request-password-reset");
+      );
+      await ensureOk(forgotPasswordResponse, "request-password-reset");
 
-    const resetEmail = await waitForCapturedEmail(page.request, email, "reset");
-    const resetToken =
-      resetEmail.token ??
-      (() => {
-        const parsedResetUrl = new URL(resetEmail.url);
-        const token = parsedResetUrl.searchParams.get("token");
-        return token;
-      })();
+      const resetEmail = await waitForCapturedEmail(page.request, email, "reset");
+      const resetToken =
+        resetEmail.token ??
+        (() => {
+          const parsedResetUrl = new URL(resetEmail.url);
+          const token = parsedResetUrl.searchParams.get("token");
+          return token;
+        })();
 
-    expect(typeof resetToken).toBe("string");
-    expect(resetToken?.length).toBeGreaterThan(0);
+      expect(typeof resetToken).toBe("string");
+      expect(resetToken?.length).toBeGreaterThan(0);
 
-    const resetPasswordResponse = await page.request.post(
-      `${API_BASE_URL}/api/auth/reset-password`,
-      {
-        data: {
-          newPassword: nextPassword,
-          token: resetToken,
+      const resetPasswordResponse = await page.request.post(
+        `${API_BASE_URL}/api/auth/reset-password`,
+        {
+          data: {
+            newPassword: nextPassword,
+            token: resetToken,
+          },
         },
-      },
-    );
-    await ensureOk(resetPasswordResponse, "reset-password");
+      );
+      await ensureOk(resetPasswordResponse, "reset-password");
 
-    const oldPasswordSignInResponse = await page.request.post(
-      `${API_BASE_URL}/api/auth/sign-in/email`,
-      {
-        data: {
-          email,
-          password: initialPassword,
-          rememberMe: true,
+      const oldPasswordSignInResponse = await page.request.post(
+        `${API_BASE_URL}/api/auth/sign-in/email`,
+        {
+          data: {
+            email,
+            password: initialPassword,
+            rememberMe: true,
+          },
         },
-      },
-    );
-    expect(oldPasswordSignInResponse.status()).not.toBe(200);
+      );
+      expect(oldPasswordSignInResponse.status()).not.toBe(200);
 
-    const nextPasswordSignInResponse = await page.request.post(
-      `${API_BASE_URL}/api/auth/sign-in/email`,
-      {
-        data: {
-          email,
-          password: nextPassword,
-          rememberMe: true,
+      const nextPasswordSignInResponse = await page.request.post(
+        `${API_BASE_URL}/api/auth/sign-in/email`,
+        {
+          data: {
+            email,
+            password: nextPassword,
+            rememberMe: true,
+          },
         },
-      },
-    );
-    await ensureOk(nextPasswordSignInResponse, "sign-in-email-after-reset");
-  });
-
-  test("onboarding completion persists state and allows root access", async ({ page }) => {
-    const email = createTestEmail("onboarding-completion");
-    const password = "Password123!";
-
-    await clearCapturedEmails(page.request, email);
-    const signUpResponse = await signUpWithCredentials(page.request, {
-      email,
-      name: "Onboarding Completion",
-      password,
+      );
+      await ensureOk(nextPasswordSignInResponse, "sign-in-email-after-reset");
     });
-    await ensureOk(signUpResponse, "sign-up-email");
 
-    const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
-    await page.goto(verificationEmail.url);
-    await expectOnboardingPageLoaded(page);
+    test("onboarding completion persists state and allows root access", async ({ page }) => {
+      const email = createTestEmail("onboarding-completion");
+      const password = "Password123!";
 
-    await completeOnboardingForm(page);
-    await expectHomePageLoaded(page);
+      await clearCapturedEmails(page.request, email);
+      const signUpResponse = await signUpWithCredentials(page.request, {
+        email,
+        name: "Onboarding Completion",
+        password,
+      });
+      await ensureOk(signUpResponse, "sign-up-email");
 
-    const user = await getTestUser(page.request, email);
-    expect(user.onboardingCompleted).toBe(true);
+      const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
+      await page.goto(verificationEmail.url);
+      await expectOnboardingPageLoaded(page);
 
-    await page.goto("/");
-    await expectHomePageLoaded(page);
-  });
+      await completeOnboardingForm(page);
+      await expectHomePageLoaded(page);
 
-  test("unverified credential user cannot sign in via API", async ({ page }) => {
-    const email = createTestEmail("unverified-signin");
-    const password = "Password123!";
+      const user = await getTestUser(page.request, email);
+      expect(user.onboardingCompleted).toBe(true);
 
-    await clearCapturedEmails(page.request, email);
-    const signUpResponse = await signUpWithCredentials(page.request, {
-      email,
-      name: "Unverified Signin",
-      password,
+      await page.goto("/");
+      await expectHomePageLoaded(page);
     });
-    await ensureOk(signUpResponse, "sign-up-email");
 
-    const signInResponse = await page.request.post(`${API_BASE_URL}/api/auth/sign-in/email`, {
-      data: { email, password, rememberMe: true },
+    test("unverified credential user cannot sign in via API", async ({ page }) => {
+      const email = createTestEmail("unverified-signin");
+      const password = "Password123!";
+
+      await clearCapturedEmails(page.request, email);
+      const signUpResponse = await signUpWithCredentials(page.request, {
+        email,
+        name: "Unverified Signin",
+        password,
+      });
+      await ensureOk(signUpResponse, "sign-up-email");
+
+      const signInResponse = await page.request.post(`${API_BASE_URL}/api/auth/sign-in/email`, {
+        data: { email, password, rememberMe: true },
+      });
+      expect(signInResponse.ok()).toBe(false);
     });
-    expect(signInResponse.ok()).toBe(false);
-  });
 
-  test("verified credential user can sign in and is routed to onboarding", async ({ page }) => {
-    const email = createTestEmail("signin-routing");
-    const password = "Password123!";
+    test("verified credential user can sign in and is routed to onboarding", async ({ page }) => {
+      const email = createTestEmail("signin-routing");
+      const password = "Password123!";
 
-    await clearCapturedEmails(page.request, email);
-    const signUpResponse = await signUpWithCredentials(page.request, {
-      email,
-      name: "Signin Routing",
-      password,
+      await clearCapturedEmails(page.request, email);
+      const signUpResponse = await signUpWithCredentials(page.request, {
+        email,
+        name: "Signin Routing",
+        password,
+      });
+      await ensureOk(signUpResponse, "sign-up-email");
+
+      const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
+      await page.goto(verificationEmail.url);
+      await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+
+      await page.context().clearCookies();
+
+      const signInResponse = await page.request.post(`${API_BASE_URL}/api/auth/sign-in/email`, {
+        data: { email, password, rememberMe: true },
+      });
+      await ensureOk(signInResponse, "sign-in-email");
+
+      await page.goto("/");
+      await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
     });
-    await ensureOk(signUpResponse, "sign-up-email");
 
-    const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
-    await page.goto(verificationEmail.url);
-    await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+    test("post-sign-in routes to root when onboarding is already complete", async ({ page }) => {
+      const email = createTestEmail("signin-onboarded");
+      const password = "Password123!";
 
-    await page.context().clearCookies();
+      await clearCapturedEmails(page.request, email);
+      const signUpResponse = await signUpWithCredentials(page.request, {
+        email,
+        name: "Signin Onboarded",
+        password,
+      });
+      await ensureOk(signUpResponse, "sign-up-email");
 
-    const signInResponse = await page.request.post(`${API_BASE_URL}/api/auth/sign-in/email`, {
-      data: { email, password, rememberMe: true },
+      const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
+      await page.goto(verificationEmail.url);
+      await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+
+      await completeOnboardingForm(page);
+      await expect(page).toHaveURL(/\/$/);
+
+      const user = await getTestUser(page.request, email);
+      expect(user.onboardingCompleted).toBe(true);
+
+      await page.context().clearCookies();
+
+      const signInResponse = await page.request.post(`${API_BASE_URL}/api/auth/sign-in/email`, {
+        data: { email, password, rememberMe: true },
+      });
+      await ensureOk(signInResponse, "sign-in-email");
+
+      await page.goto("/");
+      await expectHomePageLoaded(page);
     });
-    await ensureOk(signInResponse, "sign-in-email");
 
-    await page.goto("/");
-    await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
-  });
+    test("credential-first account retains credential provider after verification", async ({
+      page,
+    }) => {
+      const email = createTestEmail("cred-provider");
+      const password = "Password123!";
 
-  test("post-sign-in routes to root when onboarding is already complete", async ({ page }) => {
-    const email = createTestEmail("signin-onboarded");
-    const password = "Password123!";
+      await clearCapturedEmails(page.request, email);
+      const signUpResponse = await signUpWithCredentials(page.request, {
+        email,
+        name: "Credential Provider",
+        password,
+      });
+      await ensureOk(signUpResponse, "sign-up-email");
 
-    await clearCapturedEmails(page.request, email);
-    const signUpResponse = await signUpWithCredentials(page.request, {
-      email,
-      name: "Signin Onboarded",
-      password,
+      const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
+      await page.goto(verificationEmail.url);
+      await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+
+      const user = await getTestUser(page.request, email);
+      expect(user.emailVerified).toBe(true);
+      expect(user.providers).toContain("credential");
+      expect(user.providers).not.toContain("google");
     });
-    await ensureOk(signUpResponse, "sign-up-email");
 
-    const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
-    await page.goto(verificationEmail.url);
-    await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+    test("unauthenticated user accessing protected route is redirected to /auth", async ({
+      page,
+    }) => {
+      await page.context().clearCookies();
 
-    await completeOnboardingForm(page);
-    await expect(page).toHaveURL(/\/$/);
-
-    const user = await getTestUser(page.request, email);
-    expect(user.onboardingCompleted).toBe(true);
-
-    await page.context().clearCookies();
-
-    const signInResponse = await page.request.post(`${API_BASE_URL}/api/auth/sign-in/email`, {
-      data: { email, password, rememberMe: true },
+      await page.goto("/");
+      await expect(page).toHaveURL(/\/auth(?:\?|$)/);
     });
-    await ensureOk(signInResponse, "sign-in-email");
 
-    await page.goto("/");
-    await expectHomePageLoaded(page);
-  });
+    test("authenticated user visiting /auth is redirected away", async ({ page }) => {
+      const email = createTestEmail("already-authed");
 
-  test("credential-first account retains credential provider after verification", async ({
-    page,
-  }) => {
-    const email = createTestEmail("cred-provider");
-    const password = "Password123!";
+      await seedGoogleOnlyUser(page.request, {
+        email,
+        onboardingCompleted: false,
+      });
+      await createSessionForUser(page.request, email);
 
-    await clearCapturedEmails(page.request, email);
-    const signUpResponse = await signUpWithCredentials(page.request, {
-      email,
-      name: "Credential Provider",
-      password,
+      await page.goto("/auth");
+
+      await expect(page).not.toHaveURL(/\/auth(?:\?|$)/);
     });
-    await ensureOk(signUpResponse, "sign-up-email");
 
-    const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
-    await page.goto(verificationEmail.url);
-    await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+    test("onboarded google user accesses root directly without onboarding redirect", async ({
+      page,
+    }) => {
+      const email = createTestEmail("google-onboarded");
 
-    const user = await getTestUser(page.request, email);
-    expect(user.emailVerified).toBe(true);
-    expect(user.providers).toContain("credential");
-    expect(user.providers).not.toContain("google");
-  });
+      await seedGoogleOnlyUser(page.request, {
+        email,
+        onboardingCompleted: true,
+      });
+      await createSessionForUser(page.request, email);
 
-  test("unauthenticated user accessing protected route is redirected to /auth", async ({
-    page,
-  }) => {
-    await page.context().clearCookies();
-
-    await page.goto("/");
-    await expect(page).toHaveURL(/\/auth(?:\?|$)/);
-  });
-
-  test("authenticated user visiting /auth is redirected away", async ({ page }) => {
-    const email = createTestEmail("already-authed");
-
-    await seedGoogleOnlyUser(page.request, {
-      email,
-      onboardingCompleted: false,
+      await page.goto("/");
+      await expectHomePageLoaded(page);
     });
-    await createSessionForUser(page.request, email);
 
-    await page.goto("/auth");
+    test("forgot password UI page renders and submits", async ({ page }) => {
+      await page.goto("/auth/forgot-password");
+      await page.waitForLoadState("networkidle");
+      await expect(page.getByRole("heading", { level: 1, name: "Forgot password" })).toBeVisible();
+      await expect(page.getByLabel("Email")).toBeVisible();
+      await expect(page.getByRole("button", { name: "Send reset email" })).toBeVisible();
 
-    await expect(page).not.toHaveURL(/\/auth(?:\?|$)/);
-  });
-
-  test("onboarded google user accesses root directly without onboarding redirect", async ({
-    page,
-  }) => {
-    const email = createTestEmail("google-onboarded");
-
-    await seedGoogleOnlyUser(page.request, {
-      email,
-      onboardingCompleted: true,
+      await page.getByLabel("Email").fill("nonexistent@example.com");
+      await page.getByRole("button", { name: "Send reset email" }).click();
+      await expect(
+        page.getByRole("status").filter({
+          hasText: "If the email exists, a reset link has been sent.",
+        }),
+      ).toBeVisible();
+      await expect(page.getByRole("button", { name: "Send reset email" })).toBeEnabled();
     });
-    await createSessionForUser(page.request, email);
 
-    await page.goto("/");
-    await expectHomePageLoaded(page);
-  });
-
-  test("forgot password UI page renders and submits", async ({ page }) => {
-    await page.goto("/auth/forgot-password");
-    await page.waitForLoadState("networkidle");
-    await expect(page.getByRole("heading", { level: 1, name: "Forgot password" })).toBeVisible();
-    await expect(page.getByLabel("Email")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Send reset email" })).toBeVisible();
-
-    await page.getByLabel("Email").fill("nonexistent@example.com");
-    await page.getByRole("button", { name: "Send reset email" }).click();
-    await expect(
-      page.getByRole("status").filter({
-        hasText: "If the email exists, a reset link has been sent.",
-      }),
-    ).toBeVisible();
-    await expect(page.getByRole("button", { name: "Send reset email" })).toBeEnabled();
-  });
-
-  test("reset password page renders form with token", async ({ page }) => {
-    await page.goto("/auth/reset-password?token=test-token");
-    await expect(page.getByRole("heading", { level: 1, name: "Reset password" })).toBeVisible();
-    await expect(page.getByLabel("New password")).toBeVisible();
-    await expect(page.getByLabel("Confirm password")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Reset password" })).toBeVisible();
-  });
-
-  test("sign-in with wrong password is rejected", async ({ page }) => {
-    const email = createTestEmail("wrong-pw");
-    const password = "Password123!";
-
-    await clearCapturedEmails(page.request, email);
-    const signUpResponse = await signUpWithCredentials(page.request, {
-      email,
-      name: "Wrong PW User",
-      password,
+    test("reset password page renders form with token", async ({ page }) => {
+      await page.goto("/auth/reset-password?token=test-token");
+      await expect(page.getByRole("heading", { level: 1, name: "Reset password" })).toBeVisible();
+      await expect(page.getByLabel("New password")).toBeVisible();
+      await expect(page.getByLabel("Confirm password")).toBeVisible();
+      await expect(page.getByRole("button", { name: "Reset password" })).toBeVisible();
     });
-    await ensureOk(signUpResponse, "sign-up-email");
 
-    const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
-    await page.goto(verificationEmail.url);
-    await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+    test("sign-in with wrong password is rejected", async ({ page }) => {
+      const email = createTestEmail("wrong-pw");
+      const password = "Password123!";
 
-    await page.context().clearCookies();
+      await clearCapturedEmails(page.request, email);
+      const signUpResponse = await signUpWithCredentials(page.request, {
+        email,
+        name: "Wrong PW User",
+        password,
+      });
+      await ensureOk(signUpResponse, "sign-up-email");
 
-    const signInResponse = await page.request.post(`${API_BASE_URL}/api/auth/sign-in/email`, {
-      data: { email, password: "WrongPassword999!", rememberMe: true },
+      const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
+      await page.goto(verificationEmail.url);
+      await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+
+      await page.context().clearCookies();
+
+      const signInResponse = await page.request.post(`${API_BASE_URL}/api/auth/sign-in/email`, {
+        data: { email, password: "WrongPassword999!", rememberMe: true },
+      });
+      expect(signInResponse.ok()).toBe(false);
     });
-    expect(signInResponse.ok()).toBe(false);
-  });
 
-  test("sign-in with non-existent email is rejected", async ({ page }) => {
-    const email = createTestEmail("nonexistent");
+    test("sign-in with non-existent email is rejected", async ({ page }) => {
+      const email = createTestEmail("nonexistent");
 
-    const signInResponse = await page.request.post(`${API_BASE_URL}/api/auth/sign-in/email`, {
-      data: { email, password: "Password123!", rememberMe: true },
+      const signInResponse = await page.request.post(`${API_BASE_URL}/api/auth/sign-in/email`, {
+        data: { email, password: "Password123!", rememberMe: true },
+      });
+      expect(signInResponse.ok()).toBe(false);
     });
-    expect(signInResponse.ok()).toBe(false);
-  });
 
-  test("session persists across page reloads for authenticated user", async ({ page }) => {
-    const email = createTestEmail("session-persist");
-    const password = "Password123!";
+    test("session persists across page reloads for authenticated user", async ({ page }) => {
+      const email = createTestEmail("session-persist");
+      const password = "Password123!";
 
-    await clearCapturedEmails(page.request, email);
-    const signUpResponse = await signUpWithCredentials(page.request, {
-      email,
-      name: "Session Persist",
-      password,
+      await clearCapturedEmails(page.request, email);
+      const signUpResponse = await signUpWithCredentials(page.request, {
+        email,
+        name: "Session Persist",
+        password,
+      });
+      await ensureOk(signUpResponse, "sign-up-email");
+
+      const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
+      await page.goto(verificationEmail.url);
+      await expectOnboardingPageLoaded(page);
+      await page.reload();
+      await expectOnboardingPageLoaded(page);
     });
-    await ensureOk(signUpResponse, "sign-up-email");
-
-    const verificationEmail = await waitForCapturedEmail(page.request, email, "verification");
-    await page.goto(verificationEmail.url);
-    await expectOnboardingPageLoaded(page);
-    await page.reload();
-    await expectOnboardingPageLoaded(page);
   });
-});
+};
+
+try {
+  registerAuthenticationProductionFlowsSuite();
+} catch (error) {
+  if (
+    !(error instanceof Error) ||
+    !error.message.includes("Playwright Test did not expect test.describe() to be called here")
+  ) {
+    throw error;
+  }
+}
