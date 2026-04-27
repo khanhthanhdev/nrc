@@ -116,11 +116,11 @@
 :root {
   /* ──── Typography ──────────────────────────────────────────────────────── */
   --font-sans:
-    "Quicksand", Arial, Helvetica, ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    "Quicksand", Arial, Helvetica, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
 
   /* Font sizes */
   --dt-font-size-xs: 12px;
@@ -302,8 +302,7 @@
     font-weight: var(--dt-font-weight-normal);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background:
-      linear-gradient(180deg, #ffffff 0%, #f9fbff 42%, #ffffff 100%);
+    background: linear-gradient(180deg, #ffffff 0%, #f9fbff 42%, #ffffff 100%);
   }
 
   h1,
@@ -324,8 +323,7 @@
 
 @layer utilities {
   .nrc-shell {
-    background:
-      linear-gradient(180deg, #ffffff 0%, #f9fbff 42%, #ffffff 100%);
+    background: linear-gradient(180deg, #ffffff 0%, #f9fbff 42%, #ffffff 100%);
     min-width: 0;
     width: 100%;
   }

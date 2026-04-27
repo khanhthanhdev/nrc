@@ -22,11 +22,11 @@ export const usePublicTeamList = (page: number, search?: string, enabled = true)
     retry: false,
   });
 
-export const usePublicTeamProfile = (teamNumber: string) =>
+export const usePublicTeamProfile = (teamNumber: string, enabled = true) =>
   useQuery({
     ...orpc.team.getPublicTeam.queryOptions({
       input: { teamNumber },
     }),
-    enabled: teamNumber.length > 0,
+    enabled: enabled && teamNumber.length > 0,
     retry: false,
   });

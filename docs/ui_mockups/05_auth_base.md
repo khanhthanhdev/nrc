@@ -1,7 +1,9 @@
 # Auth Base UI Wireframe
+
 Route: `/auth`
 
 ## 1. Normal User View
+
 (Header only)
 
 ```ascii
@@ -35,6 +37,7 @@ Route: `/auth`
 ```
 
 ## 2. Staff View (Auth Settings)
+
 Route: `/staff/settings` (Admin only)
 (Header + Sidebar)
 
@@ -63,4 +66,3 @@ Route: `/staff/settings` (Admin only)
 |   Site        |                                                             |
 +---------------+-------------------------------------------------------------+
 ```
-

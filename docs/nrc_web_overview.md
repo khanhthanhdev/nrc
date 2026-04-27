@@ -364,6 +364,95 @@ The page should have both:
 - a public view
 - a management view for permitted team members
 
+### 8.4.1. Team Number and URL Contract
+
+- `teamNumber` must use strict 5-digit numeric format: `^\d{5}$`.
+- Examples: `00001`, `02323`, `23476`.
+- Team public route: `/teams/[teamNumber]`.
+- Organization slug for a team should use the same 5-digit value as the team number to keep URLs and identity consistent.
+- Invalid team-number URLs should fail fast on the frontend with a clear invalid-format message.
+
+### 8.4.2. Teams Listing Page (`/teams`)
+
+The teams listing page should include:
+
+- search input (team name, school/organization, team number)
+- paginated results (default page size: 20)
+- card/grid layout with:
+  - team avatar
+  - team name
+  - team number
+  - school/organization
+  - city/province
+  - short description preview
+- empty state for no teams and no-match state for search
+- loading and error states
+- primary CTA `Create team` for authenticated users only
+
+### 8.4.3. Team Creation Flow (`/teams/new`)
+
+- Only authenticated users can access the page.
+- Required fields:
+  - team name
+  - terms acceptance
+- Optional fields:
+  - school/organization
+  - city/province
+  - description
+- On success:
+  - create Better Auth organization
+  - create team record
+  - assign creator role `TEAM_MENTOR`
+  - generate unique 5-digit team number
+  - reserve matching organization slug
+  - redirect user to `/teams/[teamNumber]`
+
+### 8.4.4. Team Profile Information Architecture (`/teams/[teamNumber]`)
+
+Public view should show:
+
+- hero section
+  - cover image
+  - avatar
+  - team name
+  - team number
+  - school/organization and city/province (if present)
+- main content
+  - team description
+  - team history across events (placeholder until sync data is available)
+  - match results history (placeholder until sync data is available)
+  - awards history (placeholder until sync data is available)
+- sidebar
+  - school/organization details
+  - city/province
+  - team number
+  - created date
+  - member list
+
+Management view should show:
+
+- profile editing form (name, description, media, organization fields)
+- membership roster with role-aware actions
+- invitation management panel (for users with invite permission)
+
+### 8.4.5. Team Profile Permission and Tab Rules
+
+- Public tab is available to all visitors.
+- Management and Invitations tabs are visible only to users who can manage the team (`TEAM_MENTOR`, `TEAM_LEADER`).
+- Invite action should be restricted by role policy (`TEAM_MENTOR` default, `TEAM_LEADER` if explicitly allowed by policy).
+- Users without management permission must never see management actions in the UI.
+
+### 8.4.6. Team Page State Requirements
+
+At minimum, the team profile page must define:
+
+- loading state: while team query is pending
+- invalid-team-number state: route param not matching `^\d{5}$`
+- not-found state: no team exists for the given team number
+- load-error state: network/server failure
+
+All state messages must be localized for both `en` and `vi`.
+
 ### 8.5. Team Invitations
 
 ### Requirements

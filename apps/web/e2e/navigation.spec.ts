@@ -21,7 +21,11 @@ const ensureOk = async (response: APIResponse, context: string): Promise<void> =
 
 const seedUser = async (
   request: APIRequestContext,
-  input: { email: string; onboardingCompleted?: boolean; systemRole?: "ADMIN" | "MANAGER" | "USER" },
+  input: {
+    email: string;
+    onboardingCompleted?: boolean;
+    systemRole?: "ADMIN" | "MANAGER" | "USER";
+  },
 ): Promise<void> => {
   const response = await request.post(`${AUTH_HELPER_BASE_URL}/seed-google-user`, {
     data: {
@@ -34,10 +38,7 @@ const seedUser = async (
   await ensureOk(response, "seed-google-user");
 };
 
-const createSessionForUser = async (
-  request: APIRequestContext,
-  email: string,
-): Promise<void> => {
+const createSessionForUser = async (request: APIRequestContext, email: string): Promise<void> => {
   const response = await request.post(`${AUTH_HELPER_BASE_URL}/create-session`, {
     data: { email },
   });
@@ -95,7 +96,9 @@ test.describe("website navigation", () => {
     await page.setViewportSize({ height: 900, width: 390 });
     await page.goto("/staff");
 
-    await expect(page.getByRole("heading", { name: /Manage operations without leaving/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Manage operations without leaving/i }),
+    ).toBeVisible();
     await expect(page.getByRole("link", { name: "Seasons" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Users" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Settings" })).toHaveCount(0);

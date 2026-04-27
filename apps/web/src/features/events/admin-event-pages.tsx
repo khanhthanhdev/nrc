@@ -39,7 +39,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -143,7 +149,10 @@ const emptyAnnouncementDraft = (): AnnouncementDraft => ({
 });
 
 const normalizeEventCode = (value: string): string =>
-  value.toUpperCase().replaceAll(/[^A-Z0-9_-]/g, "").slice(0, 50);
+  value
+    .toUpperCase()
+    .replaceAll(/[^A-Z0-9_-]/g, "")
+    .slice(0, 50);
 
 const toDateTimeLocalValue = (value: string | null | undefined): string => {
   if (!value) {
@@ -186,18 +195,24 @@ const getErrorMessage = (error: unknown, fallback: string): string =>
 
 const statusClassName = (status: EventStatus): string => {
   switch (status) {
-    case "registration_open":
+    case "registration_open": {
       return "border-emerald-200 bg-emerald-50 text-emerald-700";
-    case "registration_closed":
+    }
+    case "registration_closed": {
       return "border-amber-200 bg-amber-50 text-amber-700";
-    case "active":
+    }
+    case "active": {
       return "border-cyan-200 bg-cyan-50 text-cyan-700";
-    case "completed":
+    }
+    case "completed": {
       return "border-violet-200 bg-violet-50 text-violet-700";
-    case "published":
+    }
+    case "published": {
       return "border-sky-200 bg-sky-50 text-sky-700";
-    default:
+    }
+    default: {
       return "border-slate-200 bg-slate-100 text-slate-700";
+    }
   }
 };
 
@@ -290,9 +305,7 @@ export function AdminEventListPage({
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
               Admin only
             </p>
-            <h1 className="text-3xl font-semibold tracking-[-0.04em] text-foreground">
-              Events
-            </h1>
+            <h1 className="text-3xl font-semibold tracking-[-0.04em] text-foreground">Events</h1>
             <p className="max-w-3xl text-sm leading-7 text-muted-foreground">
               Manage season-scoped event pages, documents, announcements, and registration form
               versions.
@@ -452,7 +465,9 @@ export function AdminEventCreatePage() {
 export function AdminEventEditorPage({ data }: { data: AdminEventDetailData }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const detailQueryOptions = orpc.event.getAdminEvent.queryOptions({ input: { id: data.event.id } });
+  const detailQueryOptions = orpc.event.getAdminEvent.queryOptions({
+    input: { id: data.event.id },
+  });
   const [form, setForm] = useState<EventFormState>(formFromDetail(data));
   const [formError, setFormError] = useState<string | null>(null);
   const currentSeasonQuery = useQuery({
@@ -482,7 +497,9 @@ export function AdminEventEditorPage({ data }: { data: AdminEventDetailData }) {
   const invalidateDetail = async () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: detailQueryOptions.queryKey }),
-      queryClient.invalidateQueries({ queryKey: orpc.event.listAdminEvents.queryOptions().queryKey }),
+      queryClient.invalidateQueries({
+        queryKey: orpc.event.listAdminEvents.queryOptions().queryKey,
+      }),
     ]);
   };
 
@@ -719,7 +736,11 @@ function EventFormCard({
                 id="event-season"
                 disabled
                 readOnly
-                value={currentSeason ? getCurrentSeasonDescription(currentSeason) : "Loading active season..."}
+                value={
+                  currentSeason
+                    ? getCurrentSeasonDescription(currentSeason)
+                    : "Loading active season..."
+                }
               />
             </Field>
             <Field label="Event code" name="event-code">
@@ -766,7 +787,11 @@ function EventFormCard({
                 disabled
                 id="event-public-url"
                 readOnly
-                value={form.eventCode ? `/${form.season || "season"}/${form.eventCode}` : `/${form.season || "season"}/EVENT_CODE`}
+                value={
+                  form.eventCode
+                    ? `/${form.season || "season"}/${form.eventCode}`
+                    : `/${form.season || "season"}/EVENT_CODE`
+                }
               />
             </div>
           </div>
@@ -792,7 +817,9 @@ function EventFormCard({
             <Field label="Registration starts" name="registration-starts">
               <Input
                 id="registration-starts"
-                onChange={(event) => onChange({ ...form, registrationStartsAt: event.target.value })}
+                onChange={(event) =>
+                  onChange({ ...form, registrationStartsAt: event.target.value })
+                }
                 type="datetime-local"
                 value={form.registrationStartsAt}
               />
@@ -932,7 +959,8 @@ function EventDocumentsEditor({
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (documentId: string) => client.event.deleteEventDocument({ eventId, id: documentId }),
+    mutationFn: async (documentId: string) =>
+      client.event.deleteEventDocument({ eventId, id: documentId }),
     onError: (error) => toast.error(getErrorMessage(error, "Document could not be deleted.")),
     onSuccess: async () => {
       toast.success("Document deleted.");
@@ -956,7 +984,10 @@ function EventDocumentsEditor({
             />
           ) : (
             documents.map((document) => (
-              <div className="nrc-card-subtle flex items-center justify-between gap-4 p-4" key={document.id}>
+              <div
+                className="nrc-card-subtle flex items-center justify-between gap-4 p-4"
+                key={document.id}
+              >
                 <div className="min-w-0">
                   <p className="truncate font-semibold">{document.title}</p>
                   <p className="text-sm text-muted-foreground">
@@ -1091,7 +1122,10 @@ function EventAnnouncementsEditor({
             />
           ) : (
             announcements.map((announcement) => (
-              <div className="nrc-card-subtle flex items-start justify-between gap-4 p-4" key={announcement.id}>
+              <div
+                className="nrc-card-subtle flex items-start justify-between gap-4 p-4"
+                key={announcement.id}
+              >
                 <div className="min-w-0 space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-semibold">{announcement.title}</p>
@@ -1245,7 +1279,9 @@ function RegistrationFormsEditor({
       <Card className="nrc-card">
         <CardHeader className="border-b border-border">
           <CardTitle>Registration form versions</CardTitle>
-          <CardDescription>Publishing a version unpublishes the previous active version.</CardDescription>
+          <CardDescription>
+            Publishing a version unpublishes the previous active version.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3 pt-6">
           {versions.length === 0 ? (
@@ -1299,7 +1335,9 @@ function RegistrationFormsEditor({
 
       <Card className="nrc-card">
         <CardHeader className="border-b border-border">
-          <CardTitle>{selectedVersion ? `Version ${selectedVersion.versionNumber}` : "New version"}</CardTitle>
+          <CardTitle>
+            {selectedVersion ? `Version ${selectedVersion.versionNumber}` : "New version"}
+          </CardTitle>
           <CardDescription>Definition must parse to a JSON object.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
@@ -1389,9 +1427,10 @@ function DocumentDraftCard({
             value={draft.sortOrder}
           />
         </Field>
-        <label className="flex items-center gap-3 text-sm">
+        <label className="flex items-center gap-3 text-sm" htmlFor="document-public">
           <Checkbox
             checked={draft.isPublic}
+            id="document-public"
             onCheckedChange={(checked) => onChange({ ...draft, isPublic: checked === true })}
           />
           Public document
@@ -1451,9 +1490,10 @@ function AnnouncementDraftCard({
             value={draft.body}
           />
         </Field>
-        <label className="flex items-center gap-3 text-sm">
+        <label className="flex items-center gap-3 text-sm" htmlFor="announcement-pinned">
           <Checkbox
             checked={draft.isPinned}
+            id="announcement-pinned"
             onCheckedChange={(checked) => onChange({ ...draft, isPinned: checked === true })}
           />
           Pin announcement
@@ -1471,15 +1511,7 @@ function AnnouncementDraftCard({
   );
 }
 
-function Field({
-  children,
-  label,
-  name,
-}: {
-  children: ReactNode;
-  label: string;
-  name: string;
-}) {
+function Field({ children, label, name }: { children: ReactNode; label: string; name: string }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={name}>{label}</Label>

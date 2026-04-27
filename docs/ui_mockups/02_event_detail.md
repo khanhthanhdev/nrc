@@ -1,7 +1,9 @@
 # Event Detail UI Wireframe
+
 Route: `/$season/$eventId`
 
 ## 1. Normal User View
+
 (Header only)
 
 ```ascii
@@ -39,6 +41,7 @@ Route: `/$season/$eventId`
 ```
 
 ## 2. Staff View
+
 Route: `/staff/events/$eventId`
 (Header + Sidebar)
 
@@ -67,4 +70,3 @@ Route: `/staff/events/$eventId`
 |   Site        |                                                             |
 +---------------+-------------------------------------------------------------+
 ```
-

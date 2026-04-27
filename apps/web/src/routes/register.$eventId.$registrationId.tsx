@@ -54,6 +54,14 @@ const RegistrationDetailPage = () => {
     systemRole: getSystemRole(session.data),
   });
 
+  let accessStatus = "Denied";
+
+  if (canEdit) {
+    accessStatus = "Editable";
+  } else if (canRead) {
+    accessStatus = "Read-only";
+  }
+
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-8">
       <div className="space-y-2">
@@ -64,9 +72,10 @@ const RegistrationDetailPage = () => {
       </div>
 
       <div className="rounded-2xl border p-4">
-        <p className="text-sm font-medium">{canEdit ? "Editable" : canRead ? "Read-only" : "Denied"}</p>
+        <p className="text-sm font-medium">{accessStatus}</p>
         <p className="text-muted-foreground mt-1 text-sm">
-          Non-owner team members are read-only. Staff can edit. Placeholder until registration API lands.
+          Non-owner team members are read-only. Staff can edit. Placeholder until registration API
+          lands.
         </p>
       </div>
     </div>

@@ -20,13 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "./ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "./ui/sheet";
 import { SidebarTrigger } from "./ui/sidebar";
 
 const isPublicItemActive = (pathname: string, to: string): boolean => {
@@ -123,7 +117,10 @@ export default function Header() {
                   activeProps={{
                     className: "nrc-nav-link-active",
                   }}
-                  className={cn("nrc-nav-link px-0 py-0", isPublicItemActive(pathname, to) && "nrc-nav-link-active")}
+                  className={cn(
+                    "nrc-nav-link px-0 py-0",
+                    isPublicItemActive(pathname, to) && "nrc-nav-link-active",
+                  )}
                   key={to}
                   to={to}
                 >
@@ -181,7 +178,10 @@ export default function Header() {
               </DropdownMenu>
             ) : (
               <div className="flex items-center gap-3">
-                <Link className="text-foreground hidden text-sm font-medium sm:inline-flex" to="/auth">
+                <Link
+                  className="text-foreground hidden text-sm font-medium sm:inline-flex"
+                  to="/auth"
+                >
                   {t("header.signIn")}
                 </Link>
                 <Button asChild size="sm">
@@ -223,10 +223,20 @@ export default function Header() {
 
                 {session.data ? (
                   <div className="flex flex-col gap-2">
-                    <Button asChild className="justify-start" onClick={() => setMobileMenuOpen(false)} variant="ghost">
+                    <Button
+                      asChild
+                      className="justify-start"
+                      onClick={() => setMobileMenuOpen(false)}
+                      variant="ghost"
+                    >
                       <Link to="/account">{t("header.account.accountSettings")}</Link>
                     </Button>
-                    <Button asChild className="justify-start" onClick={() => setMobileMenuOpen(false)} variant="ghost">
+                    <Button
+                      asChild
+                      className="justify-start"
+                      onClick={() => setMobileMenuOpen(false)}
+                      variant="ghost"
+                    >
                       <Link to="/teams/new">{t("header.account.createTeam")}</Link>
                     </Button>
                     {canAccessStaffPanel && (
@@ -240,20 +250,37 @@ export default function Header() {
                       </Button>
                     )}
                     {isImpersonating && (
-                      <Button className="justify-start" onClick={() => void onStopImpersonating()} variant="ghost">
+                      <Button
+                        className="justify-start"
+                        onClick={() => void onStopImpersonating()}
+                        variant="ghost"
+                      >
                         {t("header.stopImpersonating")}
                       </Button>
                     )}
-                    <Button className="justify-start" onClick={() => void onSignOut()} variant="ghost">
+                    <Button
+                      className="justify-start"
+                      onClick={() => void onSignOut()}
+                      variant="ghost"
+                    >
                       {t("header.account.signOut")}
                     </Button>
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2">
-                    <Button asChild className="justify-start" onClick={() => setMobileMenuOpen(false)} variant="ghost">
+                    <Button
+                      asChild
+                      className="justify-start"
+                      onClick={() => setMobileMenuOpen(false)}
+                      variant="ghost"
+                    >
                       <Link to="/auth">{t("header.signIn")}</Link>
                     </Button>
-                    <Button asChild className="justify-start" onClick={() => setMobileMenuOpen(false)}>
+                    <Button
+                      asChild
+                      className="justify-start"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
                       <Link to="/register">{t("header.getStarted")}</Link>
                     </Button>
                   </div>

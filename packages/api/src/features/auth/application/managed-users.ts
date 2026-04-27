@@ -2,11 +2,13 @@ import { account, db, staffRoleAssignmentLog, user } from "@nrc-full/db";
 import { ORPCError } from "@orpc/server";
 import { and, asc, desc, eq, exists, ilike, isNull, not, sql } from "drizzle-orm";
 
-import type { AuthAdminContext, ManagedAuthUser, SystemRole, UserType } from "../../../shared/context.js";
 import type {
-  ManagedUserDirectoryEntry,
-  ManagedUsersPage,
-} from "../contracts/managed-users.js";
+  AuthAdminContext,
+  ManagedAuthUser,
+  SystemRole,
+  UserType,
+} from "../../../shared/context.js";
+import type { ManagedUserDirectoryEntry, ManagedUsersPage } from "../contracts/managed-users.js";
 import type {
   CreateManagedUserInput,
   GetManagedUserInput,
@@ -39,47 +41,68 @@ const getManagedUserColumns = () => ({
   userType: user.userType,
 });
 
-const toORPCError = (error: unknown, fallbackMessage: string) => {
-  if (error instanceof ORPCError) {
-    return error;
-  }
-
-  const message =
+const getErrorMessage = (error: unknown, fallbackMessage: string): string => {
+  if (
     typeof error === "object" &&
     error !== null &&
     "message" in error &&
     typeof error.message === "string" &&
     error.message.length > 0
-      ? error.message
-      : fallbackMessage;
+  ) {
+    return error.message;
+  }
 
-  const statusCandidate =
-    typeof error === "object" &&
-    error !== null &&
-    "status" in error &&
-    typeof error.status === "number"
-      ? error.status
-      : typeof error === "object" &&
-          error !== null &&
-          "statusCode" in error &&
-          typeof error.statusCode === "number"
-        ? error.statusCode
-        : undefined;
+  return fallbackMessage;
+};
 
-  const code =
-    statusCandidate === 400 || statusCandidate === 422
-      ? "BAD_REQUEST"
-      : statusCandidate === 401
-        ? "UNAUTHORIZED"
-        : statusCandidate === 403
-          ? "FORBIDDEN"
-          : statusCandidate === 404
-            ? "NOT_FOUND"
-            : statusCandidate === 409
-              ? "CONFLICT"
-              : "INTERNAL_SERVER_ERROR";
+const getErrorStatus = (error: unknown): number | undefined => {
+  if (typeof error !== "object" || error === null) {
+    return undefined;
+  }
 
-  return new ORPCError(code, { message });
+  if ("status" in error && typeof error.status === "number") {
+    return error.status;
+  }
+
+  if ("statusCode" in error && typeof error.statusCode === "number") {
+    return error.statusCode;
+  }
+
+  return undefined;
+};
+
+const statusToORPCCode = (status?: number): ORPCError<any, any>["code"] => {
+  if (status === 400 || status === 422) {
+    return "BAD_REQUEST";
+  }
+
+  if (status === 401) {
+    return "UNAUTHORIZED";
+  }
+
+  if (status === 403) {
+    return "FORBIDDEN";
+  }
+
+  if (status === 404) {
+    return "NOT_FOUND";
+  }
+
+  if (status === 409) {
+    return "CONFLICT";
+  }
+
+  return "INTERNAL_SERVER_ERROR";
+};
+
+const toORPCError = (error: unknown, fallbackMessage: string) => {
+  if (error instanceof ORPCError) {
+    return error;
+  }
+
+  return new ORPCError(statusToORPCCode(getErrorStatus(error)), {
+    message: getErrorMessage(error, fallbackMessage),
+  });
 };
 
 const countValue = (value: number | string | null | undefined): number => Number(value ?? 0);
@@ -190,7 +213,10 @@ const requireExistingUser = async (userId: string): Promise<ManagedUserDirectory
   return existingUser;
 };
 
-const ensureEditableManagedUser = (targetUser: { id: string; systemRole: SystemRole }, actorUserId: string) => {
+const ensureEditableManagedUser = (
+  targetUser: { id: string; systemRole: SystemRole },
+  actorUserId: string,
+) => {
   if (targetUser.id === actorUserId) {
     throw new ORPCError("FORBIDDEN", {
       message:
@@ -246,13 +272,16 @@ export const listManagedUsersForAdmin = async (
     .where(whereClause);
   const hiddenExampleCountPromise = input.includeExampleAccounts
     ? Promise.resolve(0)
-    : db
-        .select({
-          total: sql<number>`cast(count(*) as integer)`,
-        })
-        .from(user)
-        .where(and(...buildManagedUsersConditions({ input, mode: "example-only" })))
-        .then((rows) => countValue(rows[0]?.total));
+    : (async () => {
+        const rows = await db
+          .select({
+            total: sql<number>`cast(count(*) as integer)`,
+          })
+          .from(user)
+          .where(and(...buildManagedUsersConditions({ input, mode: "example-only" })));
+
+        return countValue(rows[0]?.total);
+      })();
 
   const rowsPromise = db
     .select(getManagedUserColumns())
@@ -283,7 +312,7 @@ export const listManagedUsersForAdmin = async (
   };
 };
 
-export const getManagedUserForAdmin = async (
+export const getManagedUserForAdmin = (
   input: GetManagedUserInput,
 ): Promise<ManagedUserDirectoryEntry> => requireExistingUser(input.userId);
 

@@ -16,11 +16,21 @@ interface TeamInvitationsPanelProps {
 
 const statusBadgeVariant = (status: string) => {
   switch (status) {
-    case "PENDING": return "secondary" as const;
-    case "ACCEPTED": return "default" as const;
-    case "EXPIRED": return "outline" as const;
-    case "REVOKED": return "destructive" as const;
-    default: return "outline" as const;
+    case "PENDING": {
+      return "secondary" as const;
+    }
+    case "ACCEPTED": {
+      return "default" as const;
+    }
+    case "EXPIRED": {
+      return "outline" as const;
+    }
+    case "REVOKED": {
+      return "destructive" as const;
+    }
+    default: {
+      return "outline" as const;
+    }
   }
 };
 

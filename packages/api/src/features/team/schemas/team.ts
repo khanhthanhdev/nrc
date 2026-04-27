@@ -1,5 +1,7 @@
 import * as v from "valibot";
 
+const TEAM_NUMBER_PATTERN = /^\d{5}$/;
+
 export const createTeamInputSchema = v.object({
   cityOrProvince: v.optional(v.pipe(v.string(), v.trim(), v.minLength(1), v.maxLength(255))),
   description: v.optional(v.pipe(v.string(), v.trim(), v.maxLength(2000))),
@@ -31,7 +33,7 @@ export const listPublicTeamsInputSchema = v.object({
 export type ListPublicTeamsInput = v.InferOutput<typeof listPublicTeamsInputSchema>;
 
 export const getPublicTeamInputSchema = v.object({
-  teamNumber: v.pipe(v.string(), v.trim(), v.minLength(1)),
+  teamNumber: v.pipe(v.string(), v.trim(), v.regex(TEAM_NUMBER_PATTERN)),
 });
 
 export type GetPublicTeamInput = v.InferOutput<typeof getPublicTeamInputSchema>;

@@ -16,8 +16,10 @@ describe("normalizeEmailForLookup", () => {
   });
 
   it("returns null for non-string values", () => {
+    const absentValue = {} as { value?: unknown };
+
     expect(normalizeEmailForLookup(null)).toBeNull();
-    expect(normalizeEmailForLookup(undefined)).toBeNull();
+    expect(normalizeEmailForLookup(absentValue.value)).toBeNull();
     expect(normalizeEmailForLookup(123)).toBeNull();
   });
 });

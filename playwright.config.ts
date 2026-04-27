@@ -3,8 +3,10 @@ import { config as loadEnv } from "dotenv";
 
 loadEnv({ path: ".env.test" });
 
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? process.env.CORS_ORIGIN ?? "http://localhost:3001";
-const API_URL = process.env.PLAYWRIGHT_API_URL ?? process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
+const BASE_URL =
+  process.env.PLAYWRIGHT_BASE_URL ?? process.env.CORS_ORIGIN ?? "http://localhost:3001";
+const API_URL =
+  process.env.PLAYWRIGHT_API_URL ?? process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
 const DATABASE_URL = process.env.DATABASE_URL ?? "";
 
 const resolveDatabaseName = (databaseUrl: string): string => {

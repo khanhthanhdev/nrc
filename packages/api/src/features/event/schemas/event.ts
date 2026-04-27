@@ -36,7 +36,10 @@ export const eventCodeSchema = v.pipe(
   v.string(),
   v.trim(),
   v.toUpperCase(),
-  v.regex(EVENT_CODE_PATTERN, "Event code must use uppercase letters, numbers, dashes, or underscores."),
+  v.regex(
+    EVENT_CODE_PATTERN,
+    "Event code must use uppercase letters, numbers, dashes, or underscores.",
+  ),
 );
 
 export const eventStatusSchema = v.picklist([
@@ -49,15 +52,17 @@ export const eventStatusSchema = v.picklist([
   "archived",
 ]);
 
-export const sortOrderSchema = v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(10000));
+export const sortOrderSchema = v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(10_000));
 
 const eventBaseSchema = {
-  description: optionalTrimmedNullableString(12000),
+  description: optionalTrimmedNullableString(12_000),
   eventCode: eventCodeSchema,
   eventEndsAt: validTimestampString,
   eventStartsAt: validTimestampString,
   location: optionalTrimmedNullableString(255),
-  maxParticipants: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(10000)))),
+  maxParticipants: v.optional(
+    v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(10_000))),
+  ),
   name: trimmedString(255),
   registrationEndsAt: optionalTimestampString,
   registrationStartsAt: optionalTimestampString,
@@ -123,7 +128,7 @@ export const deleteEventDocumentInputSchema = v.object({
 });
 
 export const createEventAnnouncementInputSchema = v.object({
-  body: trimmedString(10000),
+  body: trimmedString(10_000),
   eventId: trimmedString(128),
   isPinned: v.optional(v.boolean(), false),
   publishedAt: validTimestampString,
@@ -131,7 +136,7 @@ export const createEventAnnouncementInputSchema = v.object({
 });
 
 export const updateEventAnnouncementInputSchema = v.object({
-  body: trimmedString(10000),
+  body: trimmedString(10_000),
   eventId: trimmedString(128),
   id: trimmedString(128),
   isPinned: v.boolean(),

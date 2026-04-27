@@ -57,6 +57,28 @@ export const authRouter = {
       return { success: true };
     }),
 
+  createManagedUser: publicProcedure
+    .input(createManagedUserInputSchema)
+    .handler(({ context, input }) => {
+      requireAdminSession(context.session);
+
+      return createManagedUserForAdmin(context.authAdmin, input);
+    }),
+
+  getManagedUser: publicProcedure.input(getManagedUserInputSchema).handler(({ context, input }) => {
+    requireAdminSession(context.session);
+
+    return getManagedUserForAdmin(input);
+  }),
+
+  getManagedUsers: publicProcedure
+    .input(getManagedUsersInputSchema)
+    .handler(({ context, input }) => {
+      requireAdminSession(context.session);
+
+      return listManagedUsersForAdmin(input);
+    }),
+
   getOnboardingProfile: publicProcedure.handler(async ({ context }) => {
     const userId = requireUserId(context.session);
     const profile = await getOnboardingProfileByUserId(userId);
@@ -70,33 +92,15 @@ export const authRouter = {
     return profile;
   }),
 
-  getManagedUsers: publicProcedure.input(getManagedUsersInputSchema).handler(({ context, input }) => {
-    requireAdminSession(context.session);
-
-    return listManagedUsersForAdmin(input);
-  }),
-
-  getManagedUser: publicProcedure.input(getManagedUserInputSchema).handler(({ context, input }) => {
-    requireAdminSession(context.session);
-
-    return getManagedUserForAdmin(input);
-  }),
-
-  createManagedUser: publicProcedure
-    .input(createManagedUserInputSchema)
+  saveManagedUser: publicProcedure
+    .input(saveManagedUserInputSchema)
     .handler(({ context, input }) => {
-      requireAdminSession(context.session);
+      const currentSession = requireAdminSession(context.session);
 
-      return createManagedUserForAdmin(context.authAdmin, input);
+      return saveManagedUserForAdmin({
+        actorUserId: currentSession.session.userId,
+        authAdmin: context.authAdmin,
+        input,
+      });
     }),
-
-  saveManagedUser: publicProcedure.input(saveManagedUserInputSchema).handler(({ context, input }) => {
-    const currentSession = requireAdminSession(context.session);
-
-    return saveManagedUserForAdmin({
-      actorUserId: currentSession.session.userId,
-      authAdmin: context.authAdmin,
-      input,
-    });
-  }),
 };

@@ -81,9 +81,9 @@ const getDayFormatter = (locale: string) => {
 };
 
 export const deriveSeasonHeroCtas = (documents: DocumentLike[]): SeasonHeroCtas => {
-  const primary = documents.find((document) => MANUAL_DOCUMENT_PATTERN.test(document.title)) ?? null;
-  const secondary =
-    documents.find((document) => document.id !== primary?.id) ?? null;
+  const primary =
+    documents.find((document) => MANUAL_DOCUMENT_PATTERN.test(document.title)) ?? null;
+  const secondary = documents.find((document) => document.id !== primary?.id) ?? null;
 
   return {
     primary,
@@ -121,46 +121,54 @@ export const getSeasonDocumentUploadKey = (
 
 export const getSeasonEventStatusMeta = (status: PublicSeasonEvent["status"]): SeasonStatusMeta => {
   switch (status) {
-    case "registration_open":
+    case "registration_open": {
       return {
         badgeClassName: "border-emerald-200 bg-emerald-50 text-emerald-700",
         labelKey: "season.status.registrationOpen",
       };
-    case "registration_closed":
+    }
+    case "registration_closed": {
       return {
         badgeClassName: "border-amber-200 bg-amber-50 text-amber-700",
         labelKey: "season.status.registrationClosed",
       };
-    case "published":
+    }
+    case "published": {
       return {
         badgeClassName: "border-sky-200 bg-sky-50 text-sky-700",
         labelKey: "season.status.published",
       };
-    case "active":
+    }
+    case "active": {
       return {
         badgeClassName: "border-cyan-200 bg-cyan-50 text-cyan-700",
         labelKey: "season.status.active",
       };
-    case "completed":
+    }
+    case "completed": {
       return {
         badgeClassName: "border-violet-200 bg-violet-50 text-violet-700",
         labelKey: "season.status.completed",
       };
-    case "archived":
+    }
+    case "archived": {
       return {
         badgeClassName: "border-slate-200 bg-slate-100 text-slate-700",
         labelKey: "season.status.archived",
       };
-    case "draft":
+    }
+    case "draft": {
       return {
         badgeClassName: "border-slate-200 bg-slate-100 text-slate-700",
         labelKey: "season.status.draft",
       };
-    default:
+    }
+    default: {
       return {
         badgeClassName: "border-slate-200 bg-slate-100 text-slate-700",
         labelKey: "season.status.unknown",
       };
+    }
   }
 };
 
@@ -189,15 +197,12 @@ export const isSeasonNotFoundError = (error: unknown): boolean => {
   return (
     maybeError.code === "NOT_FOUND" ||
     maybeError.status === 404 ||
-    (typeof maybeError.message === "string" && maybeError.message.toLowerCase().includes("not found"))
+    (typeof maybeError.message === "string" &&
+      maybeError.message.toLowerCase().includes("not found"))
   );
 };
 
-export const formatSeasonDateRange = (
-  startAt: string,
-  endAt: string,
-  locale: string,
-): string => {
+export const formatSeasonDateRange = (startAt: string, endAt: string, locale: string): string => {
   const start = new Date(startAt);
   const end = new Date(endAt);
 
@@ -239,7 +244,9 @@ export const formatSeasonAnnouncementDate = (
   locale: string,
 ): string => formatSeasonDateTime(announcement.publishedAt, locale);
 
-export const formatSeasonLocation = (event: Pick<PublicSeasonEvent, "location" | "venue">): string => {
+export const formatSeasonLocation = (
+  event: Pick<PublicSeasonEvent, "location" | "venue">,
+): string => {
   if (event.venue && event.location) {
     return `${event.venue}, ${event.location}`;
   }
@@ -263,7 +270,5 @@ export const toIsoDateTime = (value: string): string => new Date(value).toISOStr
 export const getSeasonLocale = (language: string): string =>
   language === "vi" ? "vi-VN" : "en-US";
 
-export const renderStatusLabel = (
-  t: TFunction,
-  status: SeasonStatusMeta,
-): string => t(status.labelKey);
+export const renderStatusLabel = (t: TFunction, status: SeasonStatusMeta): string =>
+  t(status.labelKey);

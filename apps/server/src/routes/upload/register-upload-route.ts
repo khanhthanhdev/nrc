@@ -20,9 +20,13 @@ export const registerUploadRoute = (app: Hono<EvlogVariables>): void => {
     } catch (error) {
       const message = error instanceof Error ? error.message.toLowerCase() : "";
       const errorName =
-        error && typeof error === "object" && "name" in error ? String(error.name).toLowerCase() : "";
+        error && typeof error === "object" && "name" in error
+          ? String(error.name).toLowerCase()
+          : "";
       const errorCode =
-        error && typeof error === "object" && "code" in error ? String(error.code).toLowerCase() : "";
+        error && typeof error === "object" && "code" in error
+          ? String(error.code).toLowerCase()
+          : "";
 
       if (
         message.includes("not found") ||

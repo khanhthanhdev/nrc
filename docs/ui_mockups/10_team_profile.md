@@ -1,7 +1,9 @@
 # Team Profile UI Wireframe
+
 Route: `/teams/$teamNumber`
 
 ## 1. Normal User View
+
 (Header only)
 
 ```ascii
@@ -34,6 +36,7 @@ Route: `/teams/$teamNumber`
 ```
 
 ## 2. Staff View (Team Management)
+
 Route: `/staff/teams/$teamId`
 (Header + Sidebar)
 
@@ -62,4 +65,3 @@ Route: `/staff/teams/$teamId`
 |   Site        |                                                             |
 +---------------+-------------------------------------------------------------+
 ```
-

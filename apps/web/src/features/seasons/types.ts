@@ -1,4 +1,4 @@
-import { client } from "@/utils/orpc";
+import type { client } from "@/utils/orpc";
 
 export type PublicSeasonPageData = Awaited<ReturnType<typeof client.season.getPublicSeasonPage>>;
 export type PublicSeasonData = PublicSeasonPageData["season"];

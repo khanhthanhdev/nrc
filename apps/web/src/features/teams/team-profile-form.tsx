@@ -61,12 +61,7 @@ export function TeamProfileForm({ team }: TeamProfileFormProps) {
       >
         <div className="space-y-2">
           <Label htmlFor="edit-name">Team name</Label>
-          <Input
-            id="edit-name"
-            onChange={(e) => setName(e.target.value)}
-            required
-            value={name}
-          />
+          <Input id="edit-name" onChange={(e) => setName(e.target.value)} required value={name} />
         </div>
 
         <div className="space-y-2">

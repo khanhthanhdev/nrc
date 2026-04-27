@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  buildAdminEventDetail,
-  buildAdminEventSummaries,
-  buildEventKey,
-} from "./event.js";
+import { buildAdminEventDetail, buildAdminEventSummaries, buildEventKey } from "./event.js";
 
 const baseEvent = {
   createdAt: new Date("2026-01-01T00:00:00.000Z"),

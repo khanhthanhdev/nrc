@@ -35,7 +35,13 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -63,10 +69,17 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
           <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
             <div className="space-y-6">
               <div className="flex flex-wrap items-center gap-3">
-                <Badge className={cn("border-white/12 bg-white/10 text-white", seasonMeta.badgeClassName)}>
+                <Badge
+                  className={cn(
+                    "border-white/12 bg-white/10 text-white",
+                    seasonMeta.badgeClassName,
+                  )}
+                >
                   {renderStatusLabel(t, seasonMeta)}
                 </Badge>
-                <Badge className="border-white/12 bg-white/10 text-white">{data.season.gameCode}</Badge>
+                <Badge className="border-white/12 bg-white/10 text-white">
+                  {data.season.gameCode}
+                </Badge>
               </div>
 
               <div className="space-y-3">
@@ -154,9 +167,7 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
                               <p className="truncate font-medium">
                                 {option.year} · {option.theme}
                               </p>
-                              <p className="truncate text-muted-foreground">
-                                {option.gameCode}
-                              </p>
+                              <p className="truncate text-muted-foreground">{option.gameCode}</p>
                             </div>
                             <Badge
                               className={cn(
@@ -200,9 +211,7 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
             <h2 className="text-2xl font-semibold tracking-[-0.03em] text-foreground">
               {t("season.public.events.title", { year: data.season.year })}
             </h2>
-            <p className="text-sm text-muted-foreground">
-              {t("season.public.events.description")}
-            </p>
+            <p className="text-sm text-muted-foreground">{t("season.public.events.description")}</p>
           </div>
 
           {data.events.length === 0 ? (
@@ -249,7 +258,9 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
                       <div className="grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
                         <div className="flex items-start gap-2">
                           <CalendarDays className="mt-0.5 size-4 shrink-0 text-primary" />
-                          <span>{formatSeasonDateRange(event.eventStartsAt, event.eventEndsAt, locale)}</span>
+                          <span>
+                            {formatSeasonDateRange(event.eventStartsAt, event.eventEndsAt, locale)}
+                          </span>
                         </div>
                         <div className="flex items-start gap-2">
                           <MapPin className="mt-0.5 size-4 shrink-0 text-primary" />
@@ -260,7 +271,10 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
 
                     <div className="flex flex-wrap gap-3 lg:flex-col lg:items-end">
                       <Button asChild>
-                        <Link params={{ eventId: event.eventCode, season: data.season.year }} to="/$season/$eventId">
+                        <Link
+                          params={{ eventId: event.eventCode, season: data.season.year }}
+                          to="/$season/$eventId"
+                        >
                           {t("season.public.events.viewDetails")}
                           <ArrowRight />
                         </Link>
@@ -471,11 +485,7 @@ export function PublicSeasonNotFoundState({ season }: { season: string }) {
   );
 }
 
-export function PublicSeasonLoadErrorState({
-  onRetry,
-}: {
-  onRetry: () => void | Promise<void>;
-}) {
+export function PublicSeasonLoadErrorState({ onRetry }: { onRetry: () => void | Promise<void> }) {
   const { t } = useTranslation();
 
   return (

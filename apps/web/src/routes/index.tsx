@@ -1,10 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 import { resolvePostAuthRoute } from "@/lib/auth-routing";
-import { authClient } from "@/utils/auth-client";
 import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
+import { authClient } from "@/utils/auth-client";
 
 const HomeComponent = () => {
   const navigate = useNavigate();
@@ -76,7 +75,8 @@ const HomeComponent = () => {
             Structured team ops
           </p>
           <p className="text-muted-foreground mt-2 text-sm leading-6">
-            Team creation, registration, and account settings remain inside light, readable surfaces.
+            Team creation, registration, and account settings remain inside light, readable
+            surfaces.
           </p>
         </div>
 
@@ -86,7 +86,8 @@ const HomeComponent = () => {
             Quiet operational UI
           </p>
           <p className="text-muted-foreground mt-2 text-sm leading-6">
-            Admin pages keep the same palette, but avoid marketing effects so operational density stays usable.
+            Admin pages keep the same palette, but avoid marketing effects so operational density
+            stays usable.
           </p>
         </div>
       </div>

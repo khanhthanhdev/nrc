@@ -1,7 +1,9 @@
 # Event Playoffs Bracket UI Wireframe
+
 Route: `/$season/$eventId/playoffs`
 
 ## 1. Normal User View
+
 (Header only)
 
 ```ascii
@@ -38,6 +40,7 @@ Route: `/$season/$eventId/playoffs`
 ```
 
 ## 2. Staff View
+
 Route: `/staff/events/$eventId/playoffs`
 (Header + Sidebar)
 
@@ -66,4 +69,3 @@ Route: `/staff/events/$eventId/playoffs`
 |   Site        |                                                             |
 +---------------+-------------------------------------------------------------+
 ```
-

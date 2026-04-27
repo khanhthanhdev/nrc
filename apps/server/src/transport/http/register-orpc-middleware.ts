@@ -13,7 +13,7 @@ export const registerOrpcMiddleware = (app: Hono<EvlogVariables>): void => {
       return;
     }
 
-    const headers = c.req.raw.headers;
+    const { headers } = c.req.raw;
     const session = await getAuthSessionFromHeaders(headers);
     const context = await createContext({
       authAdmin: createAuthAdminContext(headers),

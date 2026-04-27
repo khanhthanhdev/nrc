@@ -4,7 +4,12 @@ import { getStaffNavigation, isStaffPath, publicNavigation } from "./navigation"
 
 describe("navigation", () => {
   it("keeps the public header limited to home, events, teams, and register", () => {
-    expect(publicNavigation.map((item) => item.to)).toEqual(["/", "/events", "/teams", "/register"]);
+    expect(publicNavigation.map((item) => item.to)).toEqual([
+      "/",
+      "/events",
+      "/teams",
+      "/register",
+    ]);
   });
 
   it("marks only /staff routes as staff shell paths", () => {

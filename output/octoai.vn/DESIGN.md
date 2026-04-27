@@ -5,6 +5,7 @@
 OctoAI embodies a modern, intelligent, and futuristic design language centered on approachable AI technology. The visual theme blends soft gradients with bold typography, creating an atmosphere of innovation tempered by accessibility. The use of light periwinkle and lavender backgrounds paired with vibrant purple accents conveys sophistication and forward-thinking technology. Playful, rounded elements—like the OctoAI mascot and button treatments—humanize the AI experience, while generous whitespace and clear hierarchy ensure clarity and focus. The overall mood is welcoming yet powerful, balancing technical capability with user-friendly design.
 
 **Key Characteristics**
+
 - Soft gradient backgrounds transitioning from light periwinkle to lavender
 - Bold, oversized display typography for impact
 - Fully rounded buttons (pill-shaped) for a friendly, modern aesthetic
@@ -17,19 +18,23 @@ OctoAI embodies a modern, intelligent, and futuristic design language centered o
 ## 2. Color Palette & Roles
 
 ### Primary
+
 - **Primary Blue** (`#1447E6`): Main interactive elements, primary CTAs, and brand-critical links
 - **Vibrant Purple** (`#5925DC`): Secondary emphasis, complementary accents, alternative CTAs
 
 ### Accent Colors
+
 - **Rich Blue** (`#4D66D4`): Mid-tone interactive states, secondary navigation, hover effects
 - **Deep Navy** (`#182230`): Dark headings, primary text on light backgrounds
 - **Ultra Dark Navy** (`#080B1E`): Maximum contrast text, premium dark mode support
 
 ### Interactive
+
 - **Secondary Navy** (`#475467`): Body text, descriptions, secondary content on light backgrounds
 - **Purple Link** (`#5925DC`): Default link color, interactive text elements
 
 ### Neutral Scale
+
 - **Pure White** (`#FFFFFF`): Primary background, card surfaces, neutral container fills
 - **Almost White** (`#F6F8FF`): Subtle background tint, light container backgrounds, off-white surfaces
 - **Off White** (`#FAFAFA`): Secondary backgrounds, slightly distinguished surface layers
@@ -40,10 +45,12 @@ OctoAI embodies a modern, intelligent, and futuristic design language centered o
 - **Pure Black** (`#0A0A0A`): Darkest neutral, maximum contrast backgrounds, deep shadows
 
 ### Surface & Borders
+
 - **Light Periwinkle Background** (`#F6F8FF`): Page backgrounds, large container fills, section separators
 - **Lavender Gradient Zone**: Visual metaphor for design surface (light blue-purple gradient area)
 
 ### Status & Semantic
+
 - **Warning** (`#F99C00`): Warning messages, caution states, non-critical alerts
 - **Warning Alternative** (`#FCBB00`): Secondary warning highlighting, alert accents
 - **Error** (`#E40014`): Error messages, destructive actions, critical alerts
@@ -52,26 +59,28 @@ OctoAI embodies a modern, intelligent, and futuristic design language centered o
 ## 3. Typography Rules
 
 ### Font Family
+
 - **Primary Font**: Plus Jakarta Sans (sans-serif stack: `Plus Jakarta Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`)
 - **Fallback Stack**: `-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif`
 
 ### Hierarchy
 
-| Role | Font | Size | Weight | Line Height | Letter Spacing | Notes |
-|------|------|------|--------|-------------|-----------------|-------|
-| **Display / Hero** | Plus Jakarta Sans | 96px | 500 | 96px | 0px | Large hero titles, main page headings, brand statements |
-| **Heading 1** | Plus Jakarta Sans | 48px | 600 | 56px | -0.5px | Section titles, major content divisions |
-| **Heading 2** | Plus Jakarta Sans | 32px | 600 | 40px | -0.3px | Subsection titles, card headers |
-| **Heading 3** | Plus Jakarta Sans | 24px | 600 | 32px | 0px | Component titles, smaller headings |
-| **Body Large** | Plus Jakarta Sans | 18px | 400 | 28px | 0px | Large body text, introductory paragraphs |
-| **Body** | Plus Jakarta Sans | 16px | 400 | 24px | 0px | Standard body copy, descriptions |
-| **Body Small** | Plus Jakarta Sans | 14px | 400 | 24px | 0px | Secondary body text, captions, metadata |
-| **Button** | Plus Jakarta Sans | 16px | 700 | 20px | 0.5px | All button labels, call-to-action text |
-| **Link** | Plus Jakarta Sans | 16px | 600 | 24px | 0px | Hyperlinks, navigation items |
-| **Label** | Plus Jakarta Sans | 12px | 600 | 16px | 0.5px | Form labels, badges, small tags |
-| **Code** | Fira Code, monospace | 14px | 400 | 24px | 0px | Monospace code blocks, technical snippets |
+| Role               | Font                 | Size | Weight | Line Height | Letter Spacing | Notes                                                   |
+| ------------------ | -------------------- | ---- | ------ | ----------- | -------------- | ------------------------------------------------------- |
+| **Display / Hero** | Plus Jakarta Sans    | 96px | 500    | 96px        | 0px            | Large hero titles, main page headings, brand statements |
+| **Heading 1**      | Plus Jakarta Sans    | 48px | 600    | 56px        | -0.5px         | Section titles, major content divisions                 |
+| **Heading 2**      | Plus Jakarta Sans    | 32px | 600    | 40px        | -0.3px         | Subsection titles, card headers                         |
+| **Heading 3**      | Plus Jakarta Sans    | 24px | 600    | 32px        | 0px            | Component titles, smaller headings                      |
+| **Body Large**     | Plus Jakarta Sans    | 18px | 400    | 28px        | 0px            | Large body text, introductory paragraphs                |
+| **Body**           | Plus Jakarta Sans    | 16px | 400    | 24px        | 0px            | Standard body copy, descriptions                        |
+| **Body Small**     | Plus Jakarta Sans    | 14px | 400    | 24px        | 0px            | Secondary body text, captions, metadata                 |
+| **Button**         | Plus Jakarta Sans    | 16px | 700    | 20px        | 0.5px          | All button labels, call-to-action text                  |
+| **Link**           | Plus Jakarta Sans    | 16px | 600    | 24px        | 0px            | Hyperlinks, navigation items                            |
+| **Label**          | Plus Jakarta Sans    | 12px | 600    | 16px        | 0.5px          | Form labels, badges, small tags                         |
+| **Code**           | Fira Code, monospace | 14px | 400    | 24px        | 0px            | Monospace code blocks, technical snippets               |
 
 ### Principles
+
 - **Weight Distribution**: Use weight 400 for body content, 600 for headings/labels, 700 for buttons to create clear hierarchy
 - **Line Height**: Maintain 1.5x font size for body text (24px line height for 16px body) to ensure readability
 - **Letter Spacing**: Apply subtle negative tracking (-0.5px) to large display text; use 0.5px for buttons to improve visual balance
@@ -83,6 +92,7 @@ OctoAI embodies a modern, intelligent, and futuristic design language centered o
 ### Buttons
 
 #### Primary Button
+
 ```
 Background Color: #FFFFFF with 30% opacity (rgba(255, 255, 255, 0.3))
 Text Color: #212121
@@ -101,6 +111,7 @@ Disabled State: Opacity 50%, cursor not-allowed, reduce text contrast
 ```
 
 #### Secondary Button (Dark Variant)
+
 ```
 Background Color: rgba(51, 51, 51, 0.3)
 Text Color: #FFFFFF
@@ -118,6 +129,7 @@ Active State: Decrease background opacity to 15%
 ```
 
 #### Compact Button
+
 ```
 Background Color: rgba(255, 255, 255, 0.3)
 Text Color: #212121
@@ -131,6 +143,7 @@ Use for dense layouts, secondary actions
 ```
 
 #### Ghost Link Button
+
 ```
 Background Color: transparent
 Text Color: #5925DC
@@ -148,6 +161,7 @@ Active State: Text color #1447E6
 ### Cards & Containers
 
 #### Base Card
+
 ```
 Background Color: #FFFFFF
 Border: 1px solid #E5E5E5
@@ -159,6 +173,7 @@ Transition: box-shadow 200ms ease-in-out
 ```
 
 #### Elevated Card (Glass Effect)
+
 ```
 Background Color: rgba(255, 255, 255, 0.7)
 Backdrop Filter: blur(12px)
@@ -169,6 +184,7 @@ Box Shadow: 0px 8px 32px rgba(0, 0, 0, 0.1)
 ```
 
 #### Surface Container
+
 ```
 Background Color: #F6F8FF
 Border Radius: 12px
@@ -180,6 +196,7 @@ Use for form containers, info boxes, grouped content
 ### Inputs & Forms
 
 #### Text Input
+
 ```
 Background Color: #FFFFFF
 Border: 1px solid #E5E5E5
@@ -194,6 +211,7 @@ Disabled State: Background #F5F5F5, border #E5E5E5, color #A8A8A8
 ```
 
 #### Form Label
+
 ```
 Font Size: 12px
 Font Weight: 600
@@ -203,6 +221,7 @@ Display: block
 ```
 
 #### Form Group Container
+
 ```
 Display: flex
 Flex Direction: column
@@ -213,6 +232,7 @@ Margin Bottom: 20px
 ### Navigation
 
 #### Navigation Bar
+
 ```
 Background Color: rgba(255, 255, 255, 0.8)
 Backdrop Filter: blur(8px)
@@ -227,6 +247,7 @@ Z Index: 100
 ```
 
 #### Navigation Link
+
 ```
 Font Size: 16px
 Font Weight: 600
@@ -240,6 +261,7 @@ Active State: Color #1447E6, border-bottom 2px solid #1447E6
 ```
 
 #### Logo
+
 ```
 Font Size: 20px
 Font Weight: 700
@@ -252,9 +274,11 @@ Gap: 8px
 ## 5. Layout Principles
 
 ### Spacing System
+
 **Base Unit**: 4px
 
 **Scale Progression**:
+
 - **4px**: Micro spacing (icon padding, tight gaps)
 - **8px**: XS spacing (small gaps, tight component padding)
 - **12px**: S spacing (compact padding, input padding)
@@ -267,12 +291,14 @@ Gap: 8px
 - **60px**: 5XL spacing (major page section gaps)
 
 **Usage Context**:
+
 - Micro (4px–8px): Icon sizing, tight button spacing
 - Compact (12px–16px): Form inputs, small components
 - Standard (20px–32px): Cards, containers, general padding
 - Generous (40px–60px): Page sections, hero areas, vertical rhythm
 
 ### Grid & Container
+
 - **Max Width**: 1440px for main content container
 - **Column Strategy**: 12-column responsive grid
   - Desktop (1200px+): 12 columns, 32px gutter
@@ -283,9 +309,11 @@ Gap: 8px
 - **Vertical Rhythm**: 60px spacing between major sections, 40px for subsections
 
 ### Whitespace Philosophy
+
 Whitespace is treated as a design element, not empty space. The system emphasizes breathing room around content to improve clarity and reduce cognitive load. Large headlines are given generous margin above and below (40px–60px). Content cards maintain internal padding of 20px–32px to avoid cramping. Section-to-section gaps use 52px–60px to create visual separation. This approach supports the intelligent, uncluttered aesthetic of OctoAI.
 
 ### Border Radius Scale
+
 - **0px**: No radius (default, rare)
 - **4px**: Tight radius (small badges, minimal rounding)
 - **8px**: Small radius (input fields, small buttons, tight components)
@@ -296,21 +324,22 @@ Whitespace is treated as a design element, not empty space. The system emphasize
 
 ## 6. Depth & Elevation
 
-| Level | Treatment | Use |
-|-------|-----------|-----|
-| **Flat (0)** | No shadow, solid background | Base surfaces, neutral backgrounds |
-| **Raised (1)** | `0px 2px 4px rgba(0, 0, 0, 0.06)` | Small components, tags, labels |
-| **Card (2)** | `0px 4px 12px rgba(0, 0, 0, 0.08)` | Cards, input fields, small containers |
-| **Elevated (3)** | `0px 8px 24px rgba(0, 0, 0, 0.12)` | Hovered cards, modals, major containers |
-| **Modal (4)** | `0px 12px 40px rgba(0, 0, 0, 0.16)` | Modals, dropdowns, overlays, popovers |
-| **Floating (5)** | `0px 16px 56px rgba(0, 0, 0, 0.20)` | Floating action buttons, top-level overlays |
-| **Neumorphic** | `rgba(255, 255, 255, 0.8) -2.422px -2.422px 2.422px inset, rgba(255, 255, 255, 0.8) 2.422px 2.422px 2.422px inset, rgba(0, 0, 0, 0.12) 0px 29.063px 58.125px` | Primary buttons, premium surfaces, hero elements |
+| Level            | Treatment                                                                                                                                                     | Use                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| **Flat (0)**     | No shadow, solid background                                                                                                                                   | Base surfaces, neutral backgrounds               |
+| **Raised (1)**   | `0px 2px 4px rgba(0, 0, 0, 0.06)`                                                                                                                             | Small components, tags, labels                   |
+| **Card (2)**     | `0px 4px 12px rgba(0, 0, 0, 0.08)`                                                                                                                            | Cards, input fields, small containers            |
+| **Elevated (3)** | `0px 8px 24px rgba(0, 0, 0, 0.12)`                                                                                                                            | Hovered cards, modals, major containers          |
+| **Modal (4)**    | `0px 12px 40px rgba(0, 0, 0, 0.16)`                                                                                                                           | Modals, dropdowns, overlays, popovers            |
+| **Floating (5)** | `0px 16px 56px rgba(0, 0, 0, 0.20)`                                                                                                                           | Floating action buttons, top-level overlays      |
+| **Neumorphic**   | `rgba(255, 255, 255, 0.8) -2.422px -2.422px 2.422px inset, rgba(255, 255, 255, 0.8) 2.422px 2.422px 2.422px inset, rgba(0, 0, 0, 0.12) 0px 29.063px 58.125px` | Primary buttons, premium surfaces, hero elements |
 
 **Shadow Philosophy**: OctoAI uses subtle, layered shadows to create depth without heaviness. The neumorphic technique (combined inset and outset shadows) is reserved for primary interactive elements like buttons and featured cards, creating a premium, tactile feel. Standard elevation shadows are soft and diffused, emphasizing a modern, flat aesthetic. All shadows use low-opacity dark colors to maintain the light, airy aesthetic.
 
 ## 7. Do's and Don'ts
 
 ### Do
+
 - **Do** use the full-rounded (`9999px`) button style for all primary and secondary CTAs to maintain brand consistency
 - **Do** apply generous whitespace (32px–60px) between major sections to create breathing room
 - **Do** pair dark navy (`#182230`) text with light backgrounds and white text with dark backgrounds for maximum contrast
@@ -323,6 +352,7 @@ Whitespace is treated as a design element, not empty space. The system emphasize
 - **Do** reserve warning colors (#F99C00, #FCBB00) strictly for caution/alert states, not general UI
 
 ### Don't
+
 - **Don't** use font sizes outside the defined scale; keep to the hierarchy table values only
 - **Don't** reduce button padding below 12px; maintain minimum 44px height for touch targets
 - **Don't** combine multiple shadow levels on a single element; choose one elevation level
@@ -339,14 +369,15 @@ Whitespace is treated as a design element, not empty space. The system emphasize
 
 ### Breakpoints
 
-| Breakpoint Name | Width | Key Changes |
-|-----------------|-------|-------------|
-| **Mobile** | < 768px | 4 columns, 16px horizontal padding, single-column layouts, 32px section gaps |
-| **Tablet** | 768px–1199px | 8 columns, 24px horizontal padding, 2-column stacks, 40px section gaps, reduced font sizes by 1–2px |
-| **Desktop** | 1200px–1439px | 12 columns, 32px horizontal padding, multi-column grids, 60px section gaps, full typography scale |
-| **Large Desktop** | 1440px+ | 12 columns in 1440px max-width container, 40px outer padding, maximum spacing |
+| Breakpoint Name   | Width         | Key Changes                                                                                         |
+| ----------------- | ------------- | --------------------------------------------------------------------------------------------------- |
+| **Mobile**        | < 768px       | 4 columns, 16px horizontal padding, single-column layouts, 32px section gaps                        |
+| **Tablet**        | 768px–1199px  | 8 columns, 24px horizontal padding, 2-column stacks, 40px section gaps, reduced font sizes by 1–2px |
+| **Desktop**       | 1200px–1439px | 12 columns, 32px horizontal padding, multi-column grids, 60px section gaps, full typography scale   |
+| **Large Desktop** | 1440px+       | 12 columns in 1440px max-width container, 40px outer padding, maximum spacing                       |
 
 ### Touch Targets
+
 - **Minimum Touch Size**: 44px × 44px for all interactive elements (buttons, links, form inputs)
 - **Comfortable Touch Size**: 48px–56px for primary buttons and frequently used controls
 - **Tap Spacing**: 8px minimum gap between adjacent touch targets to prevent accidental activation
@@ -354,6 +385,7 @@ Whitespace is treated as a design element, not empty space. The system emphasize
 - **Form Fields**: 44px–52px height with 12px–16px internal padding
 
 ### Collapsing Strategy
+
 - **Navigation**: Hamburger menu trigger at 768px breakpoint; collapse horizontal nav to vertical stack
 - **Grid Layouts**: 2–3 column layouts on desktop collapse to single column on mobile (< 768px)
 - **Spacing Reduction**: Section margins reduce from 60px (desktop) to 40px (tablet) to 32px (mobile)
@@ -367,6 +399,7 @@ Whitespace is treated as a design element, not empty space. The system emphasize
 ## 9. Agent Prompt Guide
 
 ### Quick Color Reference
+
 - **Primary CTA**: Primary Blue (`#1447E6`)
 - **Secondary CTA**: Vibrant Purple (`#5925DC`)
 - **Background**: Pure White (`#FFFFFF`)
@@ -380,6 +413,7 @@ Whitespace is treated as a design element, not empty space. The system emphasize
 - **Success**: Success (`#009588`)
 
 ### Iteration Guide
+
 1. **Typography Foundation**: All text must use Plus Jakarta Sans with weights 400 (body), 600 (headings/links), 700 (buttons). Enforce size scale: 12px, 14px, 16px, 18px, 24px, 32px, 48px, 96px only. Line-height = 1.5× font size for body.
 2. **Button Treatment**: Every button must be fully rounded (`border-radius: 9999px`), 44px–52px height, with 16px–32px horizontal padding. Apply neumorphic shadow stack to primary buttons only. Use `background: rgba(255,255,255,0.3)` for light buttons, `rgba(51,51,51,0.3)` for dark buttons.
 3. **Color Hierarchy**: Dark navy text (`#182230`) on light backgrounds; white text on dark backgrounds. Maintain 4.5:1 contrast minimum. Use blue (`#1447E6`) and purple (`#5925DC`) for interactive states and focus indicators.

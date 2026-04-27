@@ -1,7 +1,9 @@
 # Landing Page UI Wireframe
+
 Route: `/`
 
 ## 1. Normal User View
+
 (Header only)
 
 ```ascii
@@ -39,6 +41,7 @@ Route: `/`
 ```
 
 ## 2. Staff View
+
 Route: `/staff` (Dashboard)
 (Header + Sidebar)
 
@@ -67,4 +70,3 @@ Route: `/staff` (Dashboard)
 |   Site        |                                                             |
 +---------------+-------------------------------------------------------------+
 ```
-

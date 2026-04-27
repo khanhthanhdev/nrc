@@ -1,7 +1,8 @@
 import { account, db, user } from "@nrc-full/db";
 import { env } from "@nrc-full/env/server";
 import { and, eq, isNull } from "drizzle-orm";
-import { betterAuth, type BetterAuthOptions } from "better-auth";
+import { betterAuth } from "better-auth";
+import type { BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { admin, organization } from "better-auth/plugins";

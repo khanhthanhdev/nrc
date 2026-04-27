@@ -31,7 +31,11 @@ const waitForVisibleToastsToClear = async (page: Page): Promise<void> => {
 
 const seedUser = async (
   request: APIRequestContext,
-  input: { email: string; onboardingCompleted?: boolean; systemRole?: "ADMIN" | "MANAGER" | "USER" },
+  input: {
+    email: string;
+    onboardingCompleted?: boolean;
+    systemRole?: "ADMIN" | "MANAGER" | "USER";
+  },
 ): Promise<void> => {
   const response = await request.post(`${AUTH_HELPER_BASE_URL}/seed-google-user`, {
     data: {
@@ -44,10 +48,7 @@ const seedUser = async (
   await ensureOk(response, "seed-google-user");
 };
 
-const createSessionForUser = async (
-  request: APIRequestContext,
-  email: string,
-): Promise<void> => {
+const createSessionForUser = async (request: APIRequestContext, email: string): Promise<void> => {
   const response = await request.post(`${AUTH_HELPER_BASE_URL}/create-session`, {
     data: { email },
   });
@@ -143,7 +144,9 @@ test.describe("staff events", () => {
     await expect(page.getByText("Published").first()).toBeVisible();
 
     await page.goto(`/${year}/${eventCode}`);
-    await expect(page.getByRole("heading", { name: "Event CRUD Championship Updated" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Event CRUD Championship Updated" }),
+    ).toBeVisible();
     await expect(page.getByText("Detailed public event description.")).toBeVisible();
     await expect(page.getByRole("link", { name: "Venue Packet" })).toBeVisible();
 

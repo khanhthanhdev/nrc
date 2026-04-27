@@ -1,3 +1,5 @@
+/* oxlint-disable no-barrel-file */
+
 export * from "./app-router.js";
 export * from "./features/auth/index.js";
 export * from "./features/season/index.js";

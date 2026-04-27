@@ -17,6 +17,7 @@ created: 2026-04-19
 ## Overview
 
 Plan to finalize route zones in NRC web app:
+
 - public information at `/:season/:eventId/...`
 - team self-service at `/teams/...`
 - registration at `/register/:eventId` and `/register/:eventId/:registrationId`
@@ -63,13 +64,13 @@ No unfinished related plans found in `plans/**/plan.md`.
 
 ## Phases
 
-| Phase | Name | Status |
-|-------|------|--------|
-| 1 | [Define route zones and guardrails](./phase-01-define-url-contract-and-guardrails.md) | Pending |
-| 2 | [Verify flat route skeleton and fill missing leaf pages](./phase-02-create-season-event-route-skeleton.md) | Pending |
-| 3 | [Consolidate guard logic into existing policy modules](./phase-03-implement-season-adapter-feature-layer.md) | Pending |
-| 4 | [Extend public event shell and navigation entry points](./phase-04-wire-event-shell-and-navigation-entry-points.md) | Pending |
-| 5 | [Validate permissions, routes, and rollout checks](./phase-05-validate-with-tests-and-rollout-checks.md) | Pending |
+| Phase | Name                                                                                                                | Status  |
+| ----- | ------------------------------------------------------------------------------------------------------------------- | ------- |
+| 1     | [Define route zones and guardrails](./phase-01-define-url-contract-and-guardrails.md)                               | Pending |
+| 2     | [Verify flat route skeleton and fill missing leaf pages](./phase-02-create-season-event-route-skeleton.md)          | Pending |
+| 3     | [Consolidate guard logic into existing policy modules](./phase-03-implement-season-adapter-feature-layer.md)        | Pending |
+| 4     | [Extend public event shell and navigation entry points](./phase-04-wire-event-shell-and-navigation-entry-points.md) | Pending |
+| 5     | [Validate permissions, routes, and rollout checks](./phase-05-validate-with-tests-and-rollout-checks.md)            | Pending |
 
 ## Dependencies
 
@@ -103,13 +104,13 @@ No unfinished related plans found in `plans/**/plan.md`.
 
 ## Risks
 
-| Risk | Impact | Mitigation |
-|---|---|---|
-| Route naming mismatch with TanStack file conventions | Medium | Keep existing flat dot-notation; verify generated `routeTree.gen.ts` each phase |
-| Over-coupling route-specific logic in page components | Medium | Keep route components thin, move shared UI into `features/events` and validation into `route-policy.ts` |
-| Namespace collision between root dynamic and static routes | High | Validate `season` as 4-digit year and keep static namespaces explicit (`auth`, `teams`, `register`, `staff`) |
-| Permission drift between frontend guards and backend checks | High | Centralize permission matrix and mirror checks in oRPC server handlers |
-| Header/nav confusion with existing auth-first UX | Medium | Add explicit route-zone navigation without exposing staff links to non-staff |
+| Risk                                                        | Impact | Mitigation                                                                                                   |
+| ----------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------ |
+| Route naming mismatch with TanStack file conventions        | Medium | Keep existing flat dot-notation; verify generated `routeTree.gen.ts` each phase                              |
+| Over-coupling route-specific logic in page components       | Medium | Keep route components thin, move shared UI into `features/events` and validation into `route-policy.ts`      |
+| Namespace collision between root dynamic and static routes  | High   | Validate `season` as 4-digit year and keep static namespaces explicit (`auth`, `teams`, `register`, `staff`) |
+| Permission drift between frontend guards and backend checks | High   | Centralize permission matrix and mirror checks in oRPC server handlers                                       |
+| Header/nav confusion with existing auth-first UX            | Medium | Add explicit route-zone navigation without exposing staff links to non-staff                                 |
 
 ## Unresolved Questions
 

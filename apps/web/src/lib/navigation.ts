@@ -51,7 +51,13 @@ export const getStaffNavigation = (systemRole?: SystemRole) => {
     {
       items: [
         ...(isAdmin
-          ? [{ icon: CalendarRange, labelKey: "staffSidebar.seasons", to: "/staff/seasons" } satisfies StaffNavigationItem]
+          ? [
+              {
+                icon: CalendarRange,
+                labelKey: "staffSidebar.seasons",
+                to: "/staff/seasons",
+              } satisfies StaffNavigationItem,
+            ]
           : []),
         { icon: Trophy, labelKey: "staffSidebar.events", to: "/staff/events" },
         {
@@ -65,11 +71,23 @@ export const getStaffNavigation = (systemRole?: SystemRole) => {
     {
       items: [
         ...(isAdmin
-          ? [{ icon: Users, labelKey: "staffSidebar.users", to: "/staff/users" } satisfies StaffNavigationItem]
+          ? [
+              {
+                icon: Users,
+                labelKey: "staffSidebar.users",
+                to: "/staff/users",
+              } satisfies StaffNavigationItem,
+            ]
           : []),
         { icon: RefreshCw, labelKey: "staffSidebar.sync", to: "/staff/sync" },
         ...(isAdmin
-          ? [{ icon: Settings, labelKey: "staffSidebar.settings", to: "/staff/settings" } satisfies StaffNavigationItem]
+          ? [
+              {
+                icon: Settings,
+                labelKey: "staffSidebar.settings",
+                to: "/staff/settings",
+              } satisfies StaffNavigationItem,
+            ]
           : []),
       ],
       labelKey: "staffSidebar.section.admin",

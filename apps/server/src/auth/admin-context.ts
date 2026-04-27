@@ -1,4 +1,9 @@
-import type { AuthAdminContext, ManagedAuthUser, SystemRole, UserType } from "@nrc-full/api/shared/context";
+import type {
+  AuthAdminContext,
+  ManagedAuthUser,
+  SystemRole,
+  UserType,
+} from "@nrc-full/api/shared/context";
 
 import { auth } from "./auth";
 

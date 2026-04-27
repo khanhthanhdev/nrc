@@ -73,7 +73,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import { getSystemRole, isAdminSystemRole, type SystemRole } from "@/lib/route-policy";
+import { getSystemRole, isAdminSystemRole } from "@/lib/route-policy";
+import type { SystemRole } from "@/lib/route-policy";
 
 const PAGE_SIZE = 20;
 const DEFAULT_BAN_DURATION = "604800";
@@ -84,6 +85,16 @@ const BAN_DURATION_OPTIONS = [
   { label: "30 days", value: "2592000" },
 ] as const;
 const SORT_OPTIONS = {
+  email: {
+    label: "Email A-Z",
+    sortBy: "email",
+    sortDirection: "asc",
+  },
+  name: {
+    label: "Name A-Z",
+    sortBy: "name",
+    sortDirection: "asc",
+  },
   newest: {
     label: "Newest first",
     sortBy: "createdAt",
@@ -93,16 +104,6 @@ const SORT_OPTIONS = {
     label: "Recently updated",
     sortBy: "updatedAt",
     sortDirection: "desc",
-  },
-  name: {
-    label: "Name A-Z",
-    sortBy: "name",
-    sortDirection: "asc",
-  },
-  email: {
-    label: "Email A-Z",
-    sortBy: "email",
-    sortDirection: "asc",
   },
 } as const;
 
@@ -198,7 +199,9 @@ const getBanSummary = (user: ManagedUser): string => {
     return "Active";
   }
 
-  const expiry = user.banExpires ? shortDateFormatter.format(new Date(user.banExpires)) : "No expiry";
+  const expiry = user.banExpires
+    ? shortDateFormatter.format(new Date(user.banExpires))
+    : "No expiry";
   return `Banned until ${expiry}`;
 };
 
@@ -318,18 +321,14 @@ const getImpersonatedBy = (value: unknown): string | null => {
     return null;
   }
 
-  const impersonatedBy = (value as { impersonatedBy?: unknown }).impersonatedBy;
+  const { impersonatedBy } = value as { impersonatedBy?: unknown };
 
-  return typeof impersonatedBy === "string" && impersonatedBy.length > 0
-    ? impersonatedBy
-    : null;
+  return typeof impersonatedBy === "string" && impersonatedBy.length > 0 ? impersonatedBy : null;
 };
 
 const applyManagedUserPatch = (
   user: ManagedUser,
-  patch:
-    | Partial<ManagedUser>
-    | ((currentUser: ManagedUser) => Partial<ManagedUser>),
+  patch: Partial<ManagedUser> | ((currentUser: ManagedUser) => Partial<ManagedUser>),
 ): ManagedUser => ({
   ...user,
   ...(typeof patch === "function" ? patch(user) : patch),
@@ -338,9 +337,7 @@ const applyManagedUserPatch = (
 const updateManagedUsersPageUser = (
   pageData: ManagedUsersPageResult | undefined,
   userId: string,
-  patch:
-    | Partial<ManagedUser>
-    | ((currentUser: ManagedUser) => Partial<ManagedUser>),
+  patch: Partial<ManagedUser> | ((currentUser: ManagedUser) => Partial<ManagedUser>),
 ): ManagedUsersPageResult | undefined => {
   if (!pageData) {
     return pageData;
@@ -391,6 +388,7 @@ const updateManagedUsersPageBanState = (
   };
 };
 
+// eslint-disable-next-line complexity
 export const UsersPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -437,23 +435,34 @@ export const UsersPage = () => {
 
   const usersQuery = useQuery({
     enabled: isAdmin,
-    queryFn: async (): Promise<ManagedUsersPageResult> => client.auth.getManagedUsers(managedUsersInput),
     placeholderData: keepPreviousData,
+    queryFn: (): Promise<ManagedUsersPageResult> => client.auth.getManagedUsers(managedUsersInput),
     queryKey: ["admin", "managed-users", managedUsersInput],
   });
 
   const selectedUserQuery = useQuery({
     enabled: isAdmin && detailDialogOpen && Boolean(selectedUserId),
-    queryFn: async (): Promise<ManagedUser> => client.auth.getManagedUser({ userId: selectedUserId! }),
+    queryFn: (): Promise<ManagedUser> => {
+      if (!selectedUserId) {
+        throw new Error("User id is required.");
+      }
+
+      return client.auth.getManagedUser({ userId: selectedUserId });
+    },
     queryKey: ["admin", "user", selectedUserId],
   });
 
   const selectedUserSessionsQuery = useQuery({
     enabled: isAdmin && detailDialogOpen && Boolean(selectedUserId),
-    queryFn: async () =>
-      unwrapAuthResponse<ListUserSessionsResult>(
-        await authClient.admin.listUserSessions({ userId: selectedUserId! }),
-      ),
+    queryFn: async () => {
+      if (!selectedUserId) {
+        throw new Error("User id is required.");
+      }
+
+      return unwrapAuthResponse<ListUserSessionsResult>(
+        await authClient.admin.listUserSessions({ userId: selectedUserId }),
+      );
+    },
     queryKey: ["admin", "user-sessions", selectedUserId],
   });
 
@@ -497,7 +506,9 @@ export const UsersPage = () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["admin", "managed-users"] }),
       userId ? queryClient.invalidateQueries({ queryKey: ["admin", "user", userId] }) : null,
-      userId ? queryClient.invalidateQueries({ queryKey: ["admin", "user-sessions", userId] }) : null,
+      userId
+        ? queryClient.invalidateQueries({ queryKey: ["admin", "user-sessions", userId] })
+        : null,
     ]);
     void session.refetch();
   };
@@ -536,7 +547,7 @@ export const UsersPage = () => {
   });
 
   const createUserMutation = useMutation({
-    mutationFn: async (formState: CreateUserFormState) =>
+    mutationFn: (formState: CreateUserFormState) =>
       client.auth.createManagedUser({
         email: formState.email.trim(),
         name: formState.name.trim(),
@@ -598,7 +609,7 @@ export const UsersPage = () => {
   });
 
   const confirmActionMutation = useMutation<
-    void,
+    undefined,
     Error,
     {
       action: Exclude<ConfirmAction, null>;
@@ -606,7 +617,7 @@ export const UsersPage = () => {
     },
     {
       previousManagedUser?: ManagedUser;
-      previousManagedUsers: Array<[readonly unknown[], ManagedUsersPageResult | undefined]>;
+      previousManagedUsers: [readonly unknown[], ManagedUsersPageResult | undefined][];
     }
   >({
     mutationFn: async ({ action, user: targetUser }) => {
@@ -665,9 +676,11 @@ export const UsersPage = () => {
       }
     },
     onError: (error, variables, context) => {
-      context?.previousManagedUsers.forEach(([queryKey, previousData]) => {
-        queryClient.setQueryData(queryKey, previousData);
-      });
+      if (context?.previousManagedUsers) {
+        for (const [queryKey, previousData] of context.previousManagedUsers) {
+          queryClient.setQueryData(queryKey, previousData);
+        }
+      }
 
       if (context?.previousManagedUser) {
         queryClient.setQueryData(["admin", "user", variables.user.id], context.previousManagedUser);
@@ -680,7 +693,11 @@ export const UsersPage = () => {
 
       if (!isBanStateChange) {
         return {
-          previousManagedUser: queryClient.getQueryData<ManagedUser>(["admin", "user", targetUser.id]),
+          previousManagedUser: queryClient.getQueryData<ManagedUser>([
+            "admin",
+            "user",
+            targetUser.id,
+          ]),
           previousManagedUsers: [],
         };
       }
@@ -701,13 +718,17 @@ export const UsersPage = () => {
       const previousManagedUsers = queryClient.getQueriesData<ManagedUsersPageResult>({
         queryKey: ["admin", "managed-users"],
       });
-      const previousManagedUser = queryClient.getQueryData<ManagedUser>(["admin", "user", targetUser.id]);
+      const previousManagedUser = queryClient.getQueryData<ManagedUser>([
+        "admin",
+        "user",
+        targetUser.id,
+      ]);
 
-      previousManagedUsers.forEach(([queryKey]) => {
+      for (const [queryKey] of previousManagedUsers) {
         queryClient.setQueryData<ManagedUsersPageResult>(queryKey, (currentPageData) =>
           updateManagedUsersPageBanState(currentPageData, targetUser.id, nextBanState),
         );
-      });
+      }
 
       queryClient.setQueryData<ManagedUser>(["admin", "user", targetUser.id], (currentUser) =>
         currentUser ? applyManagedUserPatch(currentUser, nextBanState) : currentUser,
@@ -821,7 +842,12 @@ export const UsersPage = () => {
             >
               {stopImpersonatingMutation.isPending ? "Returning..." : "Stop impersonating"}
             </Button>
-            <Button onClick={() => void navigate({ to: "/" })} size="sm" type="button" variant="secondary">
+            <Button
+              onClick={() => void navigate({ to: "/" })}
+              size="sm"
+              type="button"
+              variant="secondary"
+            >
               Go to home
             </Button>
           </div>
@@ -842,16 +868,18 @@ export const UsersPage = () => {
 
   const canConfirmRemove =
     confirmAction !== "remove" ||
-    Boolean(confirmUser) &&
-      removeConfirmation.trim().toLowerCase() === (confirmUser?.email ?? "").trim().toLowerCase();
+    (Boolean(confirmUser) &&
+      removeConfirmation.trim().toLowerCase() === (confirmUser?.email ?? "").trim().toLowerCase());
 
   return (
     <>
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-6 px-4 py-8">
+      <div className="mx-auto flex w-full max-w-310 flex-col gap-6 px-4 py-8">
         <section className="nrc-card overflow-hidden px-6 py-6 sm:px-8">
           <div className="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
             <div className="space-y-4">
-              <Badge className="bg-primary/10 text-primary hover:bg-primary/10">Admin plugin powered</Badge>
+              <Badge className="bg-primary/10 text-primary hover:bg-primary/10">
+                Admin plugin powered
+              </Badge>
               <div className="space-y-3">
                 <h1 className="text-foreground max-w-3xl text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">
                   Manage every account from one operational surface.
@@ -915,7 +943,11 @@ export const UsersPage = () => {
         </section>
 
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-          <MetricCard label="Total users" tone="accent" value={String(usersQuery.data?.total ?? 0)} />
+          <MetricCard
+            label="Total users"
+            tone="accent"
+            value={String(usersQuery.data?.total ?? 0)}
+          />
           <MetricCard label="Visible admins" value={String(adminCount)} />
           <MetricCard label="Visible managers" value={String(managerCount)} />
           <MetricCard label="Visible users" value={String(memberCount)} />
@@ -935,7 +967,7 @@ export const UsersPage = () => {
               </div>
 
               <div className="grid gap-3 md:grid-cols-2 xl:flex xl:flex-wrap">
-                <div className="relative min-w-[250px] flex-1 xl:min-w-[290px]">
+                <div className="relative min-w-62.5 flex-1 xl:min-w-72.5">
                   <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
                   <Input
                     className="h-11 rounded-md bg-background pl-10"
@@ -955,7 +987,7 @@ export const UsersPage = () => {
                   }}
                   value={searchField}
                 >
-                  <SelectTrigger className="h-11 w-full rounded-md bg-background px-4 md:w-[160px]">
+                  <SelectTrigger className="h-11 w-full rounded-md bg-background px-4 md:w-40">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -971,7 +1003,7 @@ export const UsersPage = () => {
                   }}
                   value={roleFilter}
                 >
-                  <SelectTrigger className="h-11 w-full rounded-md bg-background px-4 md:w-[150px]">
+                  <SelectTrigger className="h-11 w-full rounded-md bg-background px-4 md:w-37.5">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -989,7 +1021,7 @@ export const UsersPage = () => {
                   }}
                   value={statusFilter}
                 >
-                  <SelectTrigger className="h-11 w-full rounded-md bg-background px-4 md:w-[150px]">
+                  <SelectTrigger className="h-11 w-full rounded-md bg-background px-4 md:w-37.5">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1006,7 +1038,7 @@ export const UsersPage = () => {
                   }}
                   value={sortOption}
                 >
-                  <SelectTrigger className="h-11 w-full rounded-md bg-background px-4 md:w-[180px]">
+                  <SelectTrigger className="h-11 w-full rounded-md bg-background px-4 md:w-45">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1019,7 +1051,7 @@ export const UsersPage = () => {
                 </Select>
 
                 <Label
-                  className="text-foreground flex h-11 min-w-[220px] items-center justify-between gap-3 rounded-md border border-input bg-background px-4 text-sm font-normal"
+                  className="text-foreground flex h-11 min-w-55 items-center justify-between gap-3 rounded-md border border-input bg-background px-4 text-sm font-normal"
                   htmlFor="show-test-accounts"
                 >
                   Include `@example.com`
@@ -1039,11 +1071,13 @@ export const UsersPage = () => {
           <div className="px-6 py-5">
             <div className="flex items-center justify-between gap-3 pb-4">
               <p className="text-muted-foreground text-sm">
-                Showing <span className="text-foreground font-semibold">{visibleUsers.length}</span> of{" "}
-                <span className="text-foreground font-semibold">{totalVisibleUsers}</span> users.
+                Showing <span className="text-foreground font-semibold">{visibleUsers.length}</span>{" "}
+                of <span className="text-foreground font-semibold">{totalVisibleUsers}</span> users.
               </p>
               <div className="hidden items-center gap-2 md:flex">
-                <Badge variant="outline">{searchField === "email" ? "Email search" : "Name search"}</Badge>
+                <Badge variant="outline">
+                  {searchField === "email" ? "Email search" : "Name search"}
+                </Badge>
                 {roleFilter !== "all" && <Badge variant="outline">{roleFilter}</Badge>}
                 {statusFilter !== "all" && <Badge variant="outline">{statusFilter}</Badge>}
                 {!showTestAccounts && hiddenTestAccountCount > 0 && (
@@ -1061,9 +1095,7 @@ export const UsersPage = () => {
             )}
 
             {usersQuery.error && (
-              <div className="nrc-note-danger px-5 py-4 text-sm">
-                {usersQuery.error.message}
-              </div>
+              <div className="nrc-note-danger px-5 py-4 text-sm">{usersQuery.error.message}</div>
             )}
 
             {!usersQuery.isPending && !usersQuery.error && visibleUsers.length === 0 && (
@@ -1098,7 +1130,7 @@ export const UsersPage = () => {
                         <TableHead>Status</TableHead>
                         <TableHead>Created</TableHead>
                         <TableHead>Updated</TableHead>
-                        <TableHead className="w-[72px] text-right">Actions</TableHead>
+                        <TableHead className="w-18 text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -1143,9 +1175,7 @@ export const UsersPage = () => {
                                 <DropdownMenuContent align="end">
                                   <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
                                   <DropdownMenuSeparator />
-                                  <DropdownMenuItem
-                                    onSelect={() => openDetails(user.id)}
-                                  >
+                                  <DropdownMenuItem onSelect={() => openDetails(user.id)}>
                                     <Eye className="size-4" />
                                     View profile
                                   </DropdownMenuItem>
@@ -1244,11 +1274,18 @@ export const UsersPage = () => {
                           </div>
                           <div className="flex items-center justify-between gap-3">
                             <span>Access</span>
-                            <span className="text-foreground text-right">{getBanSummary(user)}</span>
+                            <span className="text-foreground text-right">
+                              {getBanSummary(user)}
+                            </span>
                           </div>
                         </div>
 
-                        <Button onClick={() => openDetails(user.id)} size="sm" type="button" variant="secondary">
+                        <Button
+                          onClick={() => openDetails(user.id)}
+                          size="sm"
+                          type="button"
+                          variant="secondary"
+                        >
                           Open profile
                         </Button>
                       </div>
@@ -1458,11 +1495,7 @@ export const UsersPage = () => {
 
             {!selectedUserQuery.isPending && !selectedUserQuery.error && selectedUser && (
               <div className="space-y-5">
-                {lockedMessage && (
-                  <div className="nrc-note px-5 py-4 text-sm">
-                    {lockedMessage}
-                  </div>
-                )}
+                {lockedMessage && <div className="nrc-note px-5 py-4 text-sm">{lockedMessage}</div>}
 
                 <Tabs defaultValue="overview">
                   <TabsList variant="line">
@@ -1548,7 +1581,9 @@ export const UsersPage = () => {
                         <dl className="grid gap-3 text-sm">
                           <div className="flex items-center justify-between gap-3">
                             <dt className="text-muted-foreground">Access state</dt>
-                            <dd className="text-foreground font-medium">{getBanSummary(selectedUser)}</dd>
+                            <dd className="text-foreground font-medium">
+                              {getBanSummary(selectedUser)}
+                            </dd>
                           </div>
                           <div className="flex items-center justify-between gap-3">
                             <dt className="text-muted-foreground">Email verification</dt>
@@ -1559,7 +1594,9 @@ export const UsersPage = () => {
                           <div className="flex items-center justify-between gap-3">
                             <dt className="text-muted-foreground">Login method</dt>
                             <dd className="text-foreground font-medium">
-                              {selectedUser.hasCredentialAccount ? "Email + password" : "External provider only"}
+                              {selectedUser.hasCredentialAccount
+                                ? "Email + password"
+                                : "External provider only"}
                             </dd>
                           </div>
                           <div className="flex items-center justify-between gap-3">
@@ -1576,8 +1613,8 @@ export const UsersPage = () => {
                   </TabsContent>
 
                   <TabsContent value="security">
-                   <div className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
-                     <div className="nrc-card-subtle space-y-4 px-5 py-5">
+                    <div className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
+                      <div className="nrc-card-subtle space-y-4 px-5 py-5">
                         <div>
                           <h3 className="text-foreground text-lg font-semibold tracking-[-0.03em]">
                             Password reset
@@ -1597,7 +1634,9 @@ export const UsersPage = () => {
                                 <div className="flex items-center gap-2">
                                   <Button
                                     disabled={selectedUserLocked}
-                                    onClick={() => setShowDetailPassword((currentValue) => !currentValue)}
+                                    onClick={() =>
+                                      setShowDetailPassword((currentValue) => !currentValue)
+                                    }
                                     size="xs"
                                     type="button"
                                     variant="ghost"
@@ -1645,7 +1684,8 @@ export const UsersPage = () => {
                           </>
                         ) : (
                           <div className="nrc-note px-4 py-3 text-sm">
-                            This user signed in with an external provider. Password reset and generation are not available.
+                            This user signed in with an external provider. Password reset and
+                            generation are not available.
                           </div>
                         )}
                       </div>
@@ -1687,7 +1727,9 @@ export const UsersPage = () => {
                         {!selectedUserSessionsQuery.isPending &&
                           !selectedUserSessionsQuery.error &&
                           selectedUserSessions.length === 0 && (
-                            <p className="text-muted-foreground text-sm">No active sessions found.</p>
+                            <p className="text-muted-foreground text-sm">
+                              No active sessions found.
+                            </p>
                           )}
 
                         <div className="grid gap-3">
@@ -1720,8 +1762,8 @@ export const UsersPage = () => {
                             Ban controls and impersonation
                           </h3>
                           <p className="text-muted-foreground mt-1 text-sm">
-                            Use a documented reason when removing access. Impersonation creates a new
-                            admin session cookie.
+                            Use a documented reason when removing access. Impersonation creates a
+                            new admin session cookie.
                           </p>
                         </div>
 
@@ -1739,7 +1781,10 @@ export const UsersPage = () => {
                           <Button
                             disabled={selectedUserLocked}
                             onClick={() =>
-                              openConfirmation(isBanned(selectedUser) ? "unban" : "ban", selectedUser)
+                              openConfirmation(
+                                isBanned(selectedUser) ? "unban" : "ban",
+                                selectedUser,
+                              )
                             }
                             size="sm"
                             type="button"
@@ -1788,7 +1833,9 @@ export const UsersPage = () => {
                       <div className="nrc-note px-4 py-4 text-sm">
                         <p className="text-foreground font-medium">Current status</p>
                         <p className="mt-2">{getBanSummary(selectedUser)}</p>
-                        {selectedUser.banReason && <p className="mt-2">Reason: {selectedUser.banReason}</p>}
+                        {selectedUser.banReason && (
+                          <p className="mt-2">Reason: {selectedUser.banReason}</p>
+                        )}
                       </div>
                     </div>
                   </TabsContent>
@@ -1800,8 +1847,8 @@ export const UsersPage = () => {
                           Permanent removal
                         </h3>
                         <p className="text-muted-foreground mt-1 text-sm">
-                          This removes the user record and associated sessions. Type the user email to
-                          unlock the remove action.
+                          This removes the user record and associated sessions. Type the user email
+                          to unlock the remove action.
                         </p>
                       </div>
 
@@ -1862,8 +1909,7 @@ export const UsersPage = () => {
             <DialogDescription>
               {confirmAction === "ban" &&
                 `This will immediately block ${confirmUser?.email} and revoke their active sessions.`}
-              {confirmAction === "unban" &&
-                `This restores login access for ${confirmUser?.email}.`}
+              {confirmAction === "unban" && `This restores login access for ${confirmUser?.email}.`}
               {confirmAction === "impersonate" &&
                 `This swaps your current session into ${confirmUser?.email}. Use the header action to return.`}
               {confirmAction === "revokeSessions" &&
@@ -1879,7 +1925,8 @@ export const UsersPage = () => {
               <p className="mt-2">Reason: {banReason.trim() || "No reason provided"}</p>
               <p>
                 Duration:{" "}
-                {BAN_DURATION_OPTIONS.find((option) => option.value === banDuration)?.label || "Custom"}
+                {BAN_DURATION_OPTIONS.find((option) => option.value === banDuration)?.label ||
+                  "Custom"}
               </p>
             </div>
           )}
@@ -1905,7 +1952,9 @@ export const UsersPage = () => {
               disabled={confirmActionMutation.isPending || !canConfirmRemove}
               onClick={() => void onConfirmAction()}
               type="button"
-              variant={confirmAction === "remove" || confirmAction === "ban" ? "destructive" : "default"}
+              variant={
+                confirmAction === "remove" || confirmAction === "ban" ? "destructive" : "default"
+              }
             >
               {confirmActionMutation.isPending ? "Working..." : "Confirm"}
             </Button>

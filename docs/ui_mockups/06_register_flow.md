@@ -1,7 +1,9 @@
 # Registration Flow UI Wireframe
+
 Route: `/register/$eventId`
 
 ## 1. Normal User View
+
 (Header only)
 
 ```ascii
@@ -28,6 +30,7 @@ Route: `/register/$eventId`
 ```
 
 ## 2. Staff View (Registration Review)
+
 Route: `/staff/registrations/$regId`
 (Header + Sidebar)
 
@@ -57,4 +60,3 @@ Route: `/staff/registrations/$regId`
 |   Site        |                                                             |
 +---------------+-------------------------------------------------------------+
 ```
-

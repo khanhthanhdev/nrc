@@ -17,18 +17,32 @@ interface TeamMembersListProps {
 
 const roleBadgeVariant = (role: string) => {
   switch (role) {
-    case "TEAM_MENTOR": return "default" as const;
-    case "TEAM_LEADER": return "secondary" as const;
-    default: return "outline" as const;
+    case "TEAM_MENTOR": {
+      return "default" as const;
+    }
+    case "TEAM_LEADER": {
+      return "secondary" as const;
+    }
+    default: {
+      return "outline" as const;
+    }
   }
 };
 
 const roleLabel = (role: string) => {
   switch (role) {
-    case "TEAM_MENTOR": return "Mentor";
-    case "TEAM_LEADER": return "Leader";
-    case "TEAM_MEMBER": return "Member";
-    default: return role;
+    case "TEAM_MENTOR": {
+      return "Mentor";
+    }
+    case "TEAM_LEADER": {
+      return "Leader";
+    }
+    case "TEAM_MEMBER": {
+      return "Member";
+    }
+    default: {
+      return role;
+    }
   }
 };
 

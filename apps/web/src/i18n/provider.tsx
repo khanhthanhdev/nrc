@@ -6,7 +6,7 @@ import i18n from "./config";
 
 const getActiveLanguage = () => i18n.resolvedLanguage ?? i18n.language ?? "en";
 
-export function I18nProvider({ children }: { children: React.ReactNode }) {
+export const I18nProvider = ({ children }: { children: React.ReactNode }) => {
   const [languageRevision, setLanguageRevision] = useState(0);
 
   useEffect(() => {
@@ -28,4 +28,4 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       <div data-language-revision={languageRevision}>{children}</div>
     </I18nextProvider>
   );
-}
+};

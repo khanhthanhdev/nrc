@@ -14,8 +14,10 @@ describe("hasCredentialProvider", () => {
   });
 
   it("returns false for empty or missing account lists", () => {
+    const missingAccounts = {} as { accounts?: readonly { providerId: string }[] | null };
+
     expect(hasCredentialProvider([])).toBe(false);
     expect(hasCredentialProvider(null)).toBe(false);
-    expect(hasCredentialProvider(undefined)).toBe(false);
+    expect(hasCredentialProvider(missingAccounts.accounts)).toBe(false);
   });
 });

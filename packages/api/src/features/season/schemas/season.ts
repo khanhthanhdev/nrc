@@ -20,7 +20,7 @@ export const seasonYearSchema = v.pipe(
   v.regex(SEASON_PATTERN, "Season year must be a 4-digit year."),
 );
 
-export const sortOrderSchema = v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(10000));
+export const sortOrderSchema = v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(10_000));
 
 export const getPublicSeasonPageInputSchema = v.object({
   year: seasonYearSchema,
@@ -82,7 +82,7 @@ export const deleteSeasonDocumentInputSchema = v.object({
 });
 
 export const createSeasonAnnouncementInputSchema = v.object({
-  body: trimmedString(10000),
+  body: trimmedString(10_000),
   isPinned: v.optional(v.boolean(), false),
   publishedAt: validTimestampString,
   seasonYear: seasonYearSchema,
@@ -91,7 +91,7 @@ export const createSeasonAnnouncementInputSchema = v.object({
 });
 
 export const updateSeasonAnnouncementInputSchema = v.object({
-  body: trimmedString(10000),
+  body: trimmedString(10_000),
   id: trimmedString(128),
   isPinned: v.boolean(),
   publishedAt: validTimestampString,

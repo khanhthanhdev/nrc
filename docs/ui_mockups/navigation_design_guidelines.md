@@ -4,10 +4,10 @@
 
 Two distinct layout shells depending on user role and current route context:
 
-| Context | Layout | Navigation |
-|:---|:---|:---|
-| **All users** (public pages, auth, account, teams, register, events) | **Header only** — full-width content below | Top header bar with nav links |
-| **Staff users** on `/staff/*` routes | **Header + Left Sidebar** — sidebar + content area | Top header (compact) + persistent left sidebar |
+| Context                                                              | Layout                                             | Navigation                                     |
+| :------------------------------------------------------------------- | :------------------------------------------------- | :--------------------------------------------- |
+| **All users** (public pages, auth, account, teams, register, events) | **Header only** — full-width content below         | Top header bar with nav links                  |
+| **Staff users** on `/staff/*` routes                                 | **Header + Left Sidebar** — sidebar + content area | Top header (compact) + persistent left sidebar |
 
 The header is **always present** (rendered in `__root.tsx`). The sidebar is **only rendered** inside the `staff.tsx` layout route when the user has a staff/admin system role.
 
@@ -16,6 +16,7 @@ The header is **always present** (rendered in `__root.tsx`). The sidebar is **on
 ## 2. Header Bar (All Users)
 
 ### Current State
+
 The header already exists at `apps/web/src/components/header.tsx`. It renders a logo, nav links, and a user dropdown. Staff/Admin links are conditionally shown.
 
 ### Proposed Design
@@ -44,20 +45,21 @@ Legend:
 
 ### Header Specifications
 
-| Element | Detail |
-|:---|:---|
-| **Height** | `min-h-20` (80px), sticky top |
-| **Logo** | Official STEAM for Vietnam logo (no subtitle) |
-| **Nav links** | `Home`, `Events`, `Teams`, `Register` — visible to all authenticated users |
-| **Staff link** | Remove from header; staff navigation moves entirely to the sidebar |
-| **Users link** | Remove from header; moves into staff sidebar under admin-only section |
-| **Active state** | Underline + primary color via `nrc-nav-link-active` |
-| **User menu** | Dropdown: email label, "Account settings", "Create team", "Sign out" |
-| **Impersonation** | Yellow banner / button "Stop impersonating" when active |
-| **Mobile** | Hamburger menu (☰) replacing nav links below `lg` breakpoint |
-| **i18n** | Language switcher (EN/VI toggle) placed before user menu |
+| Element           | Detail                                                                     |
+| :---------------- | :------------------------------------------------------------------------- |
+| **Height**        | `min-h-20` (80px), sticky top                                              |
+| **Logo**          | Official STEAM for Vietnam logo (no subtitle)                              |
+| **Nav links**     | `Home`, `Events`, `Teams`, `Register` — visible to all authenticated users |
+| **Staff link**    | Remove from header; staff navigation moves entirely to the sidebar         |
+| **Users link**    | Remove from header; moves into staff sidebar under admin-only section      |
+| **Active state**  | Underline + primary color via `nrc-nav-link-active`                        |
+| **User menu**     | Dropdown: email label, "Account settings", "Create team", "Sign out"       |
+| **Impersonation** | Yellow banner / button "Stop impersonating" when active                    |
+| **Mobile**        | Hamburger menu (☰) replacing nav links below `lg` breakpoint              |
+| **i18n**          | Language switcher (EN/VI toggle) placed before user menu                   |
 
 ### Key Change: Remove Staff/Users from Header Nav
+
 Currently the header conditionally shows "Staff" and "Users" links for staff/admin roles. **Remove these from the header.** Staff users navigate to `/staff` once, and then the sidebar handles all staff navigation. This keeps the public header clean and consistent for everyone.
 
 ---
@@ -65,6 +67,7 @@ Currently the header conditionally shows "Staff" and "Users" links for staff/adm
 ## 3. Staff Sidebar (Staff Users Only)
 
 ### When It Appears
+
 The sidebar renders **only** inside the `staff.tsx` layout route component. It does not affect public pages, auth, account, register, or event pages at all.
 
 ### Layout Architecture
@@ -122,32 +125,32 @@ The sidebar renders **only** inside the `staff.tsx` layout route component. It d
 
 ### Sidebar Specifications
 
-| Element | Detail |
-|:---|:---|
-| **Width** | `w-60` (240px) on desktop, collapsible to icon-only `w-16` (64px) |
-| **Position** | Fixed left, full viewport height below header (`top: 80px`) |
-| **Background** | `bg-sidebar` or subtle surface color distinct from main content |
-| **Sections** | Grouped with uppercase labels: `CONTENT`, `ADMINISTRATION` |
-| **Nav items** | Icon + label per link; icon-only when collapsed |
-| **Active item** | `bg-accent` background + `text-accent-foreground` + left border accent |
-| **Hover** | `bg-muted` background transition |
-| **Collapse toggle** | Chevron button at sidebar bottom or top; remembers state in localStorage |
-| **Admin-only items** | "Users", "Settings" only visible when `isAdminSystemRole` is true |
-| **"Back to Site"** | Always at the bottom, navigates to `/` to exit staff context |
-| **Mobile** | Sidebar becomes a slide-over drawer, toggled via hamburger in header |
+| Element              | Detail                                                                   |
+| :------------------- | :----------------------------------------------------------------------- |
+| **Width**            | `w-60` (240px) on desktop, collapsible to icon-only `w-16` (64px)        |
+| **Position**         | Fixed left, full viewport height below header (`top: 80px`)              |
+| **Background**       | `bg-sidebar` or subtle surface color distinct from main content          |
+| **Sections**         | Grouped with uppercase labels: `CONTENT`, `ADMINISTRATION`               |
+| **Nav items**        | Icon + label per link; icon-only when collapsed                          |
+| **Active item**      | `bg-accent` background + `text-accent-foreground` + left border accent   |
+| **Hover**            | `bg-muted` background transition                                         |
+| **Collapse toggle**  | Chevron button at sidebar bottom or top; remembers state in localStorage |
+| **Admin-only items** | "Users", "Settings" only visible when `isAdminSystemRole` is true        |
+| **"Back to Site"**   | Always at the bottom, navigates to `/` to exit staff context             |
+| **Mobile**           | Sidebar becomes a slide-over drawer, toggled via hamburger in header     |
 
 ### Sidebar Nav Items & Icons
 
-| Item | Icon (lucide) | Route | Visibility |
-|:---|:---|:---|:---|
-| Overview | `LayoutDashboard` | `/staff` | All staff |
-| Seasons | `CalendarRange` | `/staff/seasons` | All staff |
-| Events | `Trophy` | `/staff/events` | All staff |
-| Registrations | `ClipboardCheck` | `/staff/registrations` | All staff |
-| Users | `Users` | `/users` | Admin only |
-| Sync Logs | `RefreshCw` | `/staff/sync` | All staff |
-| Settings | `Settings` | `/staff/settings` | Admin only |
-| Back to Site | `ArrowLeft` | `/` | All staff |
+| Item          | Icon (lucide)     | Route                  | Visibility |
+| :------------ | :---------------- | :--------------------- | :--------- |
+| Overview      | `LayoutDashboard` | `/staff`               | All staff  |
+| Seasons       | `CalendarRange`   | `/staff/seasons`       | All staff  |
+| Events        | `Trophy`          | `/staff/events`        | All staff  |
+| Registrations | `ClipboardCheck`  | `/staff/registrations` | All staff  |
+| Users         | `Users`           | `/users`               | Admin only |
+| Sync Logs     | `RefreshCw`       | `/staff/sync`          | All staff  |
+| Settings      | `Settings`        | `/staff/settings`      | Admin only |
+| Back to Site  | `ArrowLeft`       | `/`                    | All staff  |
 
 ---
 
@@ -163,9 +166,11 @@ apps/web/src/components/
 ```
 
 ### 4.2 Changes to `__root.tsx`
+
 No structural changes needed. The root layout stays as header + `<Outlet />`. The sidebar is introduced **inside** `staff.tsx`, not at the root level.
 
 ### 4.3 Changes to `staff.tsx`
+
 The `staff.tsx` layout route wraps its `<Outlet />` in a flex container with the sidebar:
 
 ```ascii
@@ -183,6 +188,7 @@ staff.tsx renders:
 **Important:** The current `staff.tsx` only renders `<Outlet />` when `pathname !== "/staff"`, otherwise it renders the dashboard cards inline. After this change, the staff layout should **always** render sidebar + outlet, and the dashboard content moves to a dedicated index-like component within staff.tsx itself.
 
 ### 4.4 Changes to `header.tsx`
+
 - Remove the conditional `Staff` link (line 90–100 in current code).
 - Remove the conditional `Users` link (line 101–111 in current code).
 - Optionally: when on a `/staff/*` route, show a subtle "Staff Mode" indicator badge next to the logo.

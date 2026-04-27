@@ -138,7 +138,7 @@ describe("teamRouter e2e", () => {
       name: "NRC Alpha",
       organizationId: "organization-1",
       schoolOrOrganization: "NRC School",
-      teamNumber: "TMABC123",
+      teamNumber: "02323",
     };
 
     createTeamForUserMock.mockResolvedValue(expectedTeam);
@@ -181,7 +181,7 @@ describe("teamRouter e2e", () => {
       name: "NRC Alpha",
       organizationId: "organization-1",
       schoolOrOrganization: "NRC School",
-      teamNumber: "TMABC123",
+      teamNumber: "02323",
     };
 
     getMyTeamByUserMock.mockResolvedValue(expectedTeam);

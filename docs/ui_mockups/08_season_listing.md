@@ -1,7 +1,9 @@
 # Season Listing UI Wireframe
+
 Route: `/$season`
 
 ## 1. Normal User View
+
 (Header only)
 
 ```ascii
@@ -38,8 +40,8 @@ Route: `/$season`
 +-----------------------------------------------------------------------------+
 ```
 
-
 ## 2. Staff View (Season Management)
+
 Route: `/staff/seasons`
 (Header + Sidebar)
 
@@ -68,4 +70,3 @@ Route: `/staff/seasons`
 |   Site        |                                                             |
 +---------------+-------------------------------------------------------------+
 ```
-

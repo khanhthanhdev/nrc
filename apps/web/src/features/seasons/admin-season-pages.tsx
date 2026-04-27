@@ -52,7 +52,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -94,7 +100,7 @@ interface SeasonAnnouncementDraft {
   title: string;
 }
 
-const normalizeSeasonYearInput = (value: string): string => value.replace(/\D/g, "").slice(0, 4);
+const normalizeSeasonYearInput = (value: string): string => value.replaceAll(/\D/g, "").slice(0, 4);
 
 const emptyDocumentDraft = (): SeasonDocumentDraft => ({
   kind: "",
@@ -128,7 +134,9 @@ const parseSortOrder = (value: string): number => {
 const getSeasonDocumentSourceType = (url: string): SeasonDocumentDraft["sourceType"] =>
   getSeasonDocumentUploadKey(url, env.VITE_SERVER_URL) ? "upload" : "url";
 
-const createDocumentDraftFromRecord = (document: Pick<AdminSeasonDocument, "kind" | "sortOrder" | "title" | "url">): SeasonDocumentDraft => ({
+const createDocumentDraftFromRecord = (
+  document: Pick<AdminSeasonDocument, "kind" | "sortOrder" | "title" | "url">,
+): SeasonDocumentDraft => ({
   kind: document.kind,
   sortOrder: String(document.sortOrder),
   sourceType: getSeasonDocumentSourceType(document.url),
@@ -262,7 +270,10 @@ export function AdminSeasonListPage({
                       <TableCell>{formatSeasonDateTime(season.updatedAt, locale)}</TableCell>
                       <TableCell className="text-right">
                         <Button asChild size="sm" variant="outline">
-                          <Link params={{ seasonId: season.year }} to="/staff/seasons/$seasonId/edit">
+                          <Link
+                            params={{ seasonId: season.year }}
+                            to="/staff/seasons/$seasonId/edit"
+                          >
                             <PencilLine />
                             {t("season.admin.list.edit")}
                           </Link>
@@ -489,7 +500,13 @@ export function AdminSeasonEditorPage({ data }: { data: AdminSeasonDetailData })
       theme: data.season.theme,
       year: data.season.year,
     });
-  }, [data.season.description, data.season.gameCode, data.season.isActive, data.season.theme, data.season.year]);
+  }, [
+    data.season.description,
+    data.season.gameCode,
+    data.season.isActive,
+    data.season.theme,
+    data.season.year,
+  ]);
 
   const updateSeasonMutation = useMutation({
     mutationFn: async () =>
@@ -634,7 +651,9 @@ export function AdminSeasonEditorPage({ data }: { data: AdminSeasonDetailData })
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="season-edit-description">{t("season.admin.fields.description")}</Label>
+                <Label htmlFor="season-edit-description">
+                  {t("season.admin.fields.description")}
+                </Label>
                 <Textarea
                   id="season-edit-description"
                   onChange={(event) =>
@@ -681,7 +700,11 @@ export function AdminSeasonEditorPage({ data }: { data: AdminSeasonDetailData })
                               {event.name} · {event.eventCode}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              {formatSeasonDateRange(event.eventStartsAt, event.eventEndsAt, locale)}
+                              {formatSeasonDateRange(
+                                event.eventStartsAt,
+                                event.eventEndsAt,
+                                locale,
+                              )}
                             </p>
                           </div>
                           <Badge className={cn("border-transparent", statusMeta.badgeClassName)}>
@@ -747,7 +770,10 @@ export function AdminSeasonEditorPage({ data }: { data: AdminSeasonDetailData })
         </TabsContent>
 
         <TabsContent value="announcements">
-          <SeasonAnnouncementsTab seasonYear={data.season.year} announcements={data.announcements} />
+          <SeasonAnnouncementsTab
+            seasonYear={data.season.year}
+            announcements={data.announcements}
+          />
         </TabsContent>
       </Tabs>
     </div>
@@ -767,9 +793,9 @@ function SeasonDocumentsTab({
   const [createError, setCreateError] = useState<string | null>(null);
 
   const refreshDetail = async () => {
-    const queryKey = orpc.season.getAdminSeason.queryOptions({
+    const { queryKey } = orpc.season.getAdminSeason.queryOptions({
       input: { year: seasonYear },
-    }).queryKey;
+    });
     await queryClient.invalidateQueries({ queryKey });
   };
 
@@ -825,7 +851,9 @@ function SeasonDocumentsTab({
           <div className="space-y-4 rounded-md border border-dashed border-border bg-muted/20 p-4">
             <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_11rem_8rem]">
               <div className="space-y-2">
-                <Label htmlFor="season-document-create-title">{t("season.admin.fields.title")}</Label>
+                <Label htmlFor="season-document-create-title">
+                  {t("season.admin.fields.title")}
+                </Label>
                 <Input
                   id="season-document-create-title"
                   onChange={(event) =>
@@ -880,7 +908,11 @@ function SeasonDocumentsTab({
             />
 
             <div className="flex justify-end">
-              <Button disabled={createDocumentMutation.isPending} onClick={createDocument} type="button">
+              <Button
+                disabled={createDocumentMutation.isPending}
+                onClick={createDocument}
+                type="button"
+              >
                 <FilePlus2 />
                 {t("season.admin.documents.add")}
               </Button>
@@ -908,7 +940,11 @@ function SeasonDocumentsTab({
               </TableHeader>
               <TableBody>
                 {documents.map((document) => (
-                  <SeasonDocumentRow document={document} key={document.id} seasonYear={seasonYear} />
+                  <SeasonDocumentRow
+                    document={document}
+                    key={document.id}
+                    seasonYear={seasonYear}
+                  />
                 ))}
               </TableBody>
             </Table>
@@ -933,12 +969,12 @@ function SeasonDocumentRow({
 
   useEffect(() => {
     setDraft(createDocumentDraftFromRecord(document));
-  }, [document.kind, document.sortOrder, document.title, document.url]);
+  }, [document]);
 
   const refreshDetail = async () => {
-    const queryKey = orpc.season.getAdminSeason.queryOptions({
+    const { queryKey } = orpc.season.getAdminSeason.queryOptions({
       input: { year: seasonYear },
-    }).queryKey;
+    });
     await queryClient.invalidateQueries({ queryKey });
   };
 
@@ -1007,18 +1043,14 @@ function SeasonDocumentRow({
       <TableCell className="align-top whitespace-normal">
         <Input
           aria-label={t("season.admin.fields.title")}
-          onChange={(event) =>
-            setDraft((current) => ({ ...current, title: event.target.value }))
-          }
+          onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))}
           value={draft.title}
         />
       </TableCell>
       <TableCell className="align-top whitespace-normal">
         <Input
           aria-label={t("season.admin.fields.kind")}
-          onChange={(event) =>
-            setDraft((current) => ({ ...current, kind: event.target.value }))
-          }
+          onChange={(event) => setDraft((current) => ({ ...current, kind: event.target.value }))}
           value={draft.kind}
         />
       </TableCell>
@@ -1102,7 +1134,12 @@ function SeasonDocumentSourceEditor({
   const uploadedKey = getSeasonDocumentUploadKey(draft.url, env.VITE_SERVER_URL);
 
   return (
-    <div className={cn("space-y-3", compact ? "min-w-[18rem]" : "rounded-md border border-border bg-background/70 p-4")}>
+    <div
+      className={cn(
+        "space-y-3",
+        compact ? "min-w-[18rem]" : "rounded-md border border-border bg-background/70 p-4",
+      )}
+    >
       <div className="space-y-2">
         <Label>{t("season.admin.documents.sourceLabel")}</Label>
         <RadioGroup
@@ -1115,16 +1152,24 @@ function SeasonDocumentSourceEditor({
           }
           value={draft.sourceType}
         >
-          <label className="flex items-start gap-3 rounded-md border border-border bg-background px-3 py-3 text-sm">
+          <label
+            className="flex items-start gap-3 rounded-md border border-border bg-background px-3 py-3 text-sm"
+            htmlFor={`${fileInputId}-source-url`}
+          >
             <RadioGroupItem id={`${fileInputId}-source-url`} value="url" />
             <div className="space-y-1">
-              <p className="font-medium text-foreground">{t("season.admin.documents.source.url")}</p>
+              <p className="font-medium text-foreground">
+                {t("season.admin.documents.source.url")}
+              </p>
               <p className="text-xs text-muted-foreground">
                 {t("season.admin.documents.source.urlHint")}
               </p>
             </div>
           </label>
-          <label className="flex items-start gap-3 rounded-md border border-border bg-background px-3 py-3 text-sm">
+          <label
+            className="flex items-start gap-3 rounded-md border border-border bg-background px-3 py-3 text-sm"
+            htmlFor={`${fileInputId}-source-upload`}
+          >
             <RadioGroupItem id={`${fileInputId}-source-upload`} value="upload" />
             <div className="space-y-1">
               <p className="font-medium text-foreground">
@@ -1161,7 +1206,9 @@ function SeasonDocumentSourceEditor({
               maxFiles={1}
               multiple={false}
               onError={(uploadError) => {
-                onUploadError(getErrorMessage(uploadError, t("season.admin.feedback.documentUploadError")));
+                onUploadError(
+                  getErrorMessage(uploadError, t("season.admin.feedback.documentUploadError")),
+                );
               }}
               onSuccess={(keys) => {
                 const key = keys[0];
@@ -1233,9 +1280,9 @@ function SeasonAnnouncementsTab({
   const [createError, setCreateError] = useState<string | null>(null);
 
   const refreshDetail = async () => {
-    const queryKey = orpc.season.getAdminSeason.queryOptions({
+    const { queryKey } = orpc.season.getAdminSeason.queryOptions({
       input: { year: seasonYear },
-    }).queryKey;
+    });
     await queryClient.invalidateQueries({ queryKey });
   };
 
@@ -1275,7 +1322,9 @@ function SeasonAnnouncementsTab({
         <div className="grid gap-4 rounded-md border border-dashed border-border bg-muted/20 p-4">
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_12rem_8rem]">
             <div className="space-y-2">
-              <Label htmlFor="season-announcement-create-title">{t("season.admin.fields.title")}</Label>
+              <Label htmlFor="season-announcement-create-title">
+                {t("season.admin.fields.title")}
+              </Label>
               <Input
                 id="season-announcement-create-title"
                 onChange={(event) =>
@@ -1414,12 +1463,18 @@ function SeasonAnnouncementRow({
       sortOrder: String(announcement.sortOrder),
       title: announcement.title,
     });
-  }, [announcement.body, announcement.isPinned, announcement.publishedAt, announcement.sortOrder, announcement.title]);
+  }, [
+    announcement.body,
+    announcement.isPinned,
+    announcement.publishedAt,
+    announcement.sortOrder,
+    announcement.title,
+  ]);
 
   const refreshDetail = async () => {
-    const queryKey = orpc.season.getAdminSeason.queryOptions({
+    const { queryKey } = orpc.season.getAdminSeason.queryOptions({
       input: { year: seasonYear },
-    }).queryKey;
+    });
     await queryClient.invalidateQueries({ queryKey });
   };
 
@@ -1469,18 +1524,14 @@ function SeasonAnnouncementRow({
       <TableCell className="align-top whitespace-normal">
         <Input
           aria-label={t("season.admin.fields.title")}
-          onChange={(event) =>
-            setDraft((current) => ({ ...current, title: event.target.value }))
-          }
+          onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))}
           value={draft.title}
         />
       </TableCell>
       <TableCell className="align-top whitespace-normal">
         <Textarea
           aria-label={t("season.admin.fields.body")}
-          onChange={(event) =>
-            setDraft((current) => ({ ...current, body: event.target.value }))
-          }
+          onChange={(event) => setDraft((current) => ({ ...current, body: event.target.value }))}
           rows={4}
           value={draft.body}
         />
@@ -1583,11 +1634,7 @@ export function AdminSeasonNotFoundState({ seasonYear }: { seasonYear: string })
   );
 }
 
-export function AdminSeasonLoadErrorState({
-  onRetry,
-}: {
-  onRetry: () => void | Promise<void>;
-}) {
+export function AdminSeasonLoadErrorState({ onRetry }: { onRetry: () => void | Promise<void> }) {
   const { t } = useTranslation();
 
   return (

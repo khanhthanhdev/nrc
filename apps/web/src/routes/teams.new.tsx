@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { VIETNAM_34_CITIES } from "@nrc-full/api/features/auth/contracts/vietnam-cities";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -33,7 +34,11 @@ const NewTeamPage = () => {
     onSuccess: async (data) => {
       toast.success(`Team created: ${data.teamNumber}`);
       await queryClient.invalidateQueries();
-      await navigate({ to: "/teams" });
+      await navigate({
+        params: { teamNumber: data.teamNumber },
+        search: { tab: undefined },
+        to: "/teams/$teamNumber",
+      });
     },
   });
 
@@ -106,11 +111,19 @@ const NewTeamPage = () => {
 
         <div className="space-y-2">
           <Label htmlFor="team-city">City / Province</Label>
-          <Input
+          <select
+            className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
             id="team-city"
             onChange={(event) => setCityOrProvince(event.target.value)}
             value={cityOrProvince}
-          />
+          >
+            <option value="">Select a city / province</option>
+            {VIETNAM_34_CITIES.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="space-y-2">

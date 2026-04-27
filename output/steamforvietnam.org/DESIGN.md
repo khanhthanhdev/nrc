@@ -5,6 +5,7 @@
 The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic rooted in educational accessibility and innovation. The visual language combines deep navy foundations with vibrant gradient accents—particularly cyan and magenta tones—creating an energetic yet professional atmosphere. The design celebrates AI and advanced education through smooth, contemporary typography and generous whitespace, evoking a sense of possibility and growth. Soft, approachable elements coexist with bold color statements, making complex technology feel welcoming to educators and students alike. The overall mood is inspiring, inclusive, and forward-thinking—balancing playfulness with credibility.
 
 **Key Characteristics**
+
 - Deep navy and midnight blue dominance with cyan and magenta accents
 - Clean, rounded geometric forms with subtle glowing effects
 - Generous whitespace and clear visual hierarchy
@@ -15,22 +16,26 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 ## 2. Color Palette & Roles
 
 ### Primary
+
 - **Deep Navy** (`#172B4D`): Primary foundation for headings, text, and structural elements; establishes trust and professionalism
 - **Primary Blue** (`#447AFF`): Primary interactive elements, CTAs, links, and focus states; drives engagement
 - **Electric Blue** (`#375DE7`): Secondary primary variant for emphasis and visual hierarchy
 
 ### Accent Colors
+
 - **Cyan Glow** (`#00D4FF`): Vibrant accent for highlights, gradient overlays, and premium features; associated with STEAM 3.0 Global
 - **Magenta Accent** (`#FF00FF`): Gradient component accent for AI-forward branding and dynamic visual elements
 - **Warm Gold** (`#FFC400`): Accent for STEAM 2.0 AI curriculum highlighting and positive messaging
 - **Coral Red** (`#FF4757`): Accent for STEAM 1.0 Computer Science + Robotics designation
 
 ### Interactive
+
 - **Link Blue** (`#447AFF`): Standard link color for navigation and inline interactions
 - **Danger Red** (`#CF222E`): Error states and destructive actions; semantic warning indicator
 - **Alternative Danger** (`#D0021B`): Secondary error state indicator for critical feedback
 
 ### Neutral Scale
+
 - **White** (`#FFFFFF`): Primary background and text overlay on dark surfaces; ensures contrast
 - **Light Gray** (`#F6F8FA`): Subtle background surfaces for sections and alternative areas
 - **Medium Light Gray** (`#EBECF0`): Secondary container backgrounds and inactive element surfaces
@@ -42,11 +47,13 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Pure Black** (`#000000`): Maximum contrast text and critical definitions
 
 ### Surface & Borders
+
 - **Card Background Light** (`#E7ECFC`): Subtle branded card backgrounds maintaining visual cohesion
 - **Divider Subtle** (`#C9D1D9`): Horizontal dividers and container borders
 - **Surface Accent** (`#06E38`): Midnight background for hero sections and dramatic visual contrast
 
 ### Semantic / Status
+
 - **Error** (`#CF222E`): Error notifications, validation failures, critical alerts
 - **Warning** (`#FFAB00`): Warning notifications and cautionary messaging
 - **Success** (Inferred `#2DA44E`): Positive confirmations and successful state indicators
@@ -55,6 +62,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 ## 3. Typography Rules
 
 ### Font Family
+
 **Primary:** Quicksand (sans-serif) — [https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap)
 **Fallback:** -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif
 
@@ -62,22 +70,23 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 
 ### Hierarchy
 
-| Role | Font | Size | Weight | Line Height | Letter Spacing | Notes |
-|------|------|------|--------|-------------|----------------|-------|
-| Display 1 | Quicksand | 56px | 700 | 66.56px | -0.5px | Hero headlines, main page titles |
-| Display 2 | Quicksand | 44px | 700 | 51.92px | -0.3px | Section headings, feature titles |
-| Heading 1 | Quicksand | 36px | 700 | 42.48px | -0.2px | Primary section titles |
-| Heading 2 | Quicksand | 28px | 700 | 33.12px | 0px | Secondary subsection titles |
-| Heading 3 | Quicksand | 24px | 600 | 28.8px | 0px | Tertiary headings |
-| Body Regular | Quicksand | 16px | 500 | 24px | 0px | Main body copy, standard text |
-| Body Small | Quicksand | 14px | 500 | 20.88px | 0px | Secondary body text, descriptions |
-| Button | Quicksand | 16px | 400 | 24px | 0px | All button labels |
-| Button Small | Quicksand | 14px | 400 | 20.88px | 0px | Compact button variants |
-| Link | Quicksand | 16px | 500 | 24px | 0px | Navigation links, inline links |
-| Caption | Quicksand | 12px | 500 | 17.92px | 0.2px | Image captions, metadata |
-| Code | Monospace | 13px | 400 | 19.5px | 0px | Inline and block code |
+| Role         | Font      | Size | Weight | Line Height | Letter Spacing | Notes                             |
+| ------------ | --------- | ---- | ------ | ----------- | -------------- | --------------------------------- |
+| Display 1    | Quicksand | 56px | 700    | 66.56px     | -0.5px         | Hero headlines, main page titles  |
+| Display 2    | Quicksand | 44px | 700    | 51.92px     | -0.3px         | Section headings, feature titles  |
+| Heading 1    | Quicksand | 36px | 700    | 42.48px     | -0.2px         | Primary section titles            |
+| Heading 2    | Quicksand | 28px | 700    | 33.12px     | 0px            | Secondary subsection titles       |
+| Heading 3    | Quicksand | 24px | 600    | 28.8px      | 0px            | Tertiary headings                 |
+| Body Regular | Quicksand | 16px | 500    | 24px        | 0px            | Main body copy, standard text     |
+| Body Small   | Quicksand | 14px | 500    | 20.88px     | 0px            | Secondary body text, descriptions |
+| Button       | Quicksand | 16px | 400    | 24px        | 0px            | All button labels                 |
+| Button Small | Quicksand | 14px | 400    | 20.88px     | 0px            | Compact button variants           |
+| Link         | Quicksand | 16px | 500    | 24px        | 0px            | Navigation links, inline links    |
+| Caption      | Quicksand | 12px | 500    | 17.92px     | 0.2px          | Image captions, metadata          |
+| Code         | Monospace | 13px | 400    | 19.5px      | 0px            | Inline and block code             |
 
 ### Principles
+
 - **Generous line height** ensures readability across all screen sizes and promotes visual breathing room
 - **Consistent weight progression** (400 → 500 → 600 → 700) creates clear hierarchy without font switching
 - **Negative letter spacing at display sizes** tightens large headlines for visual impact
@@ -90,6 +99,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 ### Buttons
 
 #### Primary Button
+
 - **Background:** `#447AFF` (`rgb(68, 122, 255)`)
 - **Text Color:** `#FFFFFF`
 - **Font Size:** `16px`
@@ -105,6 +115,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Focus State:** `0 0 0 2px #FFFFFF, 0 0 0 4px #447AFF`
 
 #### Secondary Button
+
 - **Background:** `rgba(0, 0, 0, 0)` (transparent)
 - **Text Color:** `#172B4D`
 - **Font Size:** `16px`
@@ -119,6 +130,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Disabled State:** Border becomes `#C9D1D9`, text becomes `#97A0AF`
 
 #### Ghost Button
+
 - **Background:** `rgba(0, 0, 0, 0)`
 - **Text Color:** `#FFFFFF` (on dark backgrounds) or `#172B4D` (on light backgrounds)
 - **Font Size:** `16px`
@@ -132,6 +144,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Active State:** Underline persistent, opacity `0.8`
 
 #### Icon Button
+
 - **Background:** `rgba(0, 0, 0, 0)`
 - **Icon Color:** `#172B4D`
 - **Padding:** `8px`
@@ -144,6 +157,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 ### Cards & Containers
 
 #### Standard Card
+
 - **Background:** `#FFFFFF`
 - **Border:** `1px solid #C9D1D9`
 - **Border Radius:** `8px`
@@ -152,6 +166,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Hover State:** Box shadow increases to `rgba(0, 0, 0, 0.24) 0px 8px 16px 0px`
 
 #### Branded Card (Light Accent)
+
 - **Background:** `#E7ECFC`
 - **Border:** `1px solid #375DE7`
 - **Border Radius:** `8px`
@@ -159,6 +174,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Box Shadow:** `rgba(0, 0, 0, 0.08) 0px 2px 4px 0px`
 
 #### Dark Hero Section
+
 - **Background:** `#172B4D` (linear gradient to `#060E38`)
 - **Text Color:** `#FFFFFF`
 - **Padding:** `96px 24px`
@@ -166,6 +182,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Box Shadow:** None
 
 #### Section Container
+
 - **Background:** `#F6F8FA` or transparent
 - **Padding:** `64px 24px`
 - **Max Width:** `1200px`
@@ -175,6 +192,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 ### Inputs & Forms
 
 #### Text Input
+
 - **Background:** `#FFFFFF`
 - **Border:** `1px solid #C9D1D9`
 - **Border Radius:** `4px`
@@ -190,6 +208,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Disabled State:** Background becomes `#EBECF0`, text becomes `#97A0AF`, border becomes `#C9D1D9`
 
 #### Textarea
+
 - **Background:** `#FFFFFF`
 - **Border:** `1px solid #C9D1D9`
 - **Border Radius:** `4px`
@@ -203,6 +222,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Focus State:** Border becomes `#447AFF`, box shadow `0 0 0 2px rgba(68, 122, 255, 0.2)`
 
 #### Form Label
+
 - **Font Size:** `14px`
 - **Font Weight:** `500`
 - **Color:** `#172B4D`
@@ -211,6 +231,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Line Height:** `20.88px`
 
 #### Form Error Message
+
 - **Font Size:** `12px`
 - **Font Weight:** `400`
 - **Color:** `#CF222E`
@@ -220,6 +241,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 ### Navigation
 
 #### Header Navigation Link
+
 - **Background:** Transparent
 - **Text Color:** `#172B4D`
 - **Font Size:** `16px`
@@ -233,6 +255,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Focus State:** Text color `#447AFF`, outline `2px solid #447AFF`
 
 #### Mobile Navigation Item
+
 - **Background:** `#FFFFFF` (default), `#F6F8FA` (hover)
 - **Text Color:** `#172B4D`
 - **Font Size:** `16px`
@@ -243,6 +266,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Active State:** Border becomes `4px solid #447AFF`, background becomes `#E7ECFC`
 
 #### Dropdown Menu Container
+
 - **Background:** `#FFFFFF`
 - **Border:** `1px solid #C9D1D9`
 - **Border Radius:** `4px`
@@ -251,6 +275,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Min Width:** `200px`
 
 #### Dropdown Menu Item
+
 - **Padding:** `8px 16px`
 - **Font Size:** `14px`
 - **Font Weight:** `500`
@@ -261,6 +286,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 ### Badge
 
 #### Primary Badge
+
 - **Background:** `#E7ECFC`
 - **Text Color:** `#375DE7`
 - **Font Size:** `12px`
@@ -271,6 +297,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Line Height:** `17.92px`
 
 #### Status Badge (Success)
+
 - **Background:** `#E6F4EA`
 - **Text Color:** `#2DA44E`
 - **Font Size:** `12px`
@@ -280,6 +307,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Line Height:** `17.92px`
 
 #### Status Badge (Warning)
+
 - **Background:** `#FFF8C5`
 - **Text Color:** `#FFAB00`
 - **Font Size:** `12px`
@@ -289,6 +317,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 - **Line Height:** `17.92px`
 
 #### Status Badge (Error)
+
 - **Background:** `#FFEBEE`
 - **Text Color:** `#CF222E`
 - **Font Size:** `12px`
@@ -300,12 +329,14 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 ### Tabs
 
 #### Tab Nav Container
+
 - **Background:** `#FFFFFF`
 - **Border Bottom:** `2px solid #C9D1D9`
 - **Display:** `flex`
 - **Overflow:** `auto`
 
 #### Tab Item
+
 - **Background:** Transparent
 - **Text Color:** `#6B778C`
 - **Font Size:** `16px`
@@ -323,6 +354,7 @@ The STEAM for Vietnam design system embodies a modern, tech-forward aesthetic ro
 **Base Unit:** `4px`
 
 **Scale with Usage Context:**
+
 - `4px`: Micro spacing for inline elements, icon margins
 - `8px`: Tight padding, form field internal spacing
 - `12px`: Component internal padding, small gaps
@@ -360,13 +392,13 @@ The design system prioritizes generous whitespace to enhance readability and foc
 
 ## 6. Depth & Elevation
 
-| Level | Treatment | Use |
-|-------|-----------|-----|
-| None (Flat) | No shadow | Text-only sections, flat backgrounds |
-| Subtle (sm) | `rgba(0, 0, 0, 0.08) 0px 2px 4px 0px` | Secondary cards, subtle elevation |
-| Standard (md) | `rgba(0, 0, 0, 0.16) 0px 4px 8px 0px` | Primary cards, dropdown menus, typical components |
-| Elevated (lg) | `rgba(0, 0, 0, 0.24) 0px 8px 16px 0px` | Hover states on cards, modals (initial) |
-| High (xl) | `rgba(0, 0, 0, 0.32) 0px 12px 24px 0px` | Modal dialogs, floating action buttons, prominent overlays |
+| Level         | Treatment                               | Use                                                        |
+| ------------- | --------------------------------------- | ---------------------------------------------------------- |
+| None (Flat)   | No shadow                               | Text-only sections, flat backgrounds                       |
+| Subtle (sm)   | `rgba(0, 0, 0, 0.08) 0px 2px 4px 0px`   | Secondary cards, subtle elevation                          |
+| Standard (md) | `rgba(0, 0, 0, 0.16) 0px 4px 8px 0px`   | Primary cards, dropdown menus, typical components          |
+| Elevated (lg) | `rgba(0, 0, 0, 0.24) 0px 8px 16px 0px`  | Hover states on cards, modals (initial)                    |
+| High (xl)     | `rgba(0, 0, 0, 0.32) 0px 12px 24px 0px` | Modal dialogs, floating action buttons, prominent overlays |
 | Maximum (xxl) | `rgba(0, 0, 0, 0.40) 0px 16px 32px 0px` | Critical modals, toast notifications, top-layer components |
 
 **Shadow Philosophy:** Shadows are used sparingly and subtly to establish layering without overwhelming the visual hierarchy. Most components rely on border and background differentiation rather than shadow depth. Shadows increase on interaction (hover, focus) to provide tactile feedback. Dark hero sections and branded backgrounds deliberately avoid shadows, maintaining flat structural integrity. The standard shadow (`md`) is applied to discrete, interactive surfaces like cards and dropdowns. Elevation is reserved for modal dialogs and floating elements that require clear visual separation from background content.
@@ -403,12 +435,12 @@ The design system prioritizes generous whitespace to enhance readability and foc
 
 ### Breakpoints
 
-| Name | Width | Key Changes |
-|------|-------|-------------|
-| Mobile | `320px–639px` | Single column, `24px` padding, stacked navigation, `16px` base text |
-| Tablet | `640px–1023px` | Two-column layout, `32px` padding, expanded navigation, `18px` base text |
+| Name    | Width           | Key Changes                                                                                |
+| ------- | --------------- | ------------------------------------------------------------------------------------------ |
+| Mobile  | `320px–639px`   | Single column, `24px` padding, stacked navigation, `16px` base text                        |
+| Tablet  | `640px–1023px`  | Two-column layout, `32px` padding, expanded navigation, `18px` base text                   |
 | Desktop | `1024px–1439px` | Multi-column layout, `48px` padding, full navigation, `16px` base text, `1200px` container |
-| Wide | `1440px+` | Max `1400px` container, `64px` padding, expanded whitespace, consistent `16px` base |
+| Wide    | `1440px+`       | Max `1400px` container, `64px` padding, expanded whitespace, consistent `16px` base        |
 
 ### Touch Targets
 

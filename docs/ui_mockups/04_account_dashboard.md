@@ -1,7 +1,9 @@
 # Account Dashboard UI Wireframe
+
 Route: `/account`
 
 ## 1. Normal User View
+
 (Header only)
 
 ```ascii
@@ -34,6 +36,7 @@ Route: `/account`
 ```
 
 ## 2. Staff View (Admin managing user)
+
 Route: `/users/$userId`
 (Header + Sidebar)
 
@@ -62,4 +65,3 @@ Route: `/users/$userId`
 |   Site        |                                                             |
 +---------------+-------------------------------------------------------------+
 ```
-

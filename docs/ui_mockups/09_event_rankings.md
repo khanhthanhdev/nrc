@@ -1,7 +1,9 @@
 # Event Rankings UI Wireframe
+
 Route: `/$season/$eventId/rankings`
 
 ## 1. Normal User View
+
 (Header only)
 
 ```ascii
@@ -30,6 +32,7 @@ Route: `/$season/$eventId/rankings`
 ```
 
 ## 2. Staff View (Match Entry)
+
 Route: `/staff/events/$eventId/matches`
 (Header + Sidebar)
 
@@ -58,4 +61,3 @@ Route: `/staff/events/$eventId/matches`
 |   Site        |                                                             |
 +---------------+-------------------------------------------------------------+
 ```
-

@@ -110,23 +110,26 @@ export interface PublicEventDetail {
   publishedRegistrationFormVersion: AdminRegistrationFormVersion | null;
 }
 
-const PUBLIC_EVENT_STATUSES: EventRecord["status"][] = [
+const PUBLIC_EVENT_STATUSES = new Set<EventRecord["status"]>([
   "published",
   "registration_open",
   "registration_closed",
   "active",
   "completed",
   "archived",
-];
+]);
 
 const toIsoString = (value: Date | null | undefined): string | null => value?.toISOString() ?? null;
 
-export const buildEventKey = (season: string, eventCode: string): string => `${season}/${eventCode}`;
+export const buildEventKey = (season: string, eventCode: string): string =>
+  `${season}/${eventCode}`;
 
 export const compareEventsForAdmin = (
   left: { eventStartsAt: Date; name: string },
   right: { eventStartsAt: Date; name: string },
-): number => left.eventStartsAt.getTime() - right.eventStartsAt.getTime() || left.name.localeCompare(right.name);
+): number =>
+  left.eventStartsAt.getTime() - right.eventStartsAt.getTime() ||
+  left.name.localeCompare(right.name);
 
 export const compareDocumentsByDisplayOrder = (
   left: { sortOrder: number; title: string },
@@ -215,7 +218,7 @@ const mapRegistrationFormVersion = (
 });
 
 export const buildAdminEventSummaries = (events: EventRecord[]): AdminEventSummary[] =>
-  events.sort(compareEventsForAdmin).map(mapAdminEventSummary);
+  events.toSorted(compareEventsForAdmin).map(mapAdminEventSummary);
 
 export const buildAdminEventDetail = ({
   announcements,
@@ -228,11 +231,13 @@ export const buildAdminEventDetail = ({
   event: EventRecord;
   registrationFormVersions: RegistrationFormVersionRecord[];
 }): AdminEventDetail => ({
-  announcements: announcements.sort(compareAnnouncementsForDisplay).map(mapAdminEventAnnouncement),
-  documents: documents.sort(compareDocumentsByDisplayOrder).map(mapAdminEventDocument),
+  announcements: announcements
+    .toSorted(compareAnnouncementsForDisplay)
+    .map(mapAdminEventAnnouncement),
+  documents: documents.toSorted(compareDocumentsByDisplayOrder).map(mapAdminEventDocument),
   event: mapAdminEvent(event),
   registrationFormVersions: registrationFormVersions
-    .sort(compareFormVersionsDesc)
+    .toSorted(compareFormVersionsDesc)
     .map(mapRegistrationFormVersion),
 });
 
@@ -289,7 +294,11 @@ const assertUniqueEventIdentity = async (
         isNull(eventTable.deletedAt),
       );
 
-  const [sameIdentity] = await db.select({ id: eventTable.id }).from(eventTable).where(identityConditions).limit(1);
+  const [sameIdentity] = await db
+    .select({ id: eventTable.id })
+    .from(eventTable)
+    .where(identityConditions)
+    .limit(1);
   if (sameIdentity) {
     throw new ORPCError("CONFLICT", {
       message: `Event ${input.season}/${input.eventCode} already exists.`,
@@ -399,7 +408,10 @@ export const listAdminEvents = async (
 
   const events =
     conditions.length > 0
-      ? await db.select().from(eventTable).where(and(...conditions))
+      ? await db
+          .select()
+          .from(eventTable)
+          .where(and(...conditions))
       : await db.select().from(eventTable);
 
   return buildAdminEventSummaries(events);
@@ -451,7 +463,7 @@ export const getPublicEventBySeasonAndCode = async (
     )
     .limit(1);
 
-  if (!event || !PUBLIC_EVENT_STATUSES.includes(event.status)) {
+  if (!event || !PUBLIC_EVENT_STATUSES.has(event.status)) {
     throw new ORPCError("NOT_FOUND", {
       message: `Event ${season}/${eventCode} was not found.`,
     });
@@ -471,7 +483,9 @@ export const getPublicEventBySeasonAndCode = async (
     db
       .select()
       .from(eventAnnouncementTable)
-      .where(and(eq(eventAnnouncementTable.eventId, event.id), isNull(eventAnnouncementTable.deletedAt))),
+      .where(
+        and(eq(eventAnnouncementTable.eventId, event.id), isNull(eventAnnouncementTable.deletedAt)),
+      ),
     db
       .select()
       .from(eventRegistrationFormVersionTable)
@@ -485,8 +499,10 @@ export const getPublicEventBySeasonAndCode = async (
   ]);
 
   return {
-    announcements: announcements.sort(compareAnnouncementsForDisplay).map(mapAdminEventAnnouncement),
-    documents: documents.sort(compareDocumentsByDisplayOrder).map(mapAdminEventDocument),
+    announcements: announcements
+      .toSorted(compareAnnouncementsForDisplay)
+      .map(mapAdminEventAnnouncement),
+    documents: documents.toSorted(compareDocumentsByDisplayOrder).map(mapAdminEventDocument),
     event: mapAdminEvent(event),
     publishedRegistrationFormVersion: formVersions[0]
       ? mapRegistrationFormVersion(formVersions[0])
@@ -541,7 +557,9 @@ export const updateEventForAdmin = async (input: UpdateEventInput): Promise<Admi
       maxParticipants: input.maxParticipants ?? null,
       name: input.name,
       registrationEndsAt: input.registrationEndsAt ? new Date(input.registrationEndsAt) : null,
-      registrationStartsAt: input.registrationStartsAt ? new Date(input.registrationStartsAt) : null,
+      registrationStartsAt: input.registrationStartsAt
+        ? new Date(input.registrationStartsAt)
+        : null,
       season: input.season,
       status: input.status,
       summary: input.summary ?? null,

@@ -49,16 +49,16 @@ The overall experience lives on a light neutral canvas with a restrained accent 
 
 ### Hierarchy
 
-| Role | Font | Size | Weight | Line Height | Notes |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| Display Hero | Plus Jakarta Sans | 64px (4rem) | 700 | 1.05 | Reserved for key landing moments only |
-| Section Heading | Plus Jakarta Sans | 40px (2.5rem) | 700 | 1.15 | Main page headings |
-| Card Heading | Plus Jakarta Sans | 22px (1.375rem) | 600 | 1.25 | Section cards and detail headers |
-| UI Large | Plus Jakarta Sans | 16px (1rem) | 600 | 1.45 | Tabs, important labels, compact headings |
-| Body Standard | Plus Jakarta Sans | 15px (0.9375rem) | 400 | 1.6 | Main reading size |
-| UI Standard | Plus Jakarta Sans | 14px (0.875rem) | 500 | 1.5 | Dense UI, metadata, tables |
-| Caption / Meta | Plus Jakarta Sans | 13px (0.8125rem) | 400 | 1.45 | Supporting annotations |
-| Micro Label | Plus Jakarta Sans | 12px (0.75rem) | 600 | 1.35 | Status chips and small labels |
+| Role            | Font              | Size             | Weight | Line Height | Notes                                    |
+| :-------------- | :---------------- | :--------------- | :----- | :---------- | :--------------------------------------- |
+| Display Hero    | Plus Jakarta Sans | 64px (4rem)      | 700    | 1.05        | Reserved for key landing moments only    |
+| Section Heading | Plus Jakarta Sans | 40px (2.5rem)    | 700    | 1.15        | Main page headings                       |
+| Card Heading    | Plus Jakarta Sans | 22px (1.375rem)  | 600    | 1.25        | Section cards and detail headers         |
+| UI Large        | Plus Jakarta Sans | 16px (1rem)      | 600    | 1.45        | Tabs, important labels, compact headings |
+| Body Standard   | Plus Jakarta Sans | 15px (0.9375rem) | 400    | 1.6         | Main reading size                        |
+| UI Standard     | Plus Jakarta Sans | 14px (0.875rem)  | 500    | 1.5         | Dense UI, metadata, tables               |
+| Caption / Meta  | Plus Jakarta Sans | 13px (0.8125rem) | 400    | 1.45        | Supporting annotations                   |
+| Micro Label     | Plus Jakarta Sans | 12px (0.75rem)   | 600    | 1.35        | Status chips and small labels            |
 
 ### Principles
 
@@ -72,6 +72,7 @@ The overall experience lives on a light neutral canvas with a restrained accent 
 ### Buttons
 
 **Primary**
+
 - Background: solid navy or a restrained blue-to-violet gradient when emphasis is needed
 - Text: white
 - Radius: 12px to 14px
@@ -80,12 +81,14 @@ The overall experience lives on a light neutral canvas with a restrained accent 
 - Hover: slight background darkening, no dramatic lift
 
 **Secondary**
+
 - Background: Soft Surface (`#f3f5f8`)
 - Text: Navy Ink (`#172b4d`)
 - Border: none
 - Hover: slightly darker surface tone or a subtle lavender tint
 
 **Outline**
+
 - Use only when semantic separation matters
 - Border: `1px solid #e6ebf2`
 - Background: white
@@ -135,12 +138,12 @@ The overall experience lives on a light neutral canvas with a restrained accent 
 
 ## 6. Depth & Elevation
 
-| Level | Treatment | Use |
-| :--- | :--- | :--- |
-| Level 0 | No shadow | Backgrounds, simple sections |
-| Level 1 | `0 8px 24px rgba(23, 43, 77, 0.06)` | Primary surface cards |
+| Level   | Treatment                            | Use                               |
+| :------ | :----------------------------------- | :-------------------------------- |
+| Level 0 | No shadow                            | Backgrounds, simple sections      |
+| Level 1 | `0 8px 24px rgba(23, 43, 77, 0.06)`  | Primary surface cards             |
 | Level 2 | `0 14px 34px rgba(23, 43, 77, 0.08)` | Menus, dialogs, emphasized panels |
-| Focus | `0 0 0 3px rgba(122, 90, 248, 0.18)` | Keyboard focus only |
+| Focus   | `0 0 0 3px rgba(122, 90, 248, 0.18)` | Keyboard focus only               |
 
 **Depth Rule**
 

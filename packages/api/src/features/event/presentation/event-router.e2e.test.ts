@@ -335,9 +335,9 @@ describe("eventRouter e2e", () => {
       status: "published" as const,
     };
 
-    await expect(
-      client.event.createEvent({ ...baseInput, season: "2025" }),
-    ).resolves.toEqual(ADMIN_DETAIL);
+    await expect(client.event.createEvent({ ...baseInput, season: "2025" })).resolves.toEqual(
+      ADMIN_DETAIL,
+    );
     await expect(
       client.event.createEvent({
         ...baseInput,

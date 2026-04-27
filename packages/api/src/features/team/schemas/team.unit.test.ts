@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import * as v from "valibot";
 
-import { createTeamInputSchema } from "./team";
+import { createTeamInputSchema, getPublicTeamInputSchema } from "./team";
 
 const validInput = {
   cityOrProvince: "Da Nang",
@@ -57,5 +57,35 @@ describe("createTeamInputSchema", () => {
       description: "A".repeat(2001),
     });
     expect(result.success).toBe(false);
+  });
+});
+
+describe("getPublicTeamInputSchema", () => {
+  it("accepts a five-digit team number", () => {
+    const result = v.safeParse(getPublicTeamInputSchema, {
+      teamNumber: "02323",
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects team numbers that contain non-digit characters", () => {
+    const result = v.safeParse(getPublicTeamInputSchema, {
+      teamNumber: "12A45",
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects team numbers that are not exactly five digits", () => {
+    const tooShort = v.safeParse(getPublicTeamInputSchema, {
+      teamNumber: "1234",
+    });
+    const tooLong = v.safeParse(getPublicTeamInputSchema, {
+      teamNumber: "123456",
+    });
+
+    expect(tooShort.success).toBe(false);
+    expect(tooLong.success).toBe(false);
   });
 });

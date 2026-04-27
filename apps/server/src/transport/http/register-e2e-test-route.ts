@@ -33,23 +33,23 @@ interface SeedGoogleUserPayload extends EmailPayload {
 }
 
 interface SeedSeasonPagePayload {
-  announcements?: Array<{
+  announcements?: {
     body: string;
     id?: string;
     isPinned?: boolean;
     publishedAt: string;
     sortOrder?: number;
     title: string;
-  }>;
+  }[];
   description?: string | null;
-  documents?: Array<{
+  documents?: {
     id?: string;
     kind: string;
     sortOrder?: number;
     title: string;
     url: string;
-  }>;
-  events?: Array<{
+  }[];
+  events?: {
     eventCode: string;
     eventEndsAt: string;
     eventStartsAt: string;
@@ -70,7 +70,7 @@ interface SeedSeasonPagePayload {
     summary?: string | null;
     timezone?: string | null;
     venue?: string | null;
-  }>;
+  }[];
   gameCode: string;
   isActive?: boolean;
   theme: string;
@@ -198,7 +198,8 @@ export const registerE2ETestRoute = (app: Hono<EvlogVariables>): void => {
         ? body.name.trim()
         : defaultName;
     const onboardingCompleted = body?.onboardingCompleted === true;
-    const systemRole = body?.systemRole === "ADMIN" || body?.systemRole === "MANAGER" ? body.systemRole : "USER";
+    const systemRole =
+      body?.systemRole === "ADMIN" || body?.systemRole === "MANAGER" ? body.systemRole : "USER";
     const userType = systemRole === "USER" ? "PARTICIPANT" : "STAFF";
     const now = new Date();
 

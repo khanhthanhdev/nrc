@@ -28,7 +28,8 @@ const assertSafeDatabase = (): string => {
 
 const resetDatabaseViaApi = async (): Promise<void> => {
   const databaseName = assertSafeDatabase();
-  const apiUrl = process.env.PLAYWRIGHT_API_URL ?? process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
+  const apiUrl =
+    process.env.PLAYWRIGHT_API_URL ?? process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
   const response = await fetch(`${apiUrl}/api/test/data/reset-database`, {
     method: "POST",
   });

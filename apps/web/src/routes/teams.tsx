@@ -27,9 +27,7 @@ const TeamsPage = () => {
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold">Teams</h1>
-          <p className="text-muted-foreground text-sm">
-            Browse registered competition teams.
-          </p>
+          <p className="text-muted-foreground text-sm">Browse registered competition teams.</p>
         </div>
 
         {session.data && (
@@ -51,13 +49,9 @@ const TeamsPage = () => {
         />
       </div>
 
-      {teamsQuery.isLoading && (
-        <p className="text-muted-foreground text-sm">Loading teams...</p>
-      )}
+      {teamsQuery.isLoading && <p className="text-muted-foreground text-sm">Loading teams...</p>}
 
-      {teamsQuery.error && (
-        <p className="text-destructive text-sm">{teamsQuery.error.message}</p>
-      )}
+      {teamsQuery.error && <p className="text-destructive text-sm">{teamsQuery.error.message}</p>}
 
       {teamsQuery.data && teamsQuery.data.teams.length === 0 && (
         <div className="rounded-2xl border border-dashed p-6 text-center">

@@ -3,6 +3,7 @@
 **Conducted at:** 2026-04-19 20:59 (local)
 
 ## Table of Contents
+
 - [Executive Summary](#executive-summary)
 - [Research Methodology](#research-methodology)
 - [Key Findings](#key-findings)
@@ -172,22 +173,22 @@ apps/web/src/features/events/
 
 ```ts
 // apps/web/src/features/events/resolver.ts
-type Season = string
+type Season = string;
 
 export function resolveQualificationsPage(season: Season) {
   switch (season) {
-    case '2025':
-      return import('./seasons/2025/pages/qualifications-page')
+    case "2025":
+      return import("./seasons/2025/pages/qualifications-page");
     default:
-      return import('./shared/pages/qualifications-page')
+      return import("./shared/pages/qualifications-page");
   }
 }
 ```
 
 ```ts
 // route param guard concept
-const seasonRegex = /^\d{4}$/
-const eventCodeRegex = /^[A-Z0-9_-]{3,20}$/
+const seasonRegex = /^\d{4}$/;
+const eventCodeRegex = /^[A-Z0-9_-]{3,20}$/;
 ```
 
 ### Common Pitfalls
@@ -224,12 +225,12 @@ const eventCodeRegex = /^[A-Z0-9_-]{3,20}$/
 
 ### B. Version Compatibility Matrix
 
-| Concern | Recommendation |
-|---|---|
-| Router style | TanStack Start file-based nested routes |
-| URL contract | Stable `/:season/:eventCode/...` |
-| Season customization | Adapter resolver layer |
-| Shared UI | Event shell at event boundary route |
+| Concern              | Recommendation                          |
+| -------------------- | --------------------------------------- |
+| Router style         | TanStack Start file-based nested routes |
+| URL contract         | Stable `/:season/:eventCode/...`        |
+| Season customization | Adapter resolver layer                  |
+| Shared UI            | Event shell at event boundary route     |
 
 ### C. Raw Research Notes
 

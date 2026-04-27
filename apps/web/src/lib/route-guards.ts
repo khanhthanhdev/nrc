@@ -2,16 +2,13 @@ import { useEffect } from "react";
 
 import { useNavigate } from "@tanstack/react-router";
 
-import { authClient } from "@/utils/auth-client";
+import type { authClient } from "@/utils/auth-client";
 
 import { getSystemRole, isAdminSystemRole, isStaffSystemRole } from "./route-policy";
 
 type SessionState = ReturnType<typeof authClient.useSession>;
 
-export const useRequireAuth = (
-  session: SessionState,
-  redirectTo = "/auth",
-): void => {
+export const useRequireAuth = (session: SessionState, redirectTo = "/auth"): void => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,10 +22,7 @@ export const useRequireAuth = (
   }, [navigate, redirectTo, session.data, session.isPending]);
 };
 
-export const useRequireStaff = (
-  session: SessionState,
-  redirectTo = "/teams",
-): void => {
+export const useRequireStaff = (session: SessionState, redirectTo = "/teams"): void => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,10 +41,7 @@ export const useRequireStaff = (
   }, [navigate, redirectTo, session.data, session.isPending]);
 };
 
-export const useRequireAdmin = (
-  session: SessionState,
-  redirectTo = "/teams",
-): void => {
+export const useRequireAdmin = (session: SessionState, redirectTo = "/teams"): void => {
   const navigate = useNavigate();
 
   useEffect(() => {

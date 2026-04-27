@@ -1,7 +1,9 @@
 # Staff Dashboard UI Wireframe
+
 Route: `/staff`
 
 ## 1. Normal User View
+
 Route: `/account` (Account Dashboard)
 (Header only)
 
@@ -26,6 +28,7 @@ Route: `/account` (Account Dashboard)
 ```
 
 ## 2. Staff View
+
 Route: `/staff` (Staff Dashboard)
 (Header + Sidebar)
 
@@ -54,5 +57,3 @@ Route: `/staff` (Staff Dashboard)
 |   Site        |                                                             |
 +---------------+-------------------------------------------------------------+
 ```
-
-

@@ -1,4 +1,13 @@
-import { db, member, organization, session, team, teamInvitation, teamMembership, user } from "@nrc-full/db";
+import {
+  db,
+  member,
+  organization,
+  session,
+  team,
+  teamInvitation,
+  teamMembership,
+  user,
+} from "@nrc-full/db";
 import { ORPCError } from "@orpc/server";
 import { and, asc, count, desc, eq, ilike, isNull, lt, or, sql } from "drizzle-orm";
 
@@ -15,8 +24,11 @@ import type {
 } from "../schemas/team.js";
 
 const MIN_MENTOR_AGE_YEARS = 18;
-const TEAM_NUMBER_SIZE = 8;
-const TEAM_NUMBER_MAX_ATTEMPTS = 10;
+const TEAM_NUMBER_DIGITS = 5;
+const TEAM_NUMBER_MIN_VALUE = 1;
+const TEAM_NUMBER_MAX_VALUE = 99_999;
+const TEAM_NUMBER_ALLOCATION_LOCK_NAMESPACE = 20_260_427;
+const TEAM_NUMBER_ALLOCATION_LOCK_KEY = 1;
 type DatabaseTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 export interface TeamSummary {
@@ -29,14 +41,6 @@ export interface TeamSummary {
   schoolOrOrganization: string | null;
   teamNumber: string;
 }
-
-const toSlugPart = (value: string): string =>
-  value
-    .normalize("NFKD")
-    .replaceAll(/[\u0300-\u036F]/g, "")
-    .toLowerCase()
-    .replaceAll(/[^a-z0-9]+/g, "-")
-    .replaceAll(/^-+|-+$/g, "");
 
 const getAgeInYears = (dateOfBirth: string, now: Date = new Date()): number => {
   const birthDate = new Date(`${dateOfBirth}T00:00:00.000Z`);
@@ -53,50 +57,59 @@ const getAgeInYears = (dateOfBirth: string, now: Date = new Date()): number => {
   return hasHadBirthdayThisYear ? age : age - 1;
 };
 
-const generateTeamNumberCandidate = (): string =>
-  `TM${crypto.randomUUID().replaceAll("-", "").slice(0, TEAM_NUMBER_SIZE).toUpperCase()}`;
+export const resolveNextTeamNumber = (currentMaxTeamNumber: number | string | null): string => {
+  const numericCurrentMax = Number(currentMaxTeamNumber ?? 0);
 
-const generateUniqueTeamNumber = async (tx: DatabaseTransaction): Promise<string> => {
-  for (let attempt = 0; attempt < TEAM_NUMBER_MAX_ATTEMPTS; attempt += 1) {
-    const teamNumber = generateTeamNumberCandidate();
-    const [existingTeam] = await tx
-      .select({ id: team.id })
-      .from(team)
-      .where(and(eq(team.teamNumber, teamNumber), isNull(team.deletedAt)))
-      .limit(1);
-
-    if (!existingTeam) {
-      return teamNumber;
-    }
+  if (!Number.isInteger(numericCurrentMax) || numericCurrentMax < 0) {
+    throw new ORPCError("INTERNAL_SERVER_ERROR", {
+      message: "Unable to read the current team number sequence.",
+    });
   }
 
-  throw new ORPCError("INTERNAL_SERVER_ERROR", {
-    message: "Unable to allocate a unique team number.",
-  });
+  const nextTeamNumber = numericCurrentMax + 1;
+
+  if (nextTeamNumber < TEAM_NUMBER_MIN_VALUE || nextTeamNumber > TEAM_NUMBER_MAX_VALUE) {
+    throw new ORPCError("INTERNAL_SERVER_ERROR", {
+      message: "Unable to allocate a unique team number and slug.",
+    });
+  }
+
+  return nextTeamNumber.toString().padStart(TEAM_NUMBER_DIGITS, "0");
 };
 
-const generateUniqueOrganizationSlug = async (
+const generateUniqueTeamIdentity = async (
   tx: DatabaseTransaction,
-  teamName: string,
-): Promise<string> => {
-  const baseSlug = toSlugPart(teamName) || "team";
+): Promise<{ organizationSlug: string; teamNumber: string }> => {
+  await tx.execute(
+    sql`select pg_advisory_xact_lock(${TEAM_NUMBER_ALLOCATION_LOCK_NAMESPACE}, ${TEAM_NUMBER_ALLOCATION_LOCK_KEY})`,
+  );
 
-  for (let sequence = 0; sequence < 200; sequence += 1) {
-    const suffix = sequence === 0 ? "" : `-${sequence + 1}`;
-    const slug = `${baseSlug}${suffix}`;
+  const [currentMaxTeamNumberRow] = await tx
+    .select({
+      maxTeamNumber: sql<
+        number | string | null
+      >`max(case when ${team.teamNumber} ~ '^[0-9]{5}$' then ${team.teamNumber}::integer else 0 end)`,
+    })
+    .from(team);
+
+  let nextTeamNumber = resolveNextTeamNumber(currentMaxTeamNumberRow?.maxTeamNumber ?? null);
+
+  while (Number(nextTeamNumber) <= TEAM_NUMBER_MAX_VALUE) {
     const [existingOrganization] = await tx
       .select({ id: organization.id })
       .from(organization)
-      .where(eq(organization.slug, slug))
+      .where(eq(organization.slug, nextTeamNumber))
       .limit(1);
 
     if (!existingOrganization) {
-      return slug;
+      return { organizationSlug: nextTeamNumber, teamNumber: nextTeamNumber };
     }
+
+    nextTeamNumber = resolveNextTeamNumber(Number(nextTeamNumber));
   }
 
-  throw new ORPCError("CONFLICT", {
-    message: "Unable to reserve an organization slug for this team.",
+  throw new ORPCError("INTERNAL_SERVER_ERROR", {
+    message: "Unable to allocate a unique team number and slug.",
   });
 };
 
@@ -138,8 +151,7 @@ export const createTeamForUser = async (
     const now = new Date();
     const organizationId = crypto.randomUUID();
     const teamId = crypto.randomUUID();
-    const teamNumber = await generateUniqueTeamNumber(tx);
-    const organizationSlug = await generateUniqueOrganizationSlug(tx, input.name);
+    const { organizationSlug, teamNumber } = await generateUniqueTeamIdentity(tx);
 
     await tx.insert(organization).values({
       createdAt: now,
@@ -320,7 +332,7 @@ export const listPublicTeams = async (
   const offset = (page - 1) * limit;
 
   const baseWhere = isNull(team.deletedAt);
-  const escapedSearch = input.search?.replace(/[%_\\]/g, "\\$&");
+  const escapedSearch = input.search?.replaceAll(/[%_\\]/g, "\\$&");
   const searchWhere = escapedSearch
     ? and(
         baseWhere,
@@ -426,7 +438,7 @@ export const getPublicTeamByTeamNumber = async (
 // Authenticated helpers
 // ---------------------------------------------------------------------------
 
-const TEAM_MANAGEMENT_ROLES = ["TEAM_MENTOR", "TEAM_LEADER"];
+const TEAM_MANAGEMENT_ROLES = new Set(["TEAM_MENTOR", "TEAM_LEADER"]);
 
 const requireTeamManagementRole = async (
   userId: string,
@@ -455,7 +467,7 @@ const requireTeamManagementRole = async (
     )
     .limit(1);
 
-  if (!membership || !TEAM_MANAGEMENT_ROLES.includes(membership.role)) {
+  if (!membership || !TEAM_MANAGEMENT_ROLES.has(membership.role)) {
     throw new ORPCError("FORBIDDEN", {
       message: "You do not have permission to manage this team.",
     });
@@ -513,19 +525,34 @@ export const updateTeamProfile = async (
   return db.transaction(async (tx) => {
     const updateData: Record<string, unknown> = {};
 
-    if (input.name !== undefined) updateData.name = input.name;
-    if (input.description !== undefined) updateData.description = input.description;
-    if (input.schoolOrOrganization !== undefined) updateData.schoolOrOrganization = input.schoolOrOrganization;
-    if (input.cityOrProvince !== undefined) updateData.cityOrProvince = input.cityOrProvince;
-    if (input.avatarUrl !== undefined) updateData.avatarUrl = input.avatarUrl;
-    if (input.coverImageUrl !== undefined) updateData.coverImageUrl = input.coverImageUrl;
+    if (input.name !== undefined) {
+      updateData.name = input.name;
+    }
+    if (input.description !== undefined) {
+      updateData.description = input.description;
+    }
+    if (input.schoolOrOrganization !== undefined) {
+      updateData.schoolOrOrganization = input.schoolOrOrganization;
+    }
+    if (input.cityOrProvince !== undefined) {
+      updateData.cityOrProvince = input.cityOrProvince;
+    }
+    if (input.avatarUrl !== undefined) {
+      updateData.avatarUrl = input.avatarUrl;
+    }
+    if (input.coverImageUrl !== undefined) {
+      updateData.coverImageUrl = input.coverImageUrl;
+    }
 
     if (Object.keys(updateData).length > 0) {
       await tx.update(team).set(updateData).where(eq(team.id, input.teamId));
     }
 
     if (input.name !== undefined) {
-      await tx.update(organization).set({ name: input.name }).where(eq(organization.id, organizationId));
+      await tx
+        .update(organization)
+        .set({ name: input.name })
+        .where(eq(organization.id, organizationId));
     }
 
     const [updatedMembership] = await tx
@@ -643,19 +670,12 @@ export const listTeamInvitations = async (
       status: teamInvitation.status,
     })
     .from(teamInvitation)
-    .where(
-      and(
-        eq(teamInvitation.teamId, input.teamId),
-        isNull(teamInvitation.deletedAt),
-      ),
-    )
+    .where(and(eq(teamInvitation.teamId, input.teamId), isNull(teamInvitation.deletedAt)))
     .orderBy(desc(teamInvitation.createdAt));
 
   return invitations.map((inv) => {
     const effectiveStatus =
-      inv.status === "PENDING" && inv.expiresAt < new Date()
-        ? "EXPIRED"
-        : inv.status;
+      inv.status === "PENDING" && inv.expiresAt < new Date() ? "EXPIRED" : inv.status;
 
     return {
       createdAt: inv.createdAt.toISOString(),

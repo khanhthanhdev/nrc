@@ -24,7 +24,11 @@ const ensureOk = async (response: APIResponse, context: string): Promise<void> =
 
 const seedUser = async (
   request: APIRequestContext,
-  input: { email: string; onboardingCompleted?: boolean; systemRole?: "ADMIN" | "MANAGER" | "USER" },
+  input: {
+    email: string;
+    onboardingCompleted?: boolean;
+    systemRole?: "ADMIN" | "MANAGER" | "USER";
+  },
 ): Promise<void> => {
   const response = await request.post(`${AUTH_HELPER_BASE_URL}/seed-google-user`, {
     data: {
@@ -37,10 +41,7 @@ const seedUser = async (
   await ensureOk(response, "seed-google-user");
 };
 
-const createSessionForUser = async (
-  request: APIRequestContext,
-  email: string,
-): Promise<void> => {
+const createSessionForUser = async (request: APIRequestContext, email: string): Promise<void> => {
   const response = await request.post(`${AUTH_HELPER_BASE_URL}/create-session`, {
     data: { email },
   });
@@ -48,10 +49,7 @@ const createSessionForUser = async (
   await ensureOk(response, "create-session");
 };
 
-const seedPublicSeasonPage = async (
-  request: APIRequestContext,
-  year: string,
-): Promise<void> => {
+const seedPublicSeasonPage = async (request: APIRequestContext, year: string): Promise<void> => {
   const response = await request.post(`${DATA_HELPER_BASE_URL}/seed-season-page`, {
     data: {
       announcements: [
@@ -121,10 +119,7 @@ const seedPublicSeasonPage = async (
   await ensureOk(response, "seed-season-page");
 };
 
-const seedAdminSeasonShell = async (
-  request: APIRequestContext,
-  year: string,
-): Promise<void> => {
+const seedAdminSeasonShell = async (request: APIRequestContext, year: string): Promise<void> => {
   const response = await request.post(`${DATA_HELPER_BASE_URL}/seed-season-page`, {
     data: {
       description: "Explore the unknown depths and engineer your way to victory.",
@@ -166,7 +161,9 @@ test.describe("season pages", () => {
     await page.getByRole("tab", { name: "Documents" }).click();
     await page.locator("#season-document-create-title").fill("Game Manual");
     await page.locator("#season-document-create-kind").fill("PDF");
-    await page.locator("input#season-document-create-upload-url").fill("https://example.com/manual.pdf");
+    await page
+      .locator("input#season-document-create-upload-url")
+      .fill("https://example.com/manual.pdf");
     await page.locator("#season-document-create-sort-order").fill("0");
     await page.getByRole("button", { name: "Add document" }).click();
     await expect(page.getByText("Document created.")).toBeVisible();
@@ -179,9 +176,7 @@ test.describe("season pages", () => {
 
     await page.getByRole("tab", { name: "Announcements" }).click();
     await page.getByLabel("Title").fill("Registration open");
-    await page
-      .getByLabel("Body")
-      .fill("Registration is now open for mentors and student teams.");
+    await page.getByLabel("Body").fill("Registration is now open for mentors and student teams.");
     await page.getByLabel("Sort order").fill("0");
     await page.getByRole("checkbox", { name: "Pin this announcement" }).click();
     await page.getByRole("button", { name: "Create announcement" }).click();
@@ -214,7 +209,9 @@ test.describe("season pages", () => {
 
     await expect(page.getByRole("heading", { exact: true, name: year })).toBeVisible();
     await expect(page.getByText("Into the Deep", { exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: new RegExp(`${year} · Into the Deep`) })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: new RegExp(`${year} · Into the Deep`) }),
+    ).toBeVisible();
     await expect(page.getByText("Hanoi Regional Hub")).toBeVisible();
     await expect(
       page.getByRole("tabpanel", { name: "Events" }).getByRole("link", { name: "Register" }),

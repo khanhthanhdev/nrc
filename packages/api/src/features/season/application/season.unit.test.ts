@@ -130,7 +130,10 @@ describe("season application builders", () => {
     expect(publicPage.season.year).toBe("2026");
     expect(publicPage.seasonOptions.map((option) => option.year)).toEqual(["2026", "2025"]);
     expect(publicPage.events.map((event) => event.eventCode)).toEqual(["HANOI", "HCMC"]);
-    expect(publicPage.documents.map((document) => document.id)).toEqual(["document-3", "document-2"]);
+    expect(publicPage.documents.map((document) => document.id)).toEqual([
+      "document-3",
+      "document-2",
+    ]);
     expect(publicPage.announcements.map((announcement) => announcement.id)).toEqual([
       "announcement-2",
       "announcement-1",

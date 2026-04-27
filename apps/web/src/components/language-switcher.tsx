@@ -18,7 +18,10 @@ export function LanguageSwitcher({ className }: { className?: string }) {
   return (
     <div
       aria-label={t("languageSwitcher.label")}
-      className={cn("inline-flex items-center gap-1 rounded-full border border-border bg-card p-1", className)}
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full border border-border bg-card p-1",
+        className,
+      )}
       role="group"
     >
       {LANGUAGES.map(({ code, label }) => {

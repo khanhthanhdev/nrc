@@ -84,27 +84,21 @@
         "normalized": "#5925dc",
         "count": 1,
         "confidence": "medium",
-        "sources": [
-          "hover/focus"
-        ]
+        "sources": ["hover/focus"]
       },
       {
         "color": "rgb(63, 63, 63)",
         "normalized": "#3f3f3f",
         "count": 1,
         "confidence": "medium",
-        "sources": [
-          "hover/focus"
-        ]
+        "sources": ["hover/focus"]
       },
       {
         "color": "oklab(0.707999 -0.00000712276 0.0000166297 / 0.5)",
         "normalized": "oklab(0.707999 -0.00000712276 0.0000166297 / 0.5)",
         "count": 1,
         "confidence": "medium",
-        "sources": [
-          "hover/focus"
-        ]
+        "sources": ["hover/focus"]
       }
     ],
     "cssVariables": {
@@ -464,37 +458,28 @@
       {
         "value": "18px",
         "count": 2,
-        "elements": [
-          "div"
-        ],
+        "elements": ["div"],
         "confidence": "low",
         "numericValue": 18
       },
       {
         "value": "30px",
         "count": 14,
-        "elements": [
-          "div"
-        ],
+        "elements": ["div"],
         "confidence": "high",
         "numericValue": 30
       },
       {
         "value": "48px",
         "count": 4,
-        "elements": [
-          "div"
-        ],
+        "elements": ["div"],
         "confidence": "medium",
         "numericValue": 48
       },
       {
         "value": "3.35544e+07px",
         "count": 15,
-        "elements": [
-          "div",
-          "button"
-        ],
+        "elements": ["div", "button"],
         "confidence": "high",
         "numericValue": 33554400
       }

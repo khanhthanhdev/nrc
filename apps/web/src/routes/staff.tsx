@@ -169,7 +169,8 @@ const StaffOverviewPage = () => {
                           Settings
                         </h2>
                         <p className="text-muted-foreground mt-2 text-sm leading-6">
-                          Placeholder route for platform-level staff settings and operational guardrails.
+                          Placeholder route for platform-level staff settings and operational
+                          guardrails.
                         </p>
                       </div>
                       <Button asChild size="sm" variant="secondary">

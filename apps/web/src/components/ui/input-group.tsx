@@ -51,11 +51,25 @@ function InputGroupAddon({
       data-slot="input-group-addon"
       data-align={align}
       className={cn(inputGroupAddonVariants({ align }), className)}
-      onClick={(e) => {
-        if ((e.target as HTMLElement).closest("button")) {
+      onClick={(event) => {
+        if ((event.target as HTMLElement | null)?.closest("button")) {
           return;
         }
-        e.currentTarget.parentElement?.querySelector("input")?.focus();
+
+        event.currentTarget.parentElement?.querySelector("input")?.focus();
+      }}
+      onKeyDown={(event) => {
+        if (event.key !== "Enter" && event.key !== " ") {
+          return;
+        }
+
+        event.preventDefault();
+
+        if ((event.target as HTMLElement | null)?.closest("button")) {
+          return;
+        }
+
+        event.currentTarget.parentElement?.querySelector("input")?.focus();
       }}
       {...props}
     />

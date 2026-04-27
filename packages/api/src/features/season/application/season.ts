@@ -135,10 +135,8 @@ export interface AdminSeasonDetail {
 
 const toIsoString = (value: Date | null | undefined): string | null => value?.toISOString() ?? null;
 
-export const compareSeasonYearsDesc = (
-  left: { year: string },
-  right: { year: string },
-): number => Number.parseInt(right.year, 10) - Number.parseInt(left.year, 10);
+export const compareSeasonYearsDesc = (left: { year: string }, right: { year: string }): number =>
+  Number.parseInt(right.year, 10) - Number.parseInt(left.year, 10);
 
 export const compareDocumentsByDisplayOrder = (
   left: { sortOrder: number; title: string },
@@ -157,7 +155,9 @@ export const compareAnnouncementsForPublic = (
 export const compareEventsForPublic = (
   left: { eventStartsAt: Date; name: string },
   right: { eventStartsAt: Date; name: string },
-): number => left.eventStartsAt.getTime() - right.eventStartsAt.getTime() || left.name.localeCompare(right.name);
+): number =>
+  left.eventStartsAt.getTime() - right.eventStartsAt.getTime() ||
+  left.name.localeCompare(right.name);
 
 export const compareEventsForAdmin = (
   left: { eventStartsAt: Date; name: string },
@@ -212,9 +212,7 @@ const mapAdminSeasonDocument = (record: SeasonDocumentRecord): AdminSeasonDocume
   updatedAt: record.updatedAt.toISOString(),
 });
 
-const mapAdminSeasonAnnouncement = (
-  record: SeasonAnnouncementRecord,
-): AdminSeasonAnnouncement => ({
+const mapAdminSeasonAnnouncement = (record: SeasonAnnouncementRecord): AdminSeasonAnnouncement => ({
   ...mapPublicSeasonAnnouncement(record),
   createdAt: record.createdAt.toISOString(),
   updatedAt: record.updatedAt.toISOString(),
@@ -244,11 +242,13 @@ export const buildPublicSeasonPage = ({
   season: SeasonRecord;
   seasonOptions: SeasonRecord[];
 }): PublicSeasonPage => ({
-  announcements: announcements.sort(compareAnnouncementsForPublic).map(mapPublicSeasonAnnouncement),
-  documents: documents.sort(compareDocumentsByDisplayOrder).map(mapPublicSeasonDocument),
+  announcements: announcements
+    .toSorted(compareAnnouncementsForPublic)
+    .map(mapPublicSeasonAnnouncement),
+  documents: documents.toSorted(compareDocumentsByDisplayOrder).map(mapPublicSeasonDocument),
   events: events
     .filter((event) => event.status !== "draft")
-    .sort(compareEventsForPublic)
+    .toSorted(compareEventsForPublic)
     .map(mapPublicSeasonEvent),
   season: {
     description: season.description ?? null,
@@ -258,11 +258,11 @@ export const buildPublicSeasonPage = ({
     theme: season.theme,
     year: season.year,
   },
-  seasonOptions: seasonOptions.sort(compareSeasonYearsDesc).map(mapPublicSeasonOption),
+  seasonOptions: seasonOptions.toSorted(compareSeasonYearsDesc).map(mapPublicSeasonOption),
 });
 
 export const buildAdminSeasonSummaries = (seasons: SeasonRecord[]): AdminSeasonSummary[] =>
-  seasons.sort(compareSeasonYearsDesc).map((season) => ({
+  seasons.toSorted(compareSeasonYearsDesc).map((season) => ({
     gameCode: season.gameCode,
     isActive: season.isActive,
     theme: season.theme,
@@ -281,9 +281,11 @@ export const buildAdminSeasonDetail = ({
   events: EventRecord[];
   season: SeasonRecord;
 }): AdminSeasonDetail => ({
-  announcements: announcements.sort(compareAnnouncementsForPublic).map(mapAdminSeasonAnnouncement),
-  documents: documents.sort(compareDocumentsByDisplayOrder).map(mapAdminSeasonDocument),
-  events: events.sort(compareEventsForAdmin).map(mapAdminSeasonEvent),
+  announcements: announcements
+    .toSorted(compareAnnouncementsForPublic)
+    .map(mapAdminSeasonAnnouncement),
+  documents: documents.toSorted(compareDocumentsByDisplayOrder).map(mapAdminSeasonDocument),
+  events: events.toSorted(compareEventsForAdmin).map(mapAdminSeasonEvent),
   season: {
     createdAt: season.createdAt.toISOString(),
     description: season.description ?? null,
@@ -394,21 +396,11 @@ export const getPublicSeasonPageByYear = async (year: string): Promise<PublicSea
     db
       .select()
       .from(eventTable)
-      .where(
-        and(
-          eq(eventTable.season, year),
-          isNull(eventTable.deletedAt),
-        ),
-      ),
+      .where(and(eq(eventTable.season, year), isNull(eventTable.deletedAt))),
     db
       .select()
       .from(seasonDocumentTable)
-      .where(
-        and(
-          eq(seasonDocumentTable.seasonYear, year),
-          isNull(seasonDocumentTable.deletedAt),
-        ),
-      ),
+      .where(and(eq(seasonDocumentTable.seasonYear, year), isNull(seasonDocumentTable.deletedAt))),
     db
       .select()
       .from(seasonAnnouncementTable)
@@ -480,12 +472,7 @@ export const getAdminSeasonByYear = async (year: string): Promise<AdminSeasonDet
     db
       .select()
       .from(seasonDocumentTable)
-      .where(
-        and(
-          eq(seasonDocumentTable.seasonYear, year),
-          isNull(seasonDocumentTable.deletedAt),
-        ),
-      ),
+      .where(and(eq(seasonDocumentTable.seasonYear, year), isNull(seasonDocumentTable.deletedAt))),
     db
       .select()
       .from(seasonAnnouncementTable)
@@ -505,7 +492,9 @@ export const getAdminSeasonByYear = async (year: string): Promise<AdminSeasonDet
   });
 };
 
-export const createSeasonForAdmin = async (input: CreateSeasonInput): Promise<AdminSeasonDetail> => {
+export const createSeasonForAdmin = async (
+  input: CreateSeasonInput,
+): Promise<AdminSeasonDetail> => {
   const existingSeason = await getSeasonByYear(input.year);
 
   if (existingSeason) {
@@ -529,7 +518,9 @@ export const createSeasonForAdmin = async (input: CreateSeasonInput): Promise<Ad
   return getAdminSeasonByYear(input.year);
 };
 
-export const updateSeasonForAdmin = async (input: UpdateSeasonInput): Promise<AdminSeasonDetail> => {
+export const updateSeasonForAdmin = async (
+  input: UpdateSeasonInput,
+): Promise<AdminSeasonDetail> => {
   await requireSeasonByYear(input.year);
 
   await db

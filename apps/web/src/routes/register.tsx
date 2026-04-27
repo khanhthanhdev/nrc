@@ -42,14 +42,15 @@ const RegisterPage = () => {
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold">Register</h1>
         <p className="text-muted-foreground text-sm">
-          Open `/register/:eventId` for event registration and `/register/:eventId/:registrationId` for
-          registration detail.
+          Open `/register/:eventId` for event registration and `/register/:eventId/:registrationId`
+          for registration detail.
         </p>
       </div>
 
       <div className="rounded-2xl border p-4">
         <p className="text-sm">
-          Current team role: <span className="font-medium">{teamQuery.data?.membershipRole ?? "none"}</span>
+          Current team role:{" "}
+          <span className="font-medium">{teamQuery.data?.membershipRole ?? "none"}</span>
         </p>
         <p className="text-muted-foreground mt-2 text-sm">
           Non-owner team members stay read-only on registration detail.

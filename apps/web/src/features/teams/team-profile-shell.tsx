@@ -28,11 +28,7 @@ export function TeamProfileShell({ children, showManageTabs, team }: TeamProfile
       <div className="-mx-4 sm:-mx-6 lg:-mx-8">
         <div className="relative overflow-hidden">
           {team.coverImageUrl ? (
-            <img
-              alt=""
-              className="h-48 w-full object-cover sm:h-56"
-              src={team.coverImageUrl}
-            />
+            <img alt="" className="h-48 w-full object-cover sm:h-56" src={team.coverImageUrl} />
           ) : (
             <div className="nrc-hero h-48 sm:h-56" />
           )}
@@ -80,7 +76,7 @@ export function TeamProfileShell({ children, showManageTabs, team }: TeamProfile
               search={{ tab: undefined }}
               to="/teams/$teamNumber"
             >
-              Overview
+              Public view
             </Link>
             {showManageTabs && (
               <>
@@ -91,7 +87,7 @@ export function TeamProfileShell({ children, showManageTabs, team }: TeamProfile
                   search={{ tab: "manage" }}
                   to="/teams/$teamNumber"
                 >
-                  Manage
+                  Management
                 </Link>
                 <Link
                   activeProps={{ className: activeTabClassName }}

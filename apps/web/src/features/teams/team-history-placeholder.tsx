@@ -1,11 +1,24 @@
 export function TeamHistoryPlaceholder() {
   return (
-    <div className="space-y-3">
-      <h2 className="text-lg font-semibold">Event history</h2>
-      <div className="rounded-lg border border-dashed p-6 text-center">
-        <p className="text-sm text-muted-foreground">
-          Event participation history, match results, and awards will appear here once synced from the
-          event-control application.
+    <div className="grid gap-4 lg:grid-cols-3">
+      <div className="nrc-card-subtle space-y-2 p-4">
+        <h2 className="text-sm font-semibold">Team history across events</h2>
+        <p className="text-xs text-muted-foreground">
+          Event participation history will appear here once synced from event-control.
+        </p>
+      </div>
+
+      <div className="nrc-card-subtle space-y-2 p-4">
+        <h2 className="text-sm font-semibold">Match results</h2>
+        <p className="text-xs text-muted-foreground">
+          Match history and latest scores will appear here once synced from event-control.
+        </p>
+      </div>
+
+      <div className="nrc-card-subtle space-y-2 p-4">
+        <h2 className="text-sm font-semibold">Awards won by team</h2>
+        <p className="text-xs text-muted-foreground">
+          Award history will appear here once synced from event-control.
         </p>
       </div>
     </div>
