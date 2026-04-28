@@ -4,7 +4,7 @@ import react from "ultracite/oxlint/react";
 
 export default defineConfig({
   extends: [core, react],
-  ignorePatterns: ["apps/web/src/routeTree.gen.ts"],
+  ignorePatterns: ["apps/web/src/routeTree.gen.ts", "**/*.md"],
   rules: {
     complexity: "allow",
     eqeqeq: "allow",

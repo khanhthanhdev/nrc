@@ -1,29 +1,58 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, useParams } from "@tanstack/react-router";
 
 import { RouteSection } from "@/components/route-section";
+import { PublicDataMessage, PublicMatchesTable } from "@/features/events/public-event-data";
 import { isValidEventId, isValidSeason } from "@/lib/route-policy";
+import { orpc } from "@/utils/orpc";
 
 const QualificationsPage = () => {
   const { eventId, season } = useParams({ from: "/{-$locale}/$season/$eventId/qualifications" });
+  const isValidRoute = isValidSeason(season) && isValidEventId(eventId);
+  const matchesQuery = useQuery({
+    ...orpc.event.listPublicMatches.queryOptions({
+      input: { eventCode: eventId, phase: "QUALIFICATION", season },
+    }),
+    enabled: isValidRoute,
+    refetchInterval: 30_000,
+    retry: false,
+  });
 
-  if (!isValidSeason(season) || !isValidEventId(eventId)) {
+  if (!isValidRoute) {
     return null;
   }
 
   return (
     <RouteSection
-      description={`Match list for ${season} / ${eventId}. Each match is a nested detail route.`}
+      description="Qualification match schedule and posted scores from the synced event data."
       title="Qualifications"
     >
-      <div className="space-y-2">
+      <div className="mb-4 flex flex-wrap gap-2">
         <Link
-          className="nrc-pill block px-4 py-3 text-sm hover:bg-muted"
-          params={{ eventId, matchNumber: "2", season }}
-          to="/{-$locale}/$season/$eventId/qualifications/$matchNumber"
+          className="nrc-pill px-3 py-2 text-sm"
+          params={{ eventId, season }}
+          to="/{-$locale}/$season/$eventId/rankings"
         >
-          Qualification 2
+          rankings
         </Link>
       </div>
+      {matchesQuery.isLoading ? (
+        <PublicDataMessage title="Loading qualification matches..." />
+      ) : null}
+      {matchesQuery.error ? (
+        <PublicDataMessage title="Qualification matches unavailable">
+          Try refreshing after the event sync completes.
+        </PublicDataMessage>
+      ) : null}
+      {!matchesQuery.isLoading && !matchesQuery.error ? (
+        <PublicMatchesTable
+          detailLinks
+          emptyMessage="No qualification matches published yet."
+          eventId={eventId}
+          matches={matchesQuery.data ?? []}
+          season={season}
+        />
+      ) : null}
     </RouteSection>
   );
 };

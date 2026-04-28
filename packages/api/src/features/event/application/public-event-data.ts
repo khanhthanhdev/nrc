@@ -4,30 +4,7 @@ import { and, asc, eq, isNull } from "drizzle-orm";
 
 import { buildEventKey, PUBLIC_EVENT_STATUSES } from "./event.js";
 
-// ---------------------------------------------------------------------------
-// Season-2026 game-specific scoring types
-// ---------------------------------------------------------------------------
-
-interface ScoreDetailAlliance2026 {
-  aCenterFlags: number;
-  aFirstTierFlags: number;
-  aSecondTierFlags: number;
-  bBaseFlagsDown: number;
-  bCenterFlagDown: number;
-  cOpponentBackfieldBullets: number;
-  dGoldFlagsDefended: number;
-  dRobotParkState: number;
-  scoreA: number;
-  scoreB: number;
-  scoreC: number;
-  scoreD: number;
-  scoreTotal: number;
-}
-
-interface MatchDetails2026 {
-  blueAlliance: ScoreDetailAlliance2026;
-  redAlliance: ScoreDetailAlliance2026;
-}
+type PublishedMatchRecord = typeof publishedMatch.$inferSelect;
 
 // ---------------------------------------------------------------------------
 // Public response types
@@ -36,7 +13,7 @@ interface MatchDetails2026 {
 export interface PublicMatchItem {
   blueAlliance: string[];
   blueScore: number | null;
-  details: MatchDetails2026 | null;
+  details: Record<string, unknown> | null;
   field: string | null;
   matchKey: string;
   phase: "PRACTICE" | "QUALIFICATION" | "PLAYOFF";
@@ -53,6 +30,7 @@ export interface PublicRankingItem {
   losses: number;
   matchesPlayed: number;
   rank: number;
+  summary: Record<string, unknown> | null;
   teamNumber: string;
   ties: number;
   wins: number;
@@ -102,27 +80,27 @@ const parseSequenceNumber = (matchKey: string): number => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 };
 
-const toIsoOrNull = (value: Date | null | undefined): string | null =>
-  value?.toISOString() ?? null;
+const toIsoOrNull = (value: Date | null | undefined): string | null => value?.toISOString() ?? null;
 
-const isScoreDetailAlliance2026 = (value: unknown): value is ScoreDetailAlliance2026 =>
-  typeof value === "object" &&
-  value !== null &&
-  "scoreA" in value &&
-  "scoreTotal" in value;
+const toRecordOrNull = (value: unknown): Record<string, unknown> | null =>
+  typeof value === "object" && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
 
-const parseMatchDetails2026 = (raw: unknown): MatchDetails2026 | null => {
-  if (typeof raw !== "object" || raw === null) {
-    return null;
-  }
-
-  const obj = raw as Record<string, unknown>;
-  if (isScoreDetailAlliance2026(obj.redAlliance) && isScoreDetailAlliance2026(obj.blueAlliance)) {
-    return { blueAlliance: obj.blueAlliance, redAlliance: obj.redAlliance };
-  }
-
-  return null;
-};
+const mapPublicMatch = (row: PublishedMatchRecord): PublicMatchItem => ({
+  blueAlliance: row.blueAlliance ?? [],
+  blueScore: row.blueScore,
+  details: toRecordOrNull(row.details),
+  field: row.field,
+  matchKey: row.matchKey,
+  phase: row.phase,
+  playedAt: toIsoOrNull(row.playedAt),
+  redAlliance: row.redAlliance ?? [],
+  redScore: row.redScore,
+  resultStatus: row.resultStatus,
+  scheduledStartAt: toIsoOrNull(row.scheduledStartAt),
+  sequenceNumber: parseSequenceNumber(row.matchKey),
+});
 
 // ---------------------------------------------------------------------------
 // Query: list matches
@@ -148,22 +126,7 @@ export const listPublicMatches = async (
     .where(and(...conditions));
 
   return rows
-    .map(
-      (row): PublicMatchItem => ({
-        blueAlliance: (row.blueAlliance as string[] | null) ?? [],
-        blueScore: row.blueScore,
-        details: parseMatchDetails2026(row.details),
-        field: row.field,
-        matchKey: row.matchKey,
-        phase: row.phase,
-        playedAt: toIsoOrNull(row.playedAt),
-        redAlliance: (row.redAlliance as string[] | null) ?? [],
-        redScore: row.redScore,
-        resultStatus: row.resultStatus,
-        scheduledStartAt: toIsoOrNull(row.scheduledStartAt),
-        sequenceNumber: parseSequenceNumber(row.matchKey),
-      }),
-    )
+    .map(mapPublicMatch)
     .toSorted(
       (a, b) =>
         (PHASE_SORT_ORDER[a.phase] ?? 9) - (PHASE_SORT_ORDER[b.phase] ?? 9) ||
@@ -199,20 +162,7 @@ export const getPublicMatchDetail = async (
     return null;
   }
 
-  return {
-    blueAlliance: (row.blueAlliance as string[] | null) ?? [],
-    blueScore: row.blueScore,
-    details: parseMatchDetails2026(row.details),
-    field: row.field,
-    matchKey: row.matchKey,
-    phase: row.phase,
-    playedAt: toIsoOrNull(row.playedAt),
-    redAlliance: (row.redAlliance as string[] | null) ?? [],
-    redScore: row.redScore,
-    resultStatus: row.resultStatus,
-    scheduledStartAt: toIsoOrNull(row.scheduledStartAt),
-    sequenceNumber: parseSequenceNumber(row.matchKey),
-  };
+  return mapPublicMatch(row);
 };
 
 // ---------------------------------------------------------------------------
@@ -234,10 +184,11 @@ export const listPublicRankings = async (
 
   return rows.map(
     (row): PublicRankingItem => ({
-      details: row.details as Record<string, unknown> | null,
+      details: toRecordOrNull(row.details),
       losses: row.losses,
       matchesPlayed: row.matchesPlayed,
       rank: row.rank,
+      summary: toRecordOrNull(row.summary),
       teamNumber: row.teamNumber,
       ties: row.ties,
       wins: row.wins,
@@ -259,7 +210,8 @@ export const listPublicAwards = async (
   const rows = await db
     .select()
     .from(publishedAward)
-    .where(and(eq(publishedAward.eventKey, eventKey), isNull(publishedAward.deletedAt)));
+    .where(and(eq(publishedAward.eventKey, eventKey), isNull(publishedAward.deletedAt)))
+    .orderBy(asc(publishedAward.awardKey));
 
   return rows.map(
     (row): PublicAwardItem => ({

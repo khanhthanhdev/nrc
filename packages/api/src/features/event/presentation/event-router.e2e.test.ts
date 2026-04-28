@@ -26,6 +26,9 @@ const createEventDocumentForAdminMock = vi.fn();
 const createEventAnnouncementForAdminMock = vi.fn();
 const createRegistrationFormVersionForAdminMock = vi.fn();
 const publishRegistrationFormVersionForAdminMock = vi.fn();
+const getPublicMatchDetailMock = vi.fn();
+const listPublicMatchesMock = vi.fn();
+const listPublicRankingsMock = vi.fn();
 
 vi.mock("../application/event.js", () => ({
   createEventAnnouncementForAdmin: createEventAnnouncementForAdminMock,
@@ -44,6 +47,13 @@ vi.mock("../application/event.js", () => ({
   updateEventDocumentForAdmin: vi.fn(),
   updateEventForAdmin: updateEventForAdminMock,
   updateRegistrationFormVersionForAdmin: vi.fn(),
+}));
+
+vi.mock("../application/public-event-data.js", () => ({
+  getPublicMatchDetail: getPublicMatchDetailMock,
+  listPublicAwards: vi.fn(),
+  listPublicMatches: listPublicMatchesMock,
+  listPublicRankings: listPublicRankingsMock,
 }));
 
 const { appRouter } = await import("../../../app-router.js");
@@ -178,6 +188,35 @@ const PUBLIC_DETAIL: PublicEventDetail = {
   publishedRegistrationFormVersion: FORM_VERSION,
 };
 
+const PUBLIC_MATCH = {
+  blueAlliance: ["101", "102"],
+  blueScore: 138,
+  details: {
+    blue: { scoreTotal: 138 },
+    red: { scoreTotal: 126 },
+  },
+  field: "Field 1",
+  matchKey: "Q1",
+  phase: "QUALIFICATION" as const,
+  playedAt: "2026-07-10T10:20:00.000Z",
+  redAlliance: ["201", "202"],
+  redScore: 126,
+  resultStatus: "POSTED",
+  scheduledStartAt: "2026-07-10T10:00:00.000Z",
+  sequenceNumber: 1,
+};
+
+const PUBLIC_RANKING = {
+  details: { qualifyingScore: 12 },
+  losses: 1,
+  matchesPlayed: 4,
+  rank: 1,
+  summary: { qs: 12 },
+  teamNumber: "101",
+  ties: 0,
+  wins: 3,
+};
+
 describe("eventRouter e2e", () => {
   beforeEach(() => {
     createEventForAdminMock.mockReset();
@@ -190,6 +229,9 @@ describe("eventRouter e2e", () => {
     createEventAnnouncementForAdminMock.mockReset();
     createRegistrationFormVersionForAdminMock.mockReset();
     publishRegistrationFormVersionForAdminMock.mockReset();
+    getPublicMatchDetailMock.mockReset();
+    listPublicMatchesMock.mockReset();
+    listPublicRankingsMock.mockReset();
   });
 
   it("allows public event reads by season and event code", async () => {
@@ -203,6 +245,39 @@ describe("eventRouter e2e", () => {
 
     expect(getPublicEventBySeasonAndCodeMock).toHaveBeenCalledWith("2026", "VNCMP");
     expect(result).toEqual(PUBLIC_DETAIL);
+  });
+
+  it("allows public match schedule, result, score detail, and ranking reads", async () => {
+    listPublicMatchesMock.mockResolvedValue([PUBLIC_MATCH]);
+    getPublicMatchDetailMock.mockResolvedValue(PUBLIC_MATCH);
+    listPublicRankingsMock.mockResolvedValue([PUBLIC_RANKING]);
+
+    const client = createClient(null);
+
+    await expect(
+      client.event.listPublicMatches({
+        eventCode: "VNCMP",
+        phase: "QUALIFICATION",
+        season: "2026",
+      }),
+    ).resolves.toEqual([PUBLIC_MATCH]);
+    await expect(
+      client.event.getPublicMatchDetail({
+        eventCode: "VNCMP",
+        matchKey: "Q1",
+        season: "2026",
+      }),
+    ).resolves.toEqual(PUBLIC_MATCH);
+    await expect(
+      client.event.listPublicRankings({
+        eventCode: "VNCMP",
+        season: "2026",
+      }),
+    ).resolves.toEqual([PUBLIC_RANKING]);
+
+    expect(listPublicMatchesMock).toHaveBeenCalledWith("2026", "VNCMP", "QUALIFICATION");
+    expect(getPublicMatchDetailMock).toHaveBeenCalledWith("2026", "VNCMP", "Q1");
+    expect(listPublicRankingsMock).toHaveBeenCalledWith("2026", "VNCMP");
   });
 
   it("rejects unauthenticated admin event calls", async () => {

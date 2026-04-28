@@ -6,6 +6,11 @@ import {
   createRegistrationFormVersionInputSchema,
   eventCodeSchema,
 } from "./event.js";
+import {
+  getPublicMatchDetailInputSchema,
+  listPublicMatchesInputSchema,
+  listPublicRankingsInputSchema,
+} from "./public-event-data.js";
 
 describe("event schemas", () => {
   it("normalizes event codes and validates event creation", () => {
@@ -50,6 +55,43 @@ describe("event schemas", () => {
       v.safeParse(createRegistrationFormVersionInputSchema, {
         definition: [],
         eventId: "event-1",
+      }).success,
+    ).toBe(false);
+  });
+
+  it("validates public event data query inputs", () => {
+    expect(
+      v.parse(listPublicMatchesInputSchema, {
+        eventCode: "vncmp",
+        phase: "QUALIFICATION",
+        season: "2026",
+      }),
+    ).toEqual({
+      eventCode: "VNCMP",
+      phase: "QUALIFICATION",
+      season: "2026",
+    });
+
+    expect(
+      v.safeParse(listPublicMatchesInputSchema, {
+        eventCode: "VNCMP",
+        phase: "BAD_PHASE",
+        season: "2026",
+      }).success,
+    ).toBe(false);
+
+    expect(
+      v.safeParse(getPublicMatchDetailInputSchema, {
+        eventCode: "VNCMP",
+        matchKey: "Q1",
+        season: "2026",
+      }).success,
+    ).toBe(true);
+
+    expect(
+      v.safeParse(listPublicRankingsInputSchema, {
+        eventCode: "VNCMP",
+        season: "26",
       }).success,
     ).toBe(false);
   });

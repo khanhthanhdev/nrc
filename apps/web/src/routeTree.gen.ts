@@ -43,6 +43,7 @@ import { Route as Char123LocaleChar125SeasonEventIdAwardsRouteImport } from './r
 import { Route as Char123LocaleChar125StaffSeasonsSeasonIdEditRouteImport } from './routes/{-$locale}/staff.seasons.$seasonId.edit'
 import { Route as Char123LocaleChar125StaffEventsEventRecordIdEditRouteImport } from './routes/{-$locale}/staff.events.$eventRecordId.edit'
 import { Route as Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRouteImport } from './routes/{-$locale}/$season.$eventId.qualifications.$matchNumber'
+import { Route as Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRouteImport } from './routes/{-$locale}/$season.$eventId.playoffs.$matchNumber'
 
 const Char123LocaleChar125IndexRoute =
   Char123LocaleChar125IndexRouteImport.update({
@@ -248,6 +249,12 @@ const Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute =
     path: '/$matchNumber',
     getParentRoute: () => Char123LocaleChar125SeasonEventIdQualificationsRoute,
   } as any)
+const Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute =
+  Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRouteImport.update({
+    id: '/$matchNumber',
+    path: '/$matchNumber',
+    getParentRoute: () => Char123LocaleChar125SeasonEventIdPlayoffsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/{-$locale}/$season': typeof Char123LocaleChar125SeasonRouteWithChildren
@@ -275,12 +282,13 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/teams/$teamNumber': typeof Char123LocaleChar125TeamsTeamNumberRoute
   '/{-$locale}/teams/new': typeof Char123LocaleChar125TeamsNewRoute
   '/{-$locale}/$season/$eventId/awards': typeof Char123LocaleChar125SeasonEventIdAwardsRoute
-  '/{-$locale}/$season/$eventId/playoffs': typeof Char123LocaleChar125SeasonEventIdPlayoffsRoute
+  '/{-$locale}/$season/$eventId/playoffs': typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren
   '/{-$locale}/$season/$eventId/qualifications': typeof Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren
   '/{-$locale}/$season/$eventId/rankings': typeof Char123LocaleChar125SeasonEventIdRankingsRoute
   '/{-$locale}/register/$eventId/$registrationId': typeof Char123LocaleChar125RegisterEventIdRegistrationIdRoute
   '/{-$locale}/staff/events/new': typeof Char123LocaleChar125StaffEventsNewRoute
   '/{-$locale}/staff/seasons/new': typeof Char123LocaleChar125StaffSeasonsNewRoute
+  '/{-$locale}/$season/$eventId/playoffs/$matchNumber': typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute
   '/{-$locale}/$season/$eventId/qualifications/$matchNumber': typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute
   '/{-$locale}/staff/events/$eventRecordId/edit': typeof Char123LocaleChar125StaffEventsEventRecordIdEditRoute
   '/{-$locale}/staff/seasons/$seasonId/edit': typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRoute
@@ -311,12 +319,13 @@ export interface FileRoutesByTo {
   '/{-$locale}/teams/$teamNumber': typeof Char123LocaleChar125TeamsTeamNumberRoute
   '/{-$locale}/teams/new': typeof Char123LocaleChar125TeamsNewRoute
   '/{-$locale}/$season/$eventId/awards': typeof Char123LocaleChar125SeasonEventIdAwardsRoute
-  '/{-$locale}/$season/$eventId/playoffs': typeof Char123LocaleChar125SeasonEventIdPlayoffsRoute
+  '/{-$locale}/$season/$eventId/playoffs': typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren
   '/{-$locale}/$season/$eventId/qualifications': typeof Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren
   '/{-$locale}/$season/$eventId/rankings': typeof Char123LocaleChar125SeasonEventIdRankingsRoute
   '/{-$locale}/register/$eventId/$registrationId': typeof Char123LocaleChar125RegisterEventIdRegistrationIdRoute
   '/{-$locale}/staff/events/new': typeof Char123LocaleChar125StaffEventsNewRoute
   '/{-$locale}/staff/seasons/new': typeof Char123LocaleChar125StaffSeasonsNewRoute
+  '/{-$locale}/$season/$eventId/playoffs/$matchNumber': typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute
   '/{-$locale}/$season/$eventId/qualifications/$matchNumber': typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute
   '/{-$locale}/staff/events/$eventRecordId/edit': typeof Char123LocaleChar125StaffEventsEventRecordIdEditRoute
   '/{-$locale}/staff/seasons/$seasonId/edit': typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRoute
@@ -348,12 +357,13 @@ export interface FileRoutesById {
   '/{-$locale}/teams/$teamNumber': typeof Char123LocaleChar125TeamsTeamNumberRoute
   '/{-$locale}/teams/new': typeof Char123LocaleChar125TeamsNewRoute
   '/{-$locale}/$season/$eventId/awards': typeof Char123LocaleChar125SeasonEventIdAwardsRoute
-  '/{-$locale}/$season/$eventId/playoffs': typeof Char123LocaleChar125SeasonEventIdPlayoffsRoute
+  '/{-$locale}/$season/$eventId/playoffs': typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren
   '/{-$locale}/$season/$eventId/qualifications': typeof Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren
   '/{-$locale}/$season/$eventId/rankings': typeof Char123LocaleChar125SeasonEventIdRankingsRoute
   '/{-$locale}/register/$eventId/$registrationId': typeof Char123LocaleChar125RegisterEventIdRegistrationIdRoute
   '/{-$locale}/staff/events/new': typeof Char123LocaleChar125StaffEventsNewRoute
   '/{-$locale}/staff/seasons/new': typeof Char123LocaleChar125StaffSeasonsNewRoute
+  '/{-$locale}/$season/$eventId/playoffs/$matchNumber': typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute
   '/{-$locale}/$season/$eventId/qualifications/$matchNumber': typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute
   '/{-$locale}/staff/events/$eventRecordId/edit': typeof Char123LocaleChar125StaffEventsEventRecordIdEditRoute
   '/{-$locale}/staff/seasons/$seasonId/edit': typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRoute
@@ -392,6 +402,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/register/$eventId/$registrationId'
     | '/{-$locale}/staff/events/new'
     | '/{-$locale}/staff/seasons/new'
+    | '/{-$locale}/$season/$eventId/playoffs/$matchNumber'
     | '/{-$locale}/$season/$eventId/qualifications/$matchNumber'
     | '/{-$locale}/staff/events/$eventRecordId/edit'
     | '/{-$locale}/staff/seasons/$seasonId/edit'
@@ -428,6 +439,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/register/$eventId/$registrationId'
     | '/{-$locale}/staff/events/new'
     | '/{-$locale}/staff/seasons/new'
+    | '/{-$locale}/$season/$eventId/playoffs/$matchNumber'
     | '/{-$locale}/$season/$eventId/qualifications/$matchNumber'
     | '/{-$locale}/staff/events/$eventRecordId/edit'
     | '/{-$locale}/staff/seasons/$seasonId/edit'
@@ -464,6 +476,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/register/$eventId/$registrationId'
     | '/{-$locale}/staff/events/new'
     | '/{-$locale}/staff/seasons/new'
+    | '/{-$locale}/$season/$eventId/playoffs/$matchNumber'
     | '/{-$locale}/$season/$eventId/qualifications/$matchNumber'
     | '/{-$locale}/staff/events/$eventRecordId/edit'
     | '/{-$locale}/staff/seasons/$seasonId/edit'
@@ -722,8 +735,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRouteImport
       parentRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsRoute
     }
+    '/{-$locale}/$season/$eventId/playoffs/$matchNumber': {
+      id: '/{-$locale}/$season/$eventId/playoffs/$matchNumber'
+      path: '/$matchNumber'
+      fullPath: '/{-$locale}/$season/$eventId/playoffs/$matchNumber'
+      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRouteImport
+      parentRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsRoute
+    }
   }
 }
+
+interface Char123LocaleChar125SeasonEventIdPlayoffsRouteChildren {
+  Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute
+}
+
+const Char123LocaleChar125SeasonEventIdPlayoffsRouteChildren: Char123LocaleChar125SeasonEventIdPlayoffsRouteChildren =
+  {
+    Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute:
+      Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute,
+  }
+
+const Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren =
+  Char123LocaleChar125SeasonEventIdPlayoffsRoute._addFileChildren(
+    Char123LocaleChar125SeasonEventIdPlayoffsRouteChildren,
+  )
 
 interface Char123LocaleChar125SeasonEventIdQualificationsRouteChildren {
   Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute
@@ -742,7 +777,7 @@ const Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren =
 
 interface Char123LocaleChar125SeasonEventIdRouteChildren {
   Char123LocaleChar125SeasonEventIdAwardsRoute: typeof Char123LocaleChar125SeasonEventIdAwardsRoute
-  Char123LocaleChar125SeasonEventIdPlayoffsRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsRoute
+  Char123LocaleChar125SeasonEventIdPlayoffsRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren
   Char123LocaleChar125SeasonEventIdQualificationsRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren
   Char123LocaleChar125SeasonEventIdRankingsRoute: typeof Char123LocaleChar125SeasonEventIdRankingsRoute
 }
@@ -752,7 +787,7 @@ const Char123LocaleChar125SeasonEventIdRouteChildren: Char123LocaleChar125Season
     Char123LocaleChar125SeasonEventIdAwardsRoute:
       Char123LocaleChar125SeasonEventIdAwardsRoute,
     Char123LocaleChar125SeasonEventIdPlayoffsRoute:
-      Char123LocaleChar125SeasonEventIdPlayoffsRoute,
+      Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren,
     Char123LocaleChar125SeasonEventIdQualificationsRoute:
       Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren,
     Char123LocaleChar125SeasonEventIdRankingsRoute:
