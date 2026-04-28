@@ -1,7 +1,8 @@
-import { db, publishedAward, publishedMatch, publishedRanking } from "@nrc-full/db";
+import { db, eventTable, publishedAward, publishedMatch, publishedRanking } from "@nrc-full/db";
+import { ORPCError } from "@orpc/server";
 import { and, asc, eq, isNull } from "drizzle-orm";
 
-import { buildEventKey } from "./event.js";
+import { buildEventKey, PUBLIC_EVENT_STATUSES } from "./event.js";
 
 // ---------------------------------------------------------------------------
 // Season-2026 game-specific scoring types
@@ -69,6 +70,26 @@ export interface PublicAwardItem {
 // Helpers
 // ---------------------------------------------------------------------------
 
+const requirePublicEvent = async (season: string, eventCode: string): Promise<void> => {
+  const [event] = await db
+    .select({ status: eventTable.status })
+    .from(eventTable)
+    .where(
+      and(
+        eq(eventTable.season, season),
+        eq(eventTable.eventCode, eventCode),
+        isNull(eventTable.deletedAt),
+      ),
+    )
+    .limit(1);
+
+  if (!event || !PUBLIC_EVENT_STATUSES.has(event.status)) {
+    throw new ORPCError("NOT_FOUND", {
+      message: `Event ${season}/${eventCode} was not found.`,
+    });
+  }
+};
+
 const PHASE_SORT_ORDER: Record<string, number> = {
   QUALIFICATION: 0,
   PLAYOFF: 1,
@@ -112,6 +133,7 @@ export const listPublicMatches = async (
   eventCode: string,
   phase?: "PRACTICE" | "QUALIFICATION" | "PLAYOFF",
 ): Promise<PublicMatchItem[]> => {
+  await requirePublicEvent(season, eventCode);
   const eventKey = buildEventKey(season, eventCode);
 
   const conditions = [eq(publishedMatch.eventKey, eventKey), isNull(publishedMatch.deletedAt)];
@@ -158,6 +180,7 @@ export const getPublicMatchDetail = async (
   eventCode: string,
   matchKey: string,
 ): Promise<PublicMatchItem | null> => {
+  await requirePublicEvent(season, eventCode);
   const eventKey = buildEventKey(season, eventCode);
 
   const [row] = await db
@@ -200,6 +223,7 @@ export const listPublicRankings = async (
   season: string,
   eventCode: string,
 ): Promise<PublicRankingItem[]> => {
+  await requirePublicEvent(season, eventCode);
   const eventKey = buildEventKey(season, eventCode);
 
   const rows = await db
@@ -229,6 +253,7 @@ export const listPublicAwards = async (
   season: string,
   eventCode: string,
 ): Promise<PublicAwardItem[]> => {
+  await requirePublicEvent(season, eventCode);
   const eventKey = buildEventKey(season, eventCode);
 
   const rows = await db

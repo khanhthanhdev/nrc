@@ -110,7 +110,7 @@ export interface PublicEventDetail {
   publishedRegistrationFormVersion: AdminRegistrationFormVersion | null;
 }
 
-const PUBLIC_EVENT_STATUSES = new Set<EventRecord["status"]>([
+export const PUBLIC_EVENT_STATUSES = new Set<EventRecord["status"]>([
   "published",
   "registration_open",
   "registration_closed",
