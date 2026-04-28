@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
 
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 
 import type { PublicEventDetailData } from "./types";
+import { getSupportedLocale, localizePathname } from "@/lib/locale-routing";
 
 interface PublicEventShellProps {
   children: ReactNode;
@@ -16,6 +18,8 @@ const tabClassName = "nrc-hero-tab";
 const activeTabClassName = "nrc-hero-tab-active";
 
 export function PublicEventShell({ children, data, eventId, season }: PublicEventShellProps) {
+  const { i18n } = useTranslation();
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
   const tabs = [
     { label: "rankings", to: "/$season/$eventId/rankings" },
     { label: "qualifications", to: "/$season/$eventId/qualifications" },
@@ -45,7 +49,7 @@ export function PublicEventShell({ children, data, eventId, season }: PublicEven
                   activeProps={{ className: activeTabClassName }}
                   className={tabClassName}
                   params={{ eventId, season }}
-                  to={to}
+                  to={localizePathname(to, activeLanguage)}
                 >
                   {label}
                 </Link>

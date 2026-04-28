@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +35,28 @@ const statusBadgeVariant = (status: string) => {
   }
 };
 
+const invitationStatusLabel = (status: string, t: (key: string) => string) => {
+  switch (status) {
+    case "PENDING": {
+      return t("routes.team.invitations.status.pending");
+    }
+    case "ACCEPTED": {
+      return t("routes.team.invitations.status.accepted");
+    }
+    case "EXPIRED": {
+      return t("routes.team.invitations.status.expired");
+    }
+    case "REVOKED": {
+      return t("routes.team.invitations.status.revoked");
+    }
+    default: {
+      return status;
+    }
+  }
+};
+
 export function TeamInvitationsPanel({ canInvite, teamId }: TeamInvitationsPanelProps) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"TEAM_LEADER" | "TEAM_MEMBER">("TEAM_MEMBER");
 
@@ -48,7 +70,7 @@ export function TeamInvitationsPanel({ canInvite, teamId }: TeamInvitationsPanel
   const inviteMutation = useMutation({
     mutationFn: () => client.team.inviteTeamMember({ email, role, teamId }),
     onSuccess: async () => {
-      toast.success(`Invitation sent to ${email}`);
+      toast.success(t("routes.team.invitations.feedback.sent", { email }));
       setEmail("");
       await queryClient.invalidateQueries();
     },
@@ -57,7 +79,7 @@ export function TeamInvitationsPanel({ canInvite, teamId }: TeamInvitationsPanel
   const revokeMutation = useMutation({
     mutationFn: (invitationId: string) => client.team.revokeTeamInvitation({ invitationId }),
     onSuccess: async () => {
-      toast.success("Invitation revoked.");
+      toast.success(t("routes.team.invitations.feedback.revoked"));
       await queryClient.invalidateQueries();
     },
   });
@@ -66,7 +88,9 @@ export function TeamInvitationsPanel({ canInvite, teamId }: TeamInvitationsPanel
     try {
       await inviteMutation.mutateAsync();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to send invitation.");
+      toast.error(
+        error instanceof Error ? error.message : t("routes.team.invitations.feedback.sendFailed"),
+      );
     }
   };
 
@@ -74,7 +98,7 @@ export function TeamInvitationsPanel({ canInvite, teamId }: TeamInvitationsPanel
     <div className="space-y-6">
       {canInvite && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Invite member</h2>
+          <h2 className="text-lg font-semibold">{t("routes.team.invitations.inviteMember")}</h2>
 
           <form
             className="flex flex-col gap-3 sm:flex-row sm:items-end"
@@ -84,11 +108,11 @@ export function TeamInvitationsPanel({ canInvite, teamId }: TeamInvitationsPanel
             }}
           >
             <div className="flex-1 space-y-2">
-              <Label htmlFor="invite-email">Email</Label>
+              <Label htmlFor="invite-email">{t("routes.team.invitations.email")}</Label>
               <Input
                 id="invite-email"
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="member@example.com"
+                placeholder={t("routes.team.invitations.emailPlaceholder")}
                 required
                 type="email"
                 value={email}
@@ -96,34 +120,36 @@ export function TeamInvitationsPanel({ canInvite, teamId }: TeamInvitationsPanel
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="invite-role">Role</Label>
+              <Label htmlFor="invite-role">{t("routes.team.invitations.role")}</Label>
               <select
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
                 id="invite-role"
                 onChange={(e) => setRole(e.target.value as "TEAM_LEADER" | "TEAM_MEMBER")}
                 value={role}
               >
-                <option value="TEAM_MEMBER">Member</option>
-                <option value="TEAM_LEADER">Leader</option>
+                <option value="TEAM_MEMBER">{t("routes.team.roles.member")}</option>
+                <option value="TEAM_LEADER">{t("routes.team.roles.leader")}</option>
               </select>
             </div>
 
             <Button disabled={inviteMutation.isPending} type="submit">
-              {inviteMutation.isPending ? "Sending..." : "Send invite"}
+              {inviteMutation.isPending
+                ? t("routes.team.invitations.sending")
+                : t("routes.team.invitations.sendInvite")}
             </Button>
           </form>
         </div>
       )}
 
       <div className="space-y-3">
-        <h2 className="text-lg font-semibold">Invitations</h2>
+        <h2 className="text-lg font-semibold">{t("routes.team.invitations.title")}</h2>
 
         {invitationsQuery.isLoading && (
-          <p className="text-sm text-muted-foreground">Loading invitations...</p>
+          <p className="text-sm text-muted-foreground">{t("routes.team.invitations.loading")}</p>
         )}
 
         {invitationsQuery.data && invitationsQuery.data.length === 0 && (
-          <p className="text-sm text-muted-foreground">No invitations yet.</p>
+          <p className="text-sm text-muted-foreground">{t("routes.team.invitations.empty")}</p>
         )}
 
         {invitationsQuery.data && invitationsQuery.data.length > 0 && (
@@ -133,12 +159,17 @@ export function TeamInvitationsPanel({ canInvite, teamId }: TeamInvitationsPanel
                 <div>
                   <p className="text-sm font-medium">{inv.email}</p>
                   <p className="text-xs text-muted-foreground">
-                    {inv.role === "TEAM_LEADER" ? "Leader" : "Member"} · Expires{" "}
+                    {inv.role === "TEAM_LEADER"
+                      ? t("routes.team.roles.leader")
+                      : t("routes.team.roles.member")}{" "}
+                    · {t("routes.team.invitations.expires")}{" "}
                     {new Date(inv.expiresAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant={statusBadgeVariant(inv.status)}>{inv.status}</Badge>
+                  <Badge variant={statusBadgeVariant(inv.status)}>
+                    {invitationStatusLabel(inv.status, t)}
+                  </Badge>
                   {inv.status === "PENDING" && canInvite && (
                     <Button
                       disabled={revokeMutation.isPending}
@@ -146,7 +177,7 @@ export function TeamInvitationsPanel({ canInvite, teamId }: TeamInvitationsPanel
                       size="sm"
                       variant="ghost"
                     >
-                      Revoke
+                      {t("routes.team.invitations.revoke")}
                     </Button>
                   )}
                 </div>

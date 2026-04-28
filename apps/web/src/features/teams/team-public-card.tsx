@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getSupportedLocale, localizePathname } from "@/lib/locale-routing";
 
 import type { PublicTeamSummary } from "./types";
 
@@ -9,6 +11,8 @@ interface TeamPublicCardProps {
 }
 
 export function TeamPublicCard({ team }: TeamPublicCardProps) {
+  const { i18n } = useTranslation();
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
   const initials = team.name
     .split(/\s+/)
     .slice(0, 2)
@@ -21,7 +25,7 @@ export function TeamPublicCard({ team }: TeamPublicCardProps) {
       className="nrc-card-subtle flex items-start gap-4 p-4 transition-colors hover:bg-muted/50"
       params={{ teamNumber: team.teamNumber }}
       search={{ tab: undefined }}
-      to="/teams/$teamNumber"
+      to={localizePathname("/teams/$teamNumber", activeLanguage)}
     >
       <Avatar className="size-12 shrink-0">
         <AvatarImage alt={team.name} src={team.avatarUrl ?? undefined} />

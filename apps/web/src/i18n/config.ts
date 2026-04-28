@@ -14,7 +14,7 @@ i18n
     defaultNS: "common",
     detection: {
       caches: ["localStorage"],
-      order: ["localStorage", "navigator", "htmlTag"],
+      order: ["htmlTag", "localStorage", "navigator"],
     },
     fallbackLng: "en",
     interpolation: {

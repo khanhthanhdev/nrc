@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ interface TeamProfileFormProps {
 }
 
 export function TeamProfileForm({ team }: TeamProfileFormProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState(team.name);
   const [description, setDescription] = useState(team.description ?? "");
   const [schoolOrOrganization, setSchoolOrOrganization] = useState(team.schoolOrOrganization ?? "");
@@ -35,7 +37,7 @@ export function TeamProfileForm({ team }: TeamProfileFormProps) {
         teamId: team.id,
       }),
     onSuccess: async () => {
-      toast.success("Team profile updated.");
+      toast.success(t("routes.team.profile.feedback.updated"));
       await queryClient.invalidateQueries();
     },
   });
@@ -44,13 +46,15 @@ export function TeamProfileForm({ team }: TeamProfileFormProps) {
     try {
       await updateMutation.mutateAsync();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to update profile.");
+      toast.error(
+        error instanceof Error ? error.message : t("routes.team.profile.feedback.updateFailed"),
+      );
     }
   };
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold">Edit profile</h2>
+      <h2 className="text-lg font-semibold">{t("routes.team.profile.editProfile")}</h2>
 
       <form
         className="space-y-4"
@@ -60,12 +64,12 @@ export function TeamProfileForm({ team }: TeamProfileFormProps) {
         }}
       >
         <div className="space-y-2">
-          <Label htmlFor="edit-name">Team name</Label>
+          <Label htmlFor="edit-name">{t("routes.team.fields.name")}</Label>
           <Input id="edit-name" onChange={(e) => setName(e.target.value)} required value={name} />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="edit-school">School / Organization</Label>
+          <Label htmlFor="edit-school">{t("routes.team.schoolOrOrganization")}</Label>
           <Input
             id="edit-school"
             onChange={(e) => setSchoolOrOrganization(e.target.value)}
@@ -74,7 +78,7 @@ export function TeamProfileForm({ team }: TeamProfileFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="edit-city">City / Province</Label>
+          <Label htmlFor="edit-city">{t("routes.team.cityOrProvince")}</Label>
           <Input
             id="edit-city"
             onChange={(e) => setCityOrProvince(e.target.value)}
@@ -83,7 +87,7 @@ export function TeamProfileForm({ team }: TeamProfileFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="edit-description">Description</Label>
+          <Label htmlFor="edit-description">{t("routes.team.fields.description")}</Label>
           <Textarea
             id="edit-description"
             onChange={(e) => setDescription(e.target.value)}
@@ -92,7 +96,7 @@ export function TeamProfileForm({ team }: TeamProfileFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="edit-avatar">Avatar URL</Label>
+          <Label htmlFor="edit-avatar">{t("routes.team.profile.avatarUrl")}</Label>
           <Input
             id="edit-avatar"
             onChange={(e) => setAvatarUrl(e.target.value)}
@@ -102,7 +106,7 @@ export function TeamProfileForm({ team }: TeamProfileFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="edit-cover">Cover image URL</Label>
+          <Label htmlFor="edit-cover">{t("routes.team.profile.coverImageUrl")}</Label>
           <Input
             id="edit-cover"
             onChange={(e) => setCoverImageUrl(e.target.value)}
@@ -112,7 +116,9 @@ export function TeamProfileForm({ team }: TeamProfileFormProps) {
         </div>
 
         <Button disabled={updateMutation.isPending} type="submit">
-          {updateMutation.isPending ? "Saving..." : "Save changes"}
+          {updateMutation.isPending
+            ? t("routes.team.profile.saving")
+            : t("routes.team.profile.save")}
         </Button>
       </form>
     </div>

@@ -1,24 +1,28 @@
+import { useTranslation } from "react-i18next";
+
 export function TeamHistoryPlaceholder() {
+  const { t } = useTranslation();
+
   return (
     <div className="grid gap-4 lg:grid-cols-3">
       <div className="nrc-card-subtle space-y-2 p-4">
-        <h2 className="text-sm font-semibold">Team history across events</h2>
+        <h2 className="text-sm font-semibold">{t("routes.team.history.eventsTitle")}</h2>
         <p className="text-xs text-muted-foreground">
-          Event participation history will appear here once synced from event-control.
+          {t("routes.team.history.eventsDescription")}
         </p>
       </div>
 
       <div className="nrc-card-subtle space-y-2 p-4">
-        <h2 className="text-sm font-semibold">Match results</h2>
+        <h2 className="text-sm font-semibold">{t("routes.team.history.matchesTitle")}</h2>
         <p className="text-xs text-muted-foreground">
-          Match history and latest scores will appear here once synced from event-control.
+          {t("routes.team.history.matchesDescription")}
         </p>
       </div>
 
       <div className="nrc-card-subtle space-y-2 p-4">
-        <h2 className="text-sm font-semibold">Awards won by team</h2>
+        <h2 className="text-sm font-semibold">{t("routes.team.history.awardsTitle")}</h2>
         <p className="text-xs text-muted-foreground">
-          Award history will appear here once synced from event-control.
+          {t("routes.team.history.awardsDescription")}
         </p>
       </div>
     </div>

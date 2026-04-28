@@ -15,6 +15,8 @@ describe("navigation", () => {
   it("marks only /staff routes as staff shell paths", () => {
     expect(isStaffPath("/staff")).toBe(true);
     expect(isStaffPath("/staff/events")).toBe(true);
+    expect(isStaffPath("/vi/staff")).toBe(true);
+    expect(isStaffPath("/en/staff/events")).toBe(true);
     expect(isStaffPath("/users")).toBe(false);
     expect(isStaffPath("/teams")).toBe(false);
   });

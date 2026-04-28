@@ -256,6 +256,229 @@
       "unknown": "Unknown"
     }
   },
+  "routes": {
+    "account": {
+      "address": "Address",
+      "changePasswordSuccess": "Password updated successfully.",
+      "city": "City",
+      "confirmNewPassword": "Confirm new password",
+      "currentPassword": "Current password",
+      "dateOfBirth": "Date of birth",
+      "description": "View account information and update security.",
+      "email": "Email",
+      "emailVerification": "Email verification",
+      "fullName": "Full name",
+      "loading": "Loading account...",
+      "loadingSecurity": "Loading security settings...",
+      "minPassword": "New password must be at least {{count}} characters.",
+      "notFound": "Profile not found.",
+      "notVerified": "Not verified",
+      "organizationOrSchool": "Organization / School",
+      "passwordMismatch": "Passwords do not match.",
+      "passwordUnavailable": "Password change is unavailable for this account because it does not use email/password sign-in.",
+      "phoneNumber": "Phone number",
+      "profile": {
+        "description": "Read-only information captured during onboarding.",
+        "title": "Profile information"
+      },
+      "redirectingToOnboarding": "Redirecting to onboarding...",
+      "redirectingToSignIn": "Redirecting to sign in...",
+      "security": {
+        "description": "Change your current password.",
+        "title": "Security"
+      },
+      "title": "Account settings",
+      "unableToLoadProviders": "Unable to load linked account providers.",
+      "userId": "User ID",
+      "verified": "Verified"
+    },
+    "auth": {
+      "accountCreated": "Account created. Verify your email to continue.",
+      "continueWithGoogle": "Continue with Google",
+      "description": "Sign in or create an account with email/password or Google.",
+      "email": "Email",
+      "forgotPassword": "Forgot password?",
+      "fullName": "Full name",
+      "loading": "Loading authentication...",
+      "password": "Password",
+      "signIn": "Sign in",
+      "signUp": "Sign up",
+      "submitSignIn": "Sign in",
+      "submitSignUp": "Create account",
+      "title": "Authentication"
+    },
+    "onboarding": {
+      "address": "Address",
+      "city": "City",
+      "completed": "Onboarding completed.",
+      "dateOfBirth": "Date of birth",
+      "description": "Fill all required profile fields to continue.",
+      "loading": "Loading onboarding...",
+      "organizationOrSchool": "Organization / School",
+      "phoneNumber": "Phone number",
+      "saveAndContinue": "Save and continue",
+      "title": "Complete onboarding",
+      "unableToComplete": "Unable to complete onboarding."
+    },
+    "register": {
+      "detail": {
+        "accessDenied": "Denied",
+        "description": "Non-owner team members are read-only. Staff can edit. Placeholder until registration API lands.",
+        "invalidRoute": "Invalid registration route",
+        "loading": "Loading registration detail...",
+        "readOnly": "Read-only",
+        "title": "Registration detail"
+      },
+      "event": {
+        "description": "Open `/register/:eventId` for event registration and `/register/:eventId/:registrationId` for registration detail.",
+        "editable": "Editable",
+        "invalidEventId": "Invalid event id",
+        "loading": "Loading registration...",
+        "openDetailExample": "Open detail example",
+        "readOnly": "Read-only",
+        "title": "Register"
+      },
+      "index": {
+        "currentTeamRole": "Current team role",
+        "description": "Open `/register/:eventId` for event registration and `/register/:eventId/:registrationId` for registration detail.",
+        "loading": "Loading registration...",
+        "manageTeam": "Manage team",
+        "none": "none",
+        "nonOwnerReadOnly": "Non-owner team members stay read-only on registration detail.",
+        "redirectingToSignIn": "Redirecting to sign in...",
+        "title": "Register"
+      }
+    },
+    "team": {
+      "about": "About",
+      "cityOrProvince": "City or province",
+      "created": "Created",
+      "description": "This team does not exist or has been removed.",
+      "galleryUnavailable": "Team photos and videos will appear here once the gallery system is available.",
+      "invalidDescription": "Team URLs must use the five-digit format (example: 02323).",
+      "invalidTitle": "Invalid team number",
+      "loading": "Loading team...",
+      "media": "Media",
+      "noDescription": "No team description has been published yet.",
+      "notFoundTitle": "Team not found",
+      "profileDetails": "Profile details",
+      "schoolOrOrganization": "School or organization",
+      "teamNumber": "Team number",
+      "title": "Teams",
+      "titles": {
+        "create": "Create team",
+        "description": "Browse registered competition teams.",
+        "emptySearch": "No teams match your search.",
+        "emptyState": "No teams registered yet.",
+        "loading": "Loading teams...",
+        "searchPlaceholder": "Search teams...",
+        "teamCount": "team",
+        "teamCountPlural": "teams"
+      },
+      "create": {
+        "cityOrProvince": "City / Province",
+        "createTeam": "Create team",
+        "description": "Creating a team creates a linked Better Auth organization with role ",
+        "loading": "Loading...",
+        "schoolOrOrganization": "School / Organization",
+        "selectCity": "Select a city / province",
+        "submit": "Create team",
+        "success": "Team created: {{teamNumber}}",
+        "terms": "I confirm team creation terms.",
+        "termsError": "You must accept the terms to create a team.",
+        "title": "Create team",
+        "unableToCreate": "Unable to create team.",
+        "creating": "Creating...",
+        "redirectingToSignIn": "Redirecting to sign in..."
+      },
+      "detail": {
+        "title": "Team not found"
+      },
+      "notProvided": "Not provided",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "fields": {
+        "name": "Team name",
+        "description": "Description"
+      },
+      "tabs": {
+        "overview": "Overview",
+        "roster": "Roster",
+        "history": "History",
+        "media": "Media",
+        "manage": "Manage",
+        "invitations": "Invitations"
+      },
+      "history": {
+        "eventsTitle": "Team history across events",
+        "eventsDescription": "Event participation history will appear here once synced from event-control.",
+        "matchesTitle": "Match results",
+        "matchesDescription": "Match history and latest scores will appear here once synced from event-control.",
+        "awardsTitle": "Awards won by team",
+        "awardsDescription": "Award history will appear here once synced from event-control."
+      },
+      "roles": {
+        "mentor": "Mentor",
+        "leader": "Leader",
+        "member": "Member"
+      },
+      "members": {
+        "title": "Members",
+        "empty": "No members found.",
+        "joined": "Joined",
+        "remove": "Remove",
+        "feedback": {
+          "removed": "Member removed."
+        }
+      },
+      "invitations": {
+        "inviteMember": "Invite member",
+        "email": "Email",
+        "emailPlaceholder": "member@example.com",
+        "role": "Role",
+        "sending": "Sending...",
+        "sendInvite": "Send invite",
+        "title": "Invitations",
+        "loading": "Loading invitations...",
+        "empty": "No invitations yet.",
+        "expires": "Expires",
+        "revoke": "Revoke",
+        "status": {
+          "pending": "Pending",
+          "accepted": "Accepted",
+          "expired": "Expired",
+          "revoked": "Revoked"
+        },
+        "feedback": {
+          "sent": "Invitation sent to {{email}}",
+          "revoked": "Invitation revoked.",
+          "sendFailed": "Failed to send invitation."
+        }
+      },
+      "profile": {
+        "editProfile": "Edit profile",
+        "avatarUrl": "Avatar URL",
+        "coverImageUrl": "Cover image URL",
+        "save": "Save changes",
+        "saving": "Saving...",
+        "changeCover": "Change cover",
+        "changeLogo": "Change logo",
+        "changeCoverImage": "Change cover image",
+        "changeTeamLogo": "Change team logo",
+        "uploadImageDescription": "Choose one image. The uploaded file is stored with Better Upload and then saved to this team profile.",
+        "teamLabel": "Team {{teamNumber}}",
+        "feedback": {
+          "updated": "Team profile updated.",
+          "updateFailed": "Failed to update profile.",
+          "coverUpdated": "Cover image updated.",
+          "logoUpdated": "Team logo updated.",
+          "imageUpdateFailed": "Unable to update team image."
+        }
+      }
+    }
+  },
   "staffSidebar": {
     "backToSite": "Back to site",
     "events": "Events",

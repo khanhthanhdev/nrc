@@ -1,7 +1,9 @@
 import { startTransition } from "react";
 
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import { getSupportedLocale, localizePathname } from "@/lib/locale-routing";
 import { cn } from "@/lib/utils";
 
 import { Button } from "./ui/button";
@@ -12,8 +14,12 @@ const LANGUAGES = [
 ] as const;
 
 export function LanguageSwitcher({ className }: { className?: string }) {
+  const navigate = useNavigate();
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
   const { i18n, t } = useTranslation();
-  const activeLanguage = i18n.resolvedLanguage ?? i18n.language ?? "en";
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
 
   return (
     <div
@@ -38,6 +44,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
               }
 
               startTransition(() => {
+                void navigate({ replace: true, to: localizePathname(pathname, code) });
                 void i18n.changeLanguage(code);
               });
             }}

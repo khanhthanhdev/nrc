@@ -1,5 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query";
 import type { RequestLogger } from "evlog";
+import { useEffect } from "react";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
@@ -12,11 +13,13 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createMiddleware } from "@tanstack/react-start";
 import { createError } from "evlog";
+import { useTranslation } from "react-i18next";
 
 import type { orpc } from "@/utils/orpc";
 
 import { Toaster } from "@/components/ui/sonner";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { getLocaleFromPathname } from "@/lib/locale-routing";
 import { isStaffPath } from "@/lib/navigation";
 
 import Header from "../components/header";
@@ -30,10 +33,19 @@ const RootDocument = () => {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
+  const { i18n } = useTranslation();
   const staffRoute = isStaffPath(pathname);
+  const localeFromPath = getLocaleFromPathname(pathname);
+  const activeLanguage = localeFromPath ?? "en";
+
+  useEffect(() => {
+    if (localeFromPath && i18n.resolvedLanguage !== localeFromPath) {
+      void i18n.changeLanguage(localeFromPath);
+    }
+  }, [i18n, localeFromPath]);
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={activeLanguage} suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>

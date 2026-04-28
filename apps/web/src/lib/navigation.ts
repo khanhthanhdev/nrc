@@ -13,6 +13,7 @@ import {
 import type { SystemRole } from "./route-policy";
 
 import { isAdminSystemRole } from "./route-policy";
+import { stripLocaleFromPathname } from "./locale-routing";
 
 export interface PublicNavigationItem {
   labelKey: string;
@@ -37,8 +38,11 @@ export const publicNavigation: PublicNavigationItem[] = [
   { labelKey: "nav.register", to: "/register" },
 ];
 
-export const isStaffPath = (pathname: string): boolean =>
-  pathname === "/staff" || pathname.startsWith("/staff/");
+export const isStaffPath = (pathname: string): boolean => {
+  const normalizedPathname = stripLocaleFromPathname(pathname);
+
+  return normalizedPathname === "/staff" || normalizedPathname.startsWith("/staff/");
+};
 
 export const getStaffNavigation = (systemRole?: SystemRole) => {
   const isAdmin = isAdminSystemRole(systemRole);

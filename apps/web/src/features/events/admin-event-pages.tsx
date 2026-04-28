@@ -13,6 +13,7 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import type {
@@ -60,8 +61,15 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { getSupportedLocale, localizePathname } from "@/lib/locale-routing";
 import { cn } from "@/lib/utils";
 import { client, orpc } from "@/utils/orpc";
+
+const useActiveLanguage = () => {
+  const { i18n } = useTranslation();
+
+  return getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
+};
 
 type EventStatus =
   | "draft"
@@ -281,6 +289,8 @@ export function AdminEventListPage({
   isLoading: boolean;
   onRetry: () => void | Promise<void>;
 }) {
+  const activeLanguage = useActiveLanguage();
+
   if (isLoading) {
     return <AdminEventListSkeleton />;
   }
@@ -313,7 +323,7 @@ export function AdminEventListPage({
           </div>
 
           <Button asChild>
-            <Link to="/staff/events/new">
+            <Link to={localizePathname("/staff/events/new", activeLanguage)}>
               <Plus />
               Create event
             </Link>
@@ -324,7 +334,7 @@ export function AdminEventListPage({
       {!events || events.length === 0 ? (
         <AdminEventState
           action="Create event"
-          actionTo="/staff/events/new"
+          actionTo={localizePathname("/staff/events/new", activeLanguage)}
           description="Create the first event under an existing season."
           icon={<CalendarDays />}
           title="No events yet"
@@ -371,7 +381,7 @@ export function AdminEventListPage({
                         <Button asChild size="sm" variant="outline">
                           <Link
                             params={{ eventId: event.eventCode, season: event.season }}
-                            to="/$season/$eventId"
+                            to={localizePathname("/$season/$eventId", activeLanguage)}
                           >
                             <ExternalLink />
                             Public
@@ -380,7 +390,10 @@ export function AdminEventListPage({
                         <Button asChild size="sm" variant="outline">
                           <Link
                             params={{ eventRecordId: event.id }}
-                            to="/staff/events/$eventRecordId/edit"
+                            to={localizePathname(
+                              "/staff/events/$eventRecordId/edit",
+                              activeLanguage,
+                            )}
                           >
                             <PencilLine />
                             Edit
@@ -402,6 +415,7 @@ export function AdminEventListPage({
 export function AdminEventCreatePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const activeLanguage = useActiveLanguage();
   const [form, setForm] = useState<EventFormState>(emptyEventForm);
   const [formError, setFormError] = useState<string | null>(null);
   const currentSeasonQuery = useQuery({
@@ -439,7 +453,7 @@ export function AdminEventCreatePage() {
       });
       await navigate({
         params: { eventRecordId: createdEvent.event.id },
-        to: "/staff/events/$eventRecordId/edit",
+        to: localizePathname("/staff/events/$eventRecordId/edit", activeLanguage),
       });
     },
   });
@@ -465,6 +479,7 @@ export function AdminEventCreatePage() {
 export function AdminEventEditorPage({ data }: { data: AdminEventDetailData }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const activeLanguage = useActiveLanguage();
   const detailQueryOptions = orpc.event.getAdminEvent.queryOptions({
     input: { id: data.event.id },
   });
@@ -529,7 +544,7 @@ export function AdminEventEditorPage({ data }: { data: AdminEventDetailData }) {
       await queryClient.invalidateQueries({
         queryKey: orpc.event.listAdminEvents.queryOptions().queryKey,
       });
-      await navigate({ to: "/staff/events" });
+      await navigate({ to: localizePathname("/staff/events", activeLanguage) });
     },
   });
 
@@ -712,6 +727,7 @@ function EventFormCard({
   onSubmit: () => void;
   submitLabel: string;
 }) {
+  const activeLanguage = useActiveLanguage();
   const seasonError = currentSeasonError;
   const isSeasonReady = Boolean(currentSeason?.year);
   const isSubmitDisabled = isSaving || !isSeasonReady;
@@ -891,7 +907,7 @@ function EventFormCard({
 
           <div className="flex flex-wrap justify-end gap-3">
             <Button asChild type="button" variant="outline">
-              <Link to="/staff/events">Cancel</Link>
+              <Link to={localizePathname("/staff/events", activeLanguage)}>Cancel</Link>
             </Button>
             <Button disabled={isSubmitDisabled} type="submit">
               {isSaving ? "Saving..." : submitLabel}
@@ -1529,7 +1545,7 @@ function AdminEventState({
   title,
 }: {
   action?: string;
-  actionTo?: "/staff/events/new";
+  actionTo?: string;
   description: string;
   icon: ReactNode;
   onAction?: () => void | Promise<void>;

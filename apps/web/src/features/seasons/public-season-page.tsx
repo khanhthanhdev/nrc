@@ -45,6 +45,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getSupportedLocale, localizePathname } from "@/lib/locale-routing";
 import { cn } from "@/lib/utils";
 
 interface PublicSeasonPageProps {
@@ -56,6 +57,7 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
   const navigate = useNavigate();
   const [seasonSwitcherOpen, setSeasonSwitcherOpen] = useState(false);
   const locale = getSeasonLocale(i18n.resolvedLanguage ?? i18n.language ?? "en");
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
   const heroCtas = deriveSeasonHeroCtas(data.documents);
   const seasonMeta = getSeasonLifecycleMeta(data.season.isActive);
 
@@ -157,7 +159,7 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
                             setSeasonSwitcherOpen(false);
                             void navigate({
                               params: { season: option.year },
-                              to: "/$season",
+                              to: localizePathname("/$season", activeLanguage),
                             });
                           }}
                           value={`${option.year} ${option.theme} ${option.gameCode}`}
@@ -273,7 +275,7 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
                       <Button asChild>
                         <Link
                           params={{ eventId: event.eventCode, season: data.season.year }}
-                          to="/$season/$eventId"
+                          to={localizePathname("/$season/$eventId", activeLanguage)}
                         >
                           {t("season.public.events.viewDetails")}
                           <ArrowRight />
@@ -281,7 +283,10 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
                       </Button>
                       {event.status === "registration_open" ? (
                         <Button asChild variant="secondary">
-                          <Link params={{ eventId: event.eventCode }} to="/register/$eventId">
+                          <Link
+                            params={{ eventId: event.eventCode }}
+                            to={localizePathname("/register/$eventId", activeLanguage)}
+                          >
                             {t("season.public.events.register")}
                           </Link>
                         </Button>
@@ -467,7 +472,8 @@ function SeasonEmptyState({ description, title }: SeasonRouteStateProps) {
 }
 
 export function PublicSeasonNotFoundState({ season }: { season: string }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
 
   return (
     <Empty className="nrc-card py-14">
@@ -479,7 +485,9 @@ export function PublicSeasonNotFoundState({ season }: { season: string }) {
         <EmptyDescription>{t("season.public.notFound.description")}</EmptyDescription>
       </EmptyHeader>
       <Button asChild>
-        <Link to="/events">{t("season.public.notFound.action")}</Link>
+        <Link to={localizePathname("/events", activeLanguage)}>
+          {t("season.public.notFound.action")}
+        </Link>
       </Button>
     </Empty>
   );

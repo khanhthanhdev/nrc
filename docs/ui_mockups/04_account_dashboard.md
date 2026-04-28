@@ -2,66 +2,69 @@
 
 Route: `/account`
 
-## 1. Normal User View
+The account dashboard provides a personalized overview of the user's involvement in the National Robotics Competition, including their teams, event registrations, and notifications.
 
-(Header only)
+## 1. User View Layout
 
 ```ascii
 +-----------------------------------------------------------------------------+
-| (Logo) STEAM for Vietnam  Home  Events  Teams  Register         [User Menu] |
+| [Header: Logo | Search | Events | Teams | Seasons |           User Profile] |
 +-----------------------------------------------------------------------------+
 |                                                                             |
-|  # Dashboard                                         [ Edit Profile ]       |
-|  Welcome back, Thanh! (Role: MENTOR)                                        |
-|                                                                             |
-|  +--------------------------------+ +-------------------------------------+ |
-|  | My Teams                       | | My Registrations                    | |
-|  |                                | |                                     | |
-|  | + Team 101: Robox              | | Event: Hanoi Reg  - Oct 10          | |
-|  |   Members: 5  | [Manage Team]  | | Team: 101 Robox                     | |
-|  |                                | | Status: [ Under Review ]            | |
-|  | + Team 404: Cyber              | | [ View Discussion / Upload ]        | |
-|  |   Members: 3  | [Manage Team]  | |                                     | |
-|  |                                | |                                     | |
-|  | [+ Create New Team]            | | [ Browse Events to Register ]       | |
-|  +--------------------------------+ +-------------------------------------+ |
-|                                                                             |
-|  ## Notifications                                                           |
 |  +-----------------------------------------------------------------------+  |
-|  | [!] Registration for "Hanoi Reg" requires revision.       (2 hrs ago) |  |
-|  | [*] You have a pending invite to join Team 999.  [Accept] (1 day ago) |  |
+|  |                                                                       |  |
+|  |  ( Avatar )  Welcome back, Thanh!                                     |  |
+|  |              Mentor | Hanoi, Vietnam                                  |  |
+|  |                                                                       |  |
+|  |  [ Edit Profile ] [ Create New Team ] [ Account Settings ]            |  |
+|  |                                                                       |  |
 |  +-----------------------------------------------------------------------+  |
+|  | [ Overview ] [ My Teams ] [ Registrations ] [ Notifications ] [ Help ] |  |
+|  +-----------------------------------------------------------------------+  |
+|                                                                             |
+|  +---------------------------+   +---------------------------------------+  |
+|  | ## Notifications          |   | ## My Active Teams                    |  |
+|  | [!] Action Required:      |   | +-----------------------------------+ |  |
+|  | Registration Revision     |   | | Team 101: Robox                   | |  |
+|  |                           |   | | [Icon] 5 Members | [ Manage ]     | |  |
+|  | [*] New Invite:           |   | +-----------------------------------+ |  |
+|  | Join Team 999             |   |                                       |  |
+|  |                           |   | +-----------------------------------+ |  |
+|  | [i] Event Update:         |   | | Team 404: Cyber                   | |  |
+|  | Hanoi Reg Schedule        |   | | [Icon] 3 Members | [ Manage ]     | |  |
+|  +---------------------------+   +-----------------------------------+ |  |
+|                                  +---------------------------------------+  |
 |                                                                             |
 +-----------------------------------------------------------------------------+
 ```
 
-## 2. Staff View (Admin managing user)
+## 2. Tab Content Wireframes
+
+### 2.1 Overview
+
+- Quick stats: Number of teams, Upcoming events, Recent notifications.
+- Activity feed of personal actions.
+
+### 2.2 My Teams
+
+- List of teams where the user is a member/mentor/leader.
+- Primary CTA to "Create New Team".
+
+### 2.3 Registrations
+
+- Detailed list of all event registrations across all teams.
+- Filter by Team or Event status.
+- Direct links to registration discussions and document uploads.
+
+### 2.4 Notifications
+
+- Full inbox of all system and team notifications.
+- Settings for email and push notification preferences.
+
+## 3. Staff View (Admin managing user)
 
 Route: `/users/$userId`
-(Header + Sidebar)
 
-```ascii
-+-----------------------------------------------------------------------------+
-| (Logo) STEAM for Vietnam  Home  Events  Teams  Register         [User Menu] |
-+-----------------------------------------------------------------------------+
-| STAFF PANEL   |                                                             |
-| ────────────  |  # Manage User: Thanh (thanh@example.com)                   |
-| Overview      |                                                             |
-|               |  [ Edit User ] [ Reset Password ] [ Impersonate ]           |
-| CONTENT       |  ----------------------------------------------------       |
-| ────────────  |                                                             |
-| Seasons       |  ## Account Info                                            |
-| Events        |  - Role: MENTOR                                             |
-| Registrations |  - Status: ACTIVE                                           |
-|               |  - Joined: Jan 12, 2026                                     |
-| ADMINISTRATION|                                                             |
-| ────────────  |  ## Associated Teams                                        |
-| Users (Active)|  - Team 101: Robox (Captain)                                |
-| Sync Logs     |  - Team 404: Cyber (Mentor)                                 |
-| Settings      |                                                             |
-|               |                                                             |
-| ────────────  |                                                             |
-| ← Back to     |                                                             |
-|   Site        |                                                             |
-+---------------+-------------------------------------------------------------+
-```
+- **Account Management**: Change role, Update status, Reset password.
+- **Audit Log**: View user's login history and administrative actions.
+- **Impersonation**: Temporarily log in as the user to troubleshoot issues.

@@ -2,71 +2,80 @@
 
 Route: `/$season/$eventId`
 
-## 1. Normal User View
+The event detail page is the central hub for a specific competition, designed to provide real-time updates and clear information for participants and spectators.
 
-(Header only)
+## 1. Public View Layout
 
 ```ascii
 +-----------------------------------------------------------------------------+
-| (Logo) STEAM for Vietnam  Home  Events  Teams  Register         [User Menu] |
+| [Header: Logo | Search | Events | Teams | Seasons |           User Profile] |
 +-----------------------------------------------------------------------------+
 |                                                                             |
-|  [---------------- Hero Banner Background Image ------------------------]   |
-|  |                                                                      |   |
-|  |  # Hanoi Regional 2026                                               |   |
-|  |  Date: Oct 10-12, 2026 | Location: Hanoi Innovation Hub              |   |
-|  |  Status: [ Registration Open ]                                       |   |
-|  |                                                                      |   |
-|  |  [ Register Team CTA ]                                               |   |
-|  [----------------------------------------------------------------------]   |
-|                                                                             |
-|  [ Overview ]  [ Rules ]  [ Schedule ]  [ Participants ]                    |
-|  [ Qualifications ]  [ Playoffs ]  [ Rankings ]  [ Awards ]                 |
-|                                                                             |
-|  -------------------------------------------------------------------------  |
-|                                                                             |
-|  ## Overview                                                                |
-|  Welcome to the Hanoi Regional! This event will host 40 teams across...     |
-|                                                                             |
-|  ## Location Map                                                            |
 |  +-----------------------------------------------------------------------+  |
 |  |                                                                       |  |
-|  |                         [ Map Placeholder ]                           |  |
+|  |                        [ Event Hero Banner ]                          |  |
+|  |                                                                       |  |
+|  |   # Hanoi Regional 2026                                               |  |
+|  |   [Icon] Oct 10-12, 2026 | [Icon] Hanoi Innovation Hub                |  |
+|  |   Status: [ LIVE ]                                                    |  |
+|  |                                                                       |  |
+|  |   [ Watch Stream ]  [ Register Team ]  [ Follow Event ]               |  |
 |  |                                                                       |  |
 |  +-----------------------------------------------------------------------+  |
+|  | [ Overview ] [ Schedule ] [ Results ] [ Rankings ] [ Teams ] [ Awards ] |  |
+|  +-----------------------------------------------------------------------+  |
 |                                                                             |
-+-----------------------------------------------------------------------------+
-|  Footer: Terms | Privacy | Contact                                          |
+|  +---------------------------+   +---------------------------------------+  |
+|  | ## About Event            |   | ## Live Match / Latest Result         |  |
+|  | Welcome to the Hanoi...    |   | +-----------------------------------+ |  |
+|  |                           |   | | Q#15: Blue [ 120 ] vs Red [ 45 ]  | |  |
+|  | ### Key Dates             |   | | [ View Match Details ]            | |  |
+|  | - Check-in: 8:00 AM       |   | +-----------------------------------+ |  |
+|  | - Opening: 9:00 AM        |   |                                       |  |
+|  |                           |   | ## Upcoming Matches                   |  |
+|  | ### Venue Info            |   | +-----------------------------------+ |  |
+|  | [ Map Thumbnail ]         |   | | Q#16: Team A, B vs Team C, D      | |  |
+|  | Hanoi Innovation Hub...   |   | | Scheduled: 10:30 AM               | |  |
+|  +---------------------------+   +-----------------------------------+ |  |
+|                                  +---------------------------------------+  |
+|                                                                             |
 +-----------------------------------------------------------------------------+
 ```
 
-## 2. Staff View
+## 2. Tab Content Wireframes
+
+### 2.1 Overview
+
+- Event description, rules links, venue information, and sponsor logos.
+
+### 2.2 Schedule
+
+- Vertical timeline of event phases (Registration, Inspection, Qualifying, Playoffs, Awards).
+- Toggle between "Planned" and "Actual".
+
+### 2.3 Results (Qualifications/Playoffs)
+
+- Searchable list of all matches.
+- Filter by Team, Match Type, or Field.
+
+### 2.4 Rankings
+
+- Live leaderboard with:
+  - Rank, Team Number, Team Name, W-L-T, RP (Ranking Points), Score.
+
+### 2.5 Teams (Participants)
+
+- Grid of team cards participating in this event.
+- Includes status (Checked-in, Pending Inspection, etc.).
+
+### 2.6 Awards
+
+- List of awards given at the end of the event with winning teams.
+
+## 3. Management View (Staff)
 
 Route: `/staff/events/$eventId`
-(Header + Sidebar)
 
-```ascii
-+-----------------------------------------------------------------------------+
-| (Logo) STEAM for Vietnam  Home  Events  Teams  Register         [User Menu] |
-+-----------------------------------------------------------------------------+
-| STAFF PANEL   |                                                             |
-| ────────────  |  # Manage Event: Hanoi Regional 2026                        |
-| Overview      |                                                             |
-|               |  [ Edit Details ] [ Manage Teams ] [ Match Schedule ]       |
-| CONTENT       |  ----------------------------------------------------       |
-| ────────────  |                                                             |
-| Seasons       |  ## Registration Status                                     |
-| Events (Active)|  - Total Capacity: 40 teams                                 |
-| Registrations |  - Confirmed: 25                                            |
-|               |  - Pending: 10                                              |
-| ADMINISTRATION|                                                             |
-| ────────────  |  ## Quick Actions                                           |
-| Users         |  [ Download Team List (CSV) ] [ Generate Match Schedule ]   |
-| Sync Logs     |  [ Send Announcement Email ]  [ Export Results ]            |
-| Settings      |                                                             |
-|               |                                                             |
-| ────────────  |                                                             |
-| ← Back to     |                                                             |
-|   Site        |                                                             |
-+---------------+-------------------------------------------------------------+
-```
+- **Control Center**: Manage match status (Start/Stop), Inspection status.
+- **Sync**: Push results to web, Pull team registrations.
+- **Communications**: Send announcements to all participating team mentors.

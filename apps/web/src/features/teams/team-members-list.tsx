@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -29,16 +30,16 @@ const roleBadgeVariant = (role: string) => {
   }
 };
 
-const roleLabel = (role: string) => {
+const roleLabel = (role: string, t: (key: string) => string) => {
   switch (role) {
     case "TEAM_MENTOR": {
-      return "Mentor";
+      return t("routes.team.roles.mentor");
     }
     case "TEAM_LEADER": {
-      return "Leader";
+      return t("routes.team.roles.leader");
     }
     case "TEAM_MEMBER": {
-      return "Member";
+      return t("routes.team.roles.member");
     }
     default: {
       return role;
@@ -52,10 +53,11 @@ export function TeamMembersList({
   membershipRole,
   showActions,
 }: TeamMembersListProps) {
+  const { t } = useTranslation();
   const removeMutation = useMutation({
     mutationFn: (membershipId: string) => client.team.removeTeamMember({ membershipId }),
     onSuccess: async () => {
-      toast.success("Member removed.");
+      toast.success(t("routes.team.members.feedback.removed"));
       await queryClient.invalidateQueries();
     },
   });
@@ -64,9 +66,9 @@ export function TeamMembersList({
 
   return (
     <div className="space-y-3">
-      <h2 className="text-lg font-semibold">Members</h2>
+      <h2 className="text-lg font-semibold">{t("routes.team.members.title")}</h2>
       {members.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No members found.</p>
+        <p className="text-sm text-muted-foreground">{t("routes.team.members.empty")}</p>
       ) : (
         <div className="divide-y rounded-lg border">
           {members.map((m) => (
@@ -78,12 +80,12 @@ export function TeamMembersList({
                 <div>
                   <p className="text-sm font-medium">{m.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    Joined {new Date(m.joinedAt).toLocaleDateString()}
+                    {t("routes.team.members.joined")} {new Date(m.joinedAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant={roleBadgeVariant(m.role)}>{roleLabel(m.role)}</Badge>
+                <Badge variant={roleBadgeVariant(m.role)}>{roleLabel(m.role, t)}</Badge>
                 {canRemove && m.userId !== currentUserId && (
                   <Button
                     disabled={removeMutation.isPending}
@@ -91,7 +93,7 @@ export function TeamMembersList({
                     size="sm"
                     variant="ghost"
                   >
-                    Remove
+                    {t("routes.team.members.remove")}
                   </Button>
                 )}
               </div>

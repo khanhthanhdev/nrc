@@ -1,6 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import {
+  getSupportedLocale,
+  localizePathname,
+  stripLocaleFromPathname,
+} from "@/lib/locale-routing";
 import { getSystemRole } from "@/lib/route-policy";
 import { getStaffNavigation } from "@/lib/navigation";
 import { authClient } from "@/utils/auth-client";
@@ -20,8 +25,11 @@ import {
   SidebarSeparator,
 } from "./ui/sidebar";
 
-const isActiveItem = (pathname: string, to: string): boolean =>
-  pathname === to || (to !== "/staff" && pathname.startsWith(`${to}/`));
+const isActiveItem = (pathname: string, to: string): boolean => {
+  const normalizedPathname = stripLocaleFromPathname(pathname);
+
+  return normalizedPathname === to || (to !== "/staff" && normalizedPathname.startsWith(`${to}/`));
+};
 
 export function StaffSidebar() {
   const pathname = useRouterState({
@@ -30,7 +38,8 @@ export function StaffSidebar() {
   const session = authClient.useSession();
   const systemRole = getSystemRole(session.data);
   const { footerItem, sections } = getStaffNavigation(systemRole);
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
 
   return (
     <Sidebar collapsible="icon">
@@ -63,7 +72,7 @@ export function StaffSidebar() {
                         isActive={isActiveItem(pathname, item.to)}
                         tooltip={t(item.labelKey)}
                       >
-                        <Link to={item.to}>
+                        <Link to={localizePathname(item.to, activeLanguage)}>
                           <Icon />
                           <span>{t(item.labelKey)}</span>
                         </Link>
@@ -83,7 +92,7 @@ export function StaffSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip={t(footerItem.labelKey)}>
-              <Link to={footerItem.to}>
+              <Link to={localizePathname(footerItem.to, activeLanguage)}>
                 <footerItem.icon />
                 <span>{t(footerItem.labelKey)}</span>
               </Link>

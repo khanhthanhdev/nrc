@@ -72,6 +72,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getSupportedLocale, localizePathname } from "@/lib/locale-routing";
 import { Textarea } from "@/components/ui/textarea";
 import { client, orpc } from "@/utils/orpc";
 import { cn } from "@/lib/utils";
@@ -181,6 +182,7 @@ export function AdminSeasonListPage({
 }) {
   const { t, i18n } = useTranslation();
   const locale = getSeasonLocale(i18n.resolvedLanguage ?? i18n.language ?? "en");
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
 
   if (isLoading) {
     return <AdminSeasonListSkeleton />;
@@ -215,7 +217,7 @@ export function AdminSeasonListPage({
           </div>
 
           <Button asChild>
-            <Link to="/staff/seasons/new">
+            <Link to={localizePathname("/staff/seasons/new", activeLanguage)}>
               <Plus />
               {t("season.admin.list.create")}
             </Link>
@@ -226,7 +228,7 @@ export function AdminSeasonListPage({
       {!seasons || seasons.length === 0 ? (
         <AdminRouteState
           action={t("season.admin.list.empty.action")}
-          actionTo="/staff/seasons/new"
+          actionTo={localizePathname("/staff/seasons/new", activeLanguage)}
           description={t("season.admin.list.empty.description")}
           icon={<CalendarDays />}
           title={t("season.admin.list.empty.title")}
@@ -272,7 +274,7 @@ export function AdminSeasonListPage({
                         <Button asChild size="sm" variant="outline">
                           <Link
                             params={{ seasonId: season.year }}
-                            to="/staff/seasons/$seasonId/edit"
+                            to={localizePathname("/staff/seasons/$seasonId/edit", activeLanguage)}
                           >
                             <PencilLine />
                             {t("season.admin.list.edit")}
@@ -309,9 +311,10 @@ export function AdminSeasonListSkeleton() {
 }
 
 export function AdminSeasonCreatePage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
   const [formError, setFormError] = useState<string | null>(null);
   const [form, setForm] = useState<SeasonBasicFormState>({
     description: "",
@@ -343,7 +346,7 @@ export function AdminSeasonCreatePage() {
       });
       await navigate({
         params: { seasonId: createdSeason.season.year },
-        to: "/staff/seasons/$seasonId/edit",
+        to: localizePathname("/staff/seasons/$seasonId/edit", activeLanguage),
       });
     },
   });
@@ -459,7 +462,9 @@ export function AdminSeasonCreatePage() {
 
             <div className="flex flex-wrap justify-end gap-3">
               <Button asChild type="button" variant="outline">
-                <Link to="/staff/seasons">{t("season.admin.actions.cancel")}</Link>
+                <Link to={localizePathname("/staff/seasons", activeLanguage)}>
+                  {t("season.admin.actions.cancel")}
+                </Link>
               </Button>
               <Button disabled={createMutation.isPending} type="submit">
                 {createMutation.isPending
@@ -479,6 +484,7 @@ export function AdminSeasonEditorPage({ data }: { data: AdminSeasonDetailData })
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const locale = getSeasonLocale(i18n.resolvedLanguage ?? i18n.language ?? "en");
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
   const detailQueryOptions = orpc.season.getAdminSeason.queryOptions({
     input: { year: data.season.year },
   });
@@ -548,7 +554,7 @@ export function AdminSeasonEditorPage({ data }: { data: AdminSeasonDetailData })
       await queryClient.invalidateQueries({
         queryKey: orpc.season.listAdminSeasons.queryOptions().queryKey,
       });
-      await navigate({ to: "/staff/seasons" });
+      await navigate({ to: localizePathname("/staff/seasons", activeLanguage) });
     },
   });
 
@@ -1621,12 +1627,13 @@ export function AdminSeasonEditorSkeleton() {
 }
 
 export function AdminSeasonNotFoundState({ seasonYear }: { seasonYear: string }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
 
   return (
     <AdminRouteState
       action={t("season.admin.notFound.action")}
-      actionTo="/staff/seasons"
+      actionTo={localizePathname("/staff/seasons", activeLanguage)}
       description={t("season.admin.notFound.description")}
       icon={<Search />}
       title={t("season.admin.notFound.title", { year: seasonYear })}
@@ -1649,12 +1656,13 @@ export function AdminSeasonLoadErrorState({ onRetry }: { onRetry: () => void | P
 }
 
 export function AdminSeasonInvalidState() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
 
   return (
     <AdminRouteState
       action={t("season.admin.notFound.action")}
-      actionTo="/staff/seasons"
+      actionTo={localizePathname("/staff/seasons", activeLanguage)}
       description={t("season.invalid.description")}
       icon={<Search />}
       title={t("season.invalid.title")}
@@ -1671,7 +1679,7 @@ function AdminRouteState({
   title,
 }: {
   action?: string;
-  actionTo?: "/staff/seasons" | "/staff/seasons/new";
+  actionTo?: string;
   description: string;
   icon: React.ReactNode;
   onAction?: () => void | Promise<void>;

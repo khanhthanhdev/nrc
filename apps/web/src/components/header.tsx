@@ -5,6 +5,11 @@ import { ChevronDown, Menu, ShieldAlert } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import {
+  getSupportedLocale,
+  localizePathname,
+  stripLocaleFromPathname,
+} from "@/lib/locale-routing";
 import { getSystemRole, isStaffSystemRole } from "@/lib/route-policy";
 import { authClient } from "@/utils/auth-client";
 import { isStaffPath, publicNavigation } from "@/lib/navigation";
@@ -24,11 +29,13 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { SidebarTrigger } from "./ui/sidebar";
 
 const isPublicItemActive = (pathname: string, to: string): boolean => {
+  const normalizedPathname = stripLocaleFromPathname(pathname);
+
   if (to === "/events") {
-    return pathname === "/events";
+    return normalizedPathname === "/events";
   }
 
-  return pathname === to || (to !== "/" && pathname.startsWith(`${to}/`));
+  return normalizedPathname === to || (to !== "/" && normalizedPathname.startsWith(`${to}/`));
 };
 
 export default function Header() {
@@ -50,7 +57,8 @@ export default function Header() {
     )?.impersonatedBy,
   );
   const displayName = session.data?.user.name.trim() || session.data?.user.email || "Account";
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
 
   const onSignOut = async () => {
     const { error } = await authClient.signOut();
@@ -79,7 +87,7 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-20 border-b border-border bg-background/92 backdrop-blur">
-        <div className="mx-auto flex min-h-20 max-w-[1440px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex min-h-20 max-w-360 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 lg:gap-8">
             <div className="flex items-center gap-2 lg:hidden">
               {isStaffRoute ? (
@@ -102,7 +110,7 @@ export default function Header() {
               )}
             </div>
 
-            <Link className="flex items-center gap-3" to="/">
+            <Link className="flex items-center gap-3" to={localizePathname("/", activeLanguage)}>
               <span className="inline-flex size-10 items-center justify-center rounded-full bg-primary/12 text-sm font-semibold tracking-[0.18em] text-primary">
                 S4V
               </span>
@@ -122,7 +130,7 @@ export default function Header() {
                     isPublicItemActive(pathname, to) && "nrc-nav-link-active",
                   )}
                   key={to}
-                  to={to}
+                  to={localizePathname(to, activeLanguage)}
                 >
                   {t(labelKey)}
                 </Link>
@@ -156,14 +164,20 @@ export default function Header() {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link to="/account">{t("header.account.accountSettings")}</Link>
+                    <Link to={localizePathname("/account", activeLanguage)}>
+                      {t("header.account.accountSettings")}
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/teams/new">{t("header.account.createTeam")}</Link>
+                    <Link to={localizePathname("/teams/new", activeLanguage)}>
+                      {t("header.account.createTeam")}
+                    </Link>
                   </DropdownMenuItem>
                   {canAccessStaffPanel && (
                     <DropdownMenuItem asChild>
-                      <Link to="/staff">{t("header.account.staffPanel")}</Link>
+                      <Link to={localizePathname("/staff", activeLanguage)}>
+                        {t("header.account.staffPanel")}
+                      </Link>
                     </DropdownMenuItem>
                   )}
                   {isImpersonating && (
@@ -180,12 +194,14 @@ export default function Header() {
               <div className="flex items-center gap-3">
                 <Link
                   className="text-foreground hidden text-sm font-medium sm:inline-flex"
-                  to="/auth"
+                  to={localizePathname("/auth", activeLanguage)}
                 >
                   {t("header.signIn")}
                 </Link>
                 <Button asChild size="sm">
-                  <Link to="/register">{t("header.getStarted")}</Link>
+                  <Link to={localizePathname("/register", activeLanguage)}>
+                    {t("header.getStarted")}
+                  </Link>
                 </Button>
               </div>
             )}
@@ -211,7 +227,7 @@ export default function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                     variant={isPublicItemActive(pathname, to) ? "secondary" : "ghost"}
                   >
-                    <Link to={to}>{t(labelKey)}</Link>
+                    <Link to={localizePathname(to, activeLanguage)}>{t(labelKey)}</Link>
                   </Button>
                 ))}
               </nav>
@@ -229,7 +245,9 @@ export default function Header() {
                       onClick={() => setMobileMenuOpen(false)}
                       variant="ghost"
                     >
-                      <Link to="/account">{t("header.account.accountSettings")}</Link>
+                      <Link to={localizePathname("/account", activeLanguage)}>
+                        {t("header.account.accountSettings")}
+                      </Link>
                     </Button>
                     <Button
                       asChild
@@ -237,7 +255,9 @@ export default function Header() {
                       onClick={() => setMobileMenuOpen(false)}
                       variant="ghost"
                     >
-                      <Link to="/teams/new">{t("header.account.createTeam")}</Link>
+                      <Link to={localizePathname("/teams/new", activeLanguage)}>
+                        {t("header.account.createTeam")}
+                      </Link>
                     </Button>
                     {canAccessStaffPanel && (
                       <Button
@@ -246,7 +266,9 @@ export default function Header() {
                         onClick={() => setMobileMenuOpen(false)}
                         variant="ghost"
                       >
-                        <Link to="/staff">{t("header.account.staffPanel")}</Link>
+                        <Link to={localizePathname("/staff", activeLanguage)}>
+                          {t("header.account.staffPanel")}
+                        </Link>
                       </Button>
                     )}
                     {isImpersonating && (
@@ -274,14 +296,18 @@ export default function Header() {
                       onClick={() => setMobileMenuOpen(false)}
                       variant="ghost"
                     >
-                      <Link to="/auth">{t("header.signIn")}</Link>
+                      <Link to={localizePathname("/auth", activeLanguage)}>
+                        {t("header.signIn")}
+                      </Link>
                     </Button>
                     <Button
                       asChild
                       className="justify-start"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <Link to="/register">{t("header.getStarted")}</Link>
+                      <Link to={localizePathname("/register", activeLanguage)}>
+                        {t("header.getStarted")}
+                      </Link>
                     </Button>
                   </div>
                 )}

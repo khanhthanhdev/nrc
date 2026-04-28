@@ -256,6 +256,229 @@
       "unknown": "Khong ro"
     }
   },
+  "routes": {
+    "account": {
+      "address": "Dia chi",
+      "changePasswordSuccess": "Da cap nhat mat khau thanh cong.",
+      "city": "Thanh pho",
+      "confirmNewPassword": "Xac nhan mat khau moi",
+      "currentPassword": "Mat khau hien tai",
+      "dateOfBirth": "Ngay sinh",
+      "description": "Xem thong tin tai khoan va cap nhat bao mat.",
+      "email": "Email",
+      "emailVerification": "Xac minh email",
+      "fullName": "Ho va ten",
+      "loading": "Dang tai tai khoan...",
+      "loadingSecurity": "Dang tai cai dat bao mat...",
+      "minPassword": "Mat khau moi phai co it nhat {{count}} ky tu.",
+      "notFound": "Khong tim thay ho so.",
+      "notVerified": "Chua xac minh",
+      "organizationOrSchool": "To chuc / Truong hoc",
+      "passwordMismatch": "Mat khau khong khop.",
+      "passwordUnavailable": "Tai khoan nay khong the doi mat khau vi khong dang nhap bang email/mat khau.",
+      "phoneNumber": "So dien thoai",
+      "profile": {
+        "description": "Thong tin chi doc duoc thu thap trong onboarding.",
+        "title": "Thong tin ho so"
+      },
+      "redirectingToOnboarding": "Dang chuyen sang onboarding...",
+      "redirectingToSignIn": "Dang chuyen sang dang nhap...",
+      "security": {
+        "description": "Doi mat khau hien tai cua ban.",
+        "title": "Bao mat"
+      },
+      "title": "Cai dat tai khoan",
+      "unableToLoadProviders": "Khong the tai cac nha cung cap tai khoan lien ket.",
+      "userId": "User ID",
+      "verified": "Da xac minh"
+    },
+    "auth": {
+      "accountCreated": "Da tao tai khoan. Hay xac minh email de tiep tuc.",
+      "continueWithGoogle": "Tiep tuc voi Google",
+      "description": "Dang nhap hoac tao tai khoan bang email/mat khau hoac Google.",
+      "email": "Email",
+      "forgotPassword": "Quen mat khau?",
+      "fullName": "Ho va ten",
+      "loading": "Dang tai xac thuc...",
+      "password": "Mat khau",
+      "signIn": "Dang nhap",
+      "signUp": "Dang ky",
+      "submitSignIn": "Dang nhap",
+      "submitSignUp": "Tao tai khoan",
+      "title": "Xac thuc"
+    },
+    "onboarding": {
+      "address": "Dia chi",
+      "city": "Thanh pho",
+      "completed": "Da hoan tat onboarding.",
+      "dateOfBirth": "Ngay sinh",
+      "description": "Hay dien day du cac truong ho so can thiet de tiep tuc.",
+      "loading": "Dang tai onboarding...",
+      "organizationOrSchool": "To chuc / Truong hoc",
+      "phoneNumber": "So dien thoai",
+      "saveAndContinue": "Luu va tiep tuc",
+      "title": "Hoan tat onboarding",
+      "unableToComplete": "Khong the hoan tat onboarding."
+    },
+    "register": {
+      "detail": {
+        "accessDenied": "Tu choi",
+        "description": "Thanh vien khong phai owner chi duoc xem. Staff co the sua. Tam thoi cho den khi co API dang ky.",
+        "invalidRoute": "Route dang ky khong hop le",
+        "loading": "Dang tai chi tiet dang ky...",
+        "readOnly": "Chi doc",
+        "title": "Chi tiet dang ky"
+      },
+      "event": {
+        "description": "Mo `/register/:eventId` cho dang ky su kien va `/register/:eventId/:registrationId` cho chi tiet dang ky.",
+        "editable": "Co the sua",
+        "invalidEventId": "Event id khong hop le",
+        "loading": "Dang tai dang ky...",
+        "openDetailExample": "Mo vi du chi tiet",
+        "readOnly": "Chi doc",
+        "title": "Dang ky"
+      },
+      "index": {
+        "currentTeamRole": "Vai tro hien tai cua nhom",
+        "description": "Mo `/register/:eventId` cho dang ky su kien va `/register/:eventId/:registrationId` cho chi tiet dang ky.",
+        "loading": "Dang tai dang ky...",
+        "manageTeam": "Quan ly nhom",
+        "none": "khong co",
+        "nonOwnerReadOnly": "Thanh vien nhom khong phai owner se chi doc o trang chi tiet dang ky.",
+        "redirectingToSignIn": "Dang chuyen sang dang nhap...",
+        "title": "Dang ky"
+      }
+    },
+    "team": {
+      "about": "Gioi thieu",
+      "cityOrProvince": "Thanh pho / tinh",
+      "created": "Da tao",
+      "description": "Nhom nay khong ton tai hoac da bi xoa.",
+      "galleryUnavailable": "Anh va video cua nhom se hien o day khi he thong thu vien san sang.",
+      "invalidDescription": "URL nhom phai dung dinh dang 5 chu so (vi du: 02323).",
+      "invalidTitle": "So nhom khong hop le",
+      "loading": "Dang tai nhom...",
+      "media": "Media",
+      "noDescription": "Chua co mo ta nhom nao duoc dang.",
+      "notFoundTitle": "Khong tim thay nhom",
+      "profileDetails": "Chi tiet ho so",
+      "schoolOrOrganization": "Truong hoc / To chuc",
+      "teamNumber": "So nhom",
+      "title": "Nhom",
+      "titles": {
+        "create": "Tao nhom",
+        "description": "Duyet cac doi thi da dang ky.",
+        "emptySearch": "Khong co nhom nao khop voi tim kiem.",
+        "emptyState": "Chua co nhom nao duoc dang ky.",
+        "loading": "Dang tai nhom...",
+        "searchPlaceholder": "Tim kiem nhom...",
+        "teamCount": "nhom",
+        "teamCountPlural": "nhom"
+      },
+      "create": {
+        "cityOrProvince": "Thanh pho / tinh",
+        "createTeam": "Tao nhom",
+        "description": "Tao nhom se tao mot Better Auth organization lien ket voi vai tro ",
+        "loading": "Dang tai...",
+        "schoolOrOrganization": "Truong hoc / To chuc",
+        "selectCity": "Chon thanh pho / tinh",
+        "submit": "Tao nhom",
+        "success": "Da tao nhom: {{teamNumber}}",
+        "terms": "Toi dong y voi cac dieu khoan tao nhom.",
+        "termsError": "Ban phai dong y dieu khoan de tao nhom.",
+        "title": "Tao nhom",
+        "unableToCreate": "Khong the tao nhom.",
+        "creating": "Dang tao...",
+        "redirectingToSignIn": "Dang chuyen sang dang nhap..."
+      },
+      "detail": {
+        "title": "Khong tim thay nhom"
+      },
+      "notProvided": "Chua cung cap",
+      "pagination": {
+        "previous": "Truoc",
+        "next": "Tiep"
+      },
+      "fields": {
+        "name": "Ten nhom",
+        "description": "Mo ta"
+      },
+      "tabs": {
+        "overview": "Tong quan",
+        "roster": "Thanh vien",
+        "history": "Lich su",
+        "media": "Media",
+        "manage": "Quan ly",
+        "invitations": "Loi moi"
+      },
+      "history": {
+        "eventsTitle": "Lich su nhom qua cac su kien",
+        "eventsDescription": "Lich su tham gia su kien se xuat hien o day sau khi dong bo tu event-control.",
+        "matchesTitle": "Ket qua tran dau",
+        "matchesDescription": "Lich su tran dau va diem so moi nhat se xuat hien o day sau khi dong bo tu event-control.",
+        "awardsTitle": "Giai thuong cua nhom",
+        "awardsDescription": "Lich su giai thuong se xuat hien o day sau khi dong bo tu event-control."
+      },
+      "roles": {
+        "mentor": "Mentor",
+        "leader": "Truong nhom",
+        "member": "Thanh vien"
+      },
+      "members": {
+        "title": "Thanh vien",
+        "empty": "Khong tim thay thanh vien.",
+        "joined": "Tham gia",
+        "remove": "Xoa",
+        "feedback": {
+          "removed": "Da xoa thanh vien."
+        }
+      },
+      "invitations": {
+        "inviteMember": "Moi thanh vien",
+        "email": "Email",
+        "emailPlaceholder": "member@example.com",
+        "role": "Vai tro",
+        "sending": "Dang gui...",
+        "sendInvite": "Gui loi moi",
+        "title": "Loi moi",
+        "loading": "Dang tai loi moi...",
+        "empty": "Chua co loi moi.",
+        "expires": "Het han",
+        "revoke": "Thu hoi",
+        "status": {
+          "pending": "Dang cho",
+          "accepted": "Da chap nhan",
+          "expired": "Het han",
+          "revoked": "Da thu hoi"
+        },
+        "feedback": {
+          "sent": "Da gui loi moi toi {{email}}",
+          "revoked": "Da thu hoi loi moi.",
+          "sendFailed": "Khong the gui loi moi."
+        }
+      },
+      "profile": {
+        "editProfile": "Sua ho so",
+        "avatarUrl": "URL avatar",
+        "coverImageUrl": "URL anh bia",
+        "save": "Luu thay doi",
+        "saving": "Dang luu...",
+        "changeCover": "Doi anh bia",
+        "changeLogo": "Doi logo",
+        "changeCoverImage": "Doi anh bia",
+        "changeTeamLogo": "Doi logo nhom",
+        "uploadImageDescription": "Chon mot anh. File tai len duoc luu voi Better Upload va sau do gan vao ho so nhom nay.",
+        "teamLabel": "Nhom {{teamNumber}}",
+        "feedback": {
+          "updated": "Da cap nhat ho so nhom.",
+          "updateFailed": "Khong the cap nhat ho so.",
+          "coverUpdated": "Da cap nhat anh bia.",
+          "logoUpdated": "Da cap nhat logo nhom.",
+          "imageUpdateFailed": "Khong the cap nhat anh nhom."
+        }
+      }
+    }
+  },
   "staffSidebar": {
     "backToSite": "Quay ve trang chinh",
     "events": "Su kien",
