@@ -8,946 +8,901 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as Char123LocaleChar125IndexRouteImport } from './routes/{-$locale}/index'
-import { Route as Char123LocaleChar125UsersRouteImport } from './routes/{-$locale}/users'
-import { Route as Char123LocaleChar125TeamsRouteImport } from './routes/{-$locale}/teams'
-import { Route as Char123LocaleChar125StaffRouteImport } from './routes/{-$locale}/staff'
-import { Route as Char123LocaleChar125RegisterRouteImport } from './routes/{-$locale}/register'
-import { Route as Char123LocaleChar125OnboardingRouteImport } from './routes/{-$locale}/onboarding'
-import { Route as Char123LocaleChar125EventsRouteImport } from './routes/{-$locale}/events'
-import { Route as Char123LocaleChar125AuthRouteImport } from './routes/{-$locale}/auth'
-import { Route as Char123LocaleChar125AccountRouteImport } from './routes/{-$locale}/account'
-import { Route as Char123LocaleChar125SeasonRouteImport } from './routes/{-$locale}/$season'
-import { Route as Char123LocaleChar125TeamsNewRouteImport } from './routes/{-$locale}/teams.new'
-import { Route as Char123LocaleChar125TeamsTeamNumberRouteImport } from './routes/{-$locale}/teams.$teamNumber'
-import { Route as Char123LocaleChar125StaffUsersRouteImport } from './routes/{-$locale}/staff.users'
-import { Route as Char123LocaleChar125StaffSyncRouteImport } from './routes/{-$locale}/staff.sync'
-import { Route as Char123LocaleChar125StaffSettingsRouteImport } from './routes/{-$locale}/staff.settings'
-import { Route as Char123LocaleChar125StaffSeasonsRouteImport } from './routes/{-$locale}/staff.seasons'
-import { Route as Char123LocaleChar125StaffRegistrationsRouteImport } from './routes/{-$locale}/staff.registrations'
-import { Route as Char123LocaleChar125StaffEventsRouteImport } from './routes/{-$locale}/staff.events'
-import { Route as Char123LocaleChar125RegisterEventIdRouteImport } from './routes/{-$locale}/register.$eventId'
-import { Route as Char123LocaleChar125AuthResetPasswordRouteImport } from './routes/{-$locale}/auth.reset-password'
-import { Route as Char123LocaleChar125AuthPostVerifyRouteImport } from './routes/{-$locale}/auth.post-verify'
-import { Route as Char123LocaleChar125AuthForgotPasswordRouteImport } from './routes/{-$locale}/auth.forgot-password'
-import { Route as Char123LocaleChar125AuthAcceptInvitationRouteImport } from './routes/{-$locale}/auth.accept-invitation'
-import { Route as Char123LocaleChar125SeasonEventIdRouteImport } from './routes/{-$locale}/$season.$eventId'
-import { Route as Char123LocaleChar125StaffSeasonsNewRouteImport } from './routes/{-$locale}/staff.seasons.new'
-import { Route as Char123LocaleChar125StaffEventsNewRouteImport } from './routes/{-$locale}/staff.events.new'
-import { Route as Char123LocaleChar125RegisterEventIdRegistrationIdRouteImport } from './routes/{-$locale}/register.$eventId.$registrationId'
-import { Route as Char123LocaleChar125SeasonEventIdRankingsRouteImport } from './routes/{-$locale}/$season.$eventId.rankings'
-import { Route as Char123LocaleChar125SeasonEventIdQualificationsRouteImport } from './routes/{-$locale}/$season.$eventId.qualifications'
-import { Route as Char123LocaleChar125SeasonEventIdPlayoffsRouteImport } from './routes/{-$locale}/$season.$eventId.playoffs'
-import { Route as Char123LocaleChar125SeasonEventIdAwardsRouteImport } from './routes/{-$locale}/$season.$eventId.awards'
-import { Route as Char123LocaleChar125StaffSeasonsSeasonIdEditRouteImport } from './routes/{-$locale}/staff.seasons.$seasonId.edit'
-import { Route as Char123LocaleChar125StaffEventsEventRecordIdEditRouteImport } from './routes/{-$locale}/staff.events.$eventRecordId.edit'
-import { Route as Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRouteImport } from './routes/{-$locale}/$season.$eventId.qualifications.$matchNumber'
-import { Route as Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRouteImport } from './routes/{-$locale}/$season.$eventId.playoffs.$matchNumber'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as Char123LocaleChar125IndexRouteImport } from "./routes/{-$locale}/index";
+import { Route as Char123LocaleChar125UsersRouteImport } from "./routes/{-$locale}/users";
+import { Route as Char123LocaleChar125TeamsRouteImport } from "./routes/{-$locale}/teams";
+import { Route as Char123LocaleChar125StaffRouteImport } from "./routes/{-$locale}/staff";
+import { Route as Char123LocaleChar125RegisterRouteImport } from "./routes/{-$locale}/register";
+import { Route as Char123LocaleChar125OnboardingRouteImport } from "./routes/{-$locale}/onboarding";
+import { Route as Char123LocaleChar125EventsRouteImport } from "./routes/{-$locale}/events";
+import { Route as Char123LocaleChar125AuthRouteImport } from "./routes/{-$locale}/auth";
+import { Route as Char123LocaleChar125AccountRouteImport } from "./routes/{-$locale}/account";
+import { Route as Char123LocaleChar125SeasonRouteImport } from "./routes/{-$locale}/$season";
+import { Route as Char123LocaleChar125TeamsNewRouteImport } from "./routes/{-$locale}/teams.new";
+import { Route as Char123LocaleChar125TeamsTeamNumberRouteImport } from "./routes/{-$locale}/teams.$teamNumber";
+import { Route as Char123LocaleChar125StaffUsersRouteImport } from "./routes/{-$locale}/staff.users";
+import { Route as Char123LocaleChar125StaffSyncRouteImport } from "./routes/{-$locale}/staff.sync";
+import { Route as Char123LocaleChar125StaffSettingsRouteImport } from "./routes/{-$locale}/staff.settings";
+import { Route as Char123LocaleChar125StaffSeasonsRouteImport } from "./routes/{-$locale}/staff.seasons";
+import { Route as Char123LocaleChar125StaffRegistrationsRouteImport } from "./routes/{-$locale}/staff.registrations";
+import { Route as Char123LocaleChar125StaffEventsRouteImport } from "./routes/{-$locale}/staff.events";
+import { Route as Char123LocaleChar125RegisterEventIdRouteImport } from "./routes/{-$locale}/register.$eventId";
+import { Route as Char123LocaleChar125AuthResetPasswordRouteImport } from "./routes/{-$locale}/auth.reset-password";
+import { Route as Char123LocaleChar125AuthPostVerifyRouteImport } from "./routes/{-$locale}/auth.post-verify";
+import { Route as Char123LocaleChar125AuthForgotPasswordRouteImport } from "./routes/{-$locale}/auth.forgot-password";
+import { Route as Char123LocaleChar125AuthAcceptInvitationRouteImport } from "./routes/{-$locale}/auth.accept-invitation";
+import { Route as Char123LocaleChar125SeasonEventIdRouteImport } from "./routes/{-$locale}/$season.$eventId";
+import { Route as Char123LocaleChar125StaffSeasonsNewRouteImport } from "./routes/{-$locale}/staff.seasons.new";
+import { Route as Char123LocaleChar125StaffEventsNewRouteImport } from "./routes/{-$locale}/staff.events.new";
+import { Route as Char123LocaleChar125RegisterEventIdRegistrationIdRouteImport } from "./routes/{-$locale}/register.$eventId.$registrationId";
+import { Route as Char123LocaleChar125SeasonEventIdRankingsRouteImport } from "./routes/{-$locale}/$season.$eventId.rankings";
+import { Route as Char123LocaleChar125SeasonEventIdQualificationsRouteImport } from "./routes/{-$locale}/$season.$eventId.qualifications";
+import { Route as Char123LocaleChar125SeasonEventIdPlayoffsRouteImport } from "./routes/{-$locale}/$season.$eventId.playoffs";
+import { Route as Char123LocaleChar125SeasonEventIdAwardsRouteImport } from "./routes/{-$locale}/$season.$eventId.awards";
+import { Route as Char123LocaleChar125StaffSeasonsSeasonIdEditRouteImport } from "./routes/{-$locale}/staff.seasons.$seasonId.edit";
+import { Route as Char123LocaleChar125StaffEventsEventRecordIdEditRouteImport } from "./routes/{-$locale}/staff.events.$eventRecordId.edit";
+import { Route as Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRouteImport } from "./routes/{-$locale}/$season.$eventId.qualifications.$matchNumber";
+import { Route as Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRouteImport } from "./routes/{-$locale}/$season.$eventId.playoffs.$matchNumber";
 
-const Char123LocaleChar125IndexRoute =
-  Char123LocaleChar125IndexRouteImport.update({
-    id: '/{-$locale}/',
-    path: '/{-$locale}/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char123LocaleChar125UsersRoute =
-  Char123LocaleChar125UsersRouteImport.update({
-    id: '/{-$locale}/users',
-    path: '/{-$locale}/users',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char123LocaleChar125TeamsRoute =
-  Char123LocaleChar125TeamsRouteImport.update({
-    id: '/{-$locale}/teams',
-    path: '/{-$locale}/teams',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char123LocaleChar125StaffRoute =
-  Char123LocaleChar125StaffRouteImport.update({
-    id: '/{-$locale}/staff',
-    path: '/{-$locale}/staff',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char123LocaleChar125RegisterRoute =
-  Char123LocaleChar125RegisterRouteImport.update({
-    id: '/{-$locale}/register',
-    path: '/{-$locale}/register',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char123LocaleChar125OnboardingRoute =
-  Char123LocaleChar125OnboardingRouteImport.update({
-    id: '/{-$locale}/onboarding',
-    path: '/{-$locale}/onboarding',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char123LocaleChar125EventsRoute =
-  Char123LocaleChar125EventsRouteImport.update({
-    id: '/{-$locale}/events',
-    path: '/{-$locale}/events',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char123LocaleChar125AuthRoute =
-  Char123LocaleChar125AuthRouteImport.update({
-    id: '/{-$locale}/auth',
-    path: '/{-$locale}/auth',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char123LocaleChar125AccountRoute =
-  Char123LocaleChar125AccountRouteImport.update({
-    id: '/{-$locale}/account',
-    path: '/{-$locale}/account',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char123LocaleChar125SeasonRoute =
-  Char123LocaleChar125SeasonRouteImport.update({
-    id: '/{-$locale}/$season',
-    path: '/{-$locale}/$season',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char123LocaleChar125TeamsNewRoute =
-  Char123LocaleChar125TeamsNewRouteImport.update({
-    id: '/new',
-    path: '/new',
-    getParentRoute: () => Char123LocaleChar125TeamsRoute,
-  } as any)
+const Char123LocaleChar125IndexRoute = Char123LocaleChar125IndexRouteImport.update({
+  id: "/{-$locale}/",
+  path: "/{-$locale}/",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const Char123LocaleChar125UsersRoute = Char123LocaleChar125UsersRouteImport.update({
+  id: "/{-$locale}/users",
+  path: "/{-$locale}/users",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const Char123LocaleChar125TeamsRoute = Char123LocaleChar125TeamsRouteImport.update({
+  id: "/{-$locale}/teams",
+  path: "/{-$locale}/teams",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const Char123LocaleChar125StaffRoute = Char123LocaleChar125StaffRouteImport.update({
+  id: "/{-$locale}/staff",
+  path: "/{-$locale}/staff",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const Char123LocaleChar125RegisterRoute = Char123LocaleChar125RegisterRouteImport.update({
+  id: "/{-$locale}/register",
+  path: "/{-$locale}/register",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const Char123LocaleChar125OnboardingRoute = Char123LocaleChar125OnboardingRouteImport.update({
+  id: "/{-$locale}/onboarding",
+  path: "/{-$locale}/onboarding",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const Char123LocaleChar125EventsRoute = Char123LocaleChar125EventsRouteImport.update({
+  id: "/{-$locale}/events",
+  path: "/{-$locale}/events",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const Char123LocaleChar125AuthRoute = Char123LocaleChar125AuthRouteImport.update({
+  id: "/{-$locale}/auth",
+  path: "/{-$locale}/auth",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const Char123LocaleChar125AccountRoute = Char123LocaleChar125AccountRouteImport.update({
+  id: "/{-$locale}/account",
+  path: "/{-$locale}/account",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const Char123LocaleChar125SeasonRoute = Char123LocaleChar125SeasonRouteImport.update({
+  id: "/{-$locale}/$season",
+  path: "/{-$locale}/$season",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const Char123LocaleChar125TeamsNewRoute = Char123LocaleChar125TeamsNewRouteImport.update({
+  id: "/new",
+  path: "/new",
+  getParentRoute: () => Char123LocaleChar125TeamsRoute,
+} as any);
 const Char123LocaleChar125TeamsTeamNumberRoute =
   Char123LocaleChar125TeamsTeamNumberRouteImport.update({
-    id: '/$teamNumber',
-    path: '/$teamNumber',
+    id: "/$teamNumber",
+    path: "/$teamNumber",
     getParentRoute: () => Char123LocaleChar125TeamsRoute,
-  } as any)
-const Char123LocaleChar125StaffUsersRoute =
-  Char123LocaleChar125StaffUsersRouteImport.update({
-    id: '/users',
-    path: '/users',
-    getParentRoute: () => Char123LocaleChar125StaffRoute,
-  } as any)
-const Char123LocaleChar125StaffSyncRoute =
-  Char123LocaleChar125StaffSyncRouteImport.update({
-    id: '/sync',
-    path: '/sync',
-    getParentRoute: () => Char123LocaleChar125StaffRoute,
-  } as any)
-const Char123LocaleChar125StaffSettingsRoute =
-  Char123LocaleChar125StaffSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => Char123LocaleChar125StaffRoute,
-  } as any)
-const Char123LocaleChar125StaffSeasonsRoute =
-  Char123LocaleChar125StaffSeasonsRouteImport.update({
-    id: '/seasons',
-    path: '/seasons',
-    getParentRoute: () => Char123LocaleChar125StaffRoute,
-  } as any)
+  } as any);
+const Char123LocaleChar125StaffUsersRoute = Char123LocaleChar125StaffUsersRouteImport.update({
+  id: "/users",
+  path: "/users",
+  getParentRoute: () => Char123LocaleChar125StaffRoute,
+} as any);
+const Char123LocaleChar125StaffSyncRoute = Char123LocaleChar125StaffSyncRouteImport.update({
+  id: "/sync",
+  path: "/sync",
+  getParentRoute: () => Char123LocaleChar125StaffRoute,
+} as any);
+const Char123LocaleChar125StaffSettingsRoute = Char123LocaleChar125StaffSettingsRouteImport.update({
+  id: "/settings",
+  path: "/settings",
+  getParentRoute: () => Char123LocaleChar125StaffRoute,
+} as any);
+const Char123LocaleChar125StaffSeasonsRoute = Char123LocaleChar125StaffSeasonsRouteImport.update({
+  id: "/seasons",
+  path: "/seasons",
+  getParentRoute: () => Char123LocaleChar125StaffRoute,
+} as any);
 const Char123LocaleChar125StaffRegistrationsRoute =
   Char123LocaleChar125StaffRegistrationsRouteImport.update({
-    id: '/registrations',
-    path: '/registrations',
+    id: "/registrations",
+    path: "/registrations",
     getParentRoute: () => Char123LocaleChar125StaffRoute,
-  } as any)
-const Char123LocaleChar125StaffEventsRoute =
-  Char123LocaleChar125StaffEventsRouteImport.update({
-    id: '/events',
-    path: '/events',
-    getParentRoute: () => Char123LocaleChar125StaffRoute,
-  } as any)
+  } as any);
+const Char123LocaleChar125StaffEventsRoute = Char123LocaleChar125StaffEventsRouteImport.update({
+  id: "/events",
+  path: "/events",
+  getParentRoute: () => Char123LocaleChar125StaffRoute,
+} as any);
 const Char123LocaleChar125RegisterEventIdRoute =
   Char123LocaleChar125RegisterEventIdRouteImport.update({
-    id: '/$eventId',
-    path: '/$eventId',
+    id: "/$eventId",
+    path: "/$eventId",
     getParentRoute: () => Char123LocaleChar125RegisterRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125AuthResetPasswordRoute =
   Char123LocaleChar125AuthResetPasswordRouteImport.update({
-    id: '/reset-password',
-    path: '/reset-password',
+    id: "/reset-password",
+    path: "/reset-password",
     getParentRoute: () => Char123LocaleChar125AuthRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125AuthPostVerifyRoute =
   Char123LocaleChar125AuthPostVerifyRouteImport.update({
-    id: '/post-verify',
-    path: '/post-verify',
+    id: "/post-verify",
+    path: "/post-verify",
     getParentRoute: () => Char123LocaleChar125AuthRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125AuthForgotPasswordRoute =
   Char123LocaleChar125AuthForgotPasswordRouteImport.update({
-    id: '/forgot-password',
-    path: '/forgot-password',
+    id: "/forgot-password",
+    path: "/forgot-password",
     getParentRoute: () => Char123LocaleChar125AuthRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125AuthAcceptInvitationRoute =
   Char123LocaleChar125AuthAcceptInvitationRouteImport.update({
-    id: '/accept-invitation',
-    path: '/accept-invitation',
+    id: "/accept-invitation",
+    path: "/accept-invitation",
     getParentRoute: () => Char123LocaleChar125AuthRoute,
-  } as any)
-const Char123LocaleChar125SeasonEventIdRoute =
-  Char123LocaleChar125SeasonEventIdRouteImport.update({
-    id: '/$eventId',
-    path: '/$eventId',
-    getParentRoute: () => Char123LocaleChar125SeasonRoute,
-  } as any)
+  } as any);
+const Char123LocaleChar125SeasonEventIdRoute = Char123LocaleChar125SeasonEventIdRouteImport.update({
+  id: "/$eventId",
+  path: "/$eventId",
+  getParentRoute: () => Char123LocaleChar125SeasonRoute,
+} as any);
 const Char123LocaleChar125StaffSeasonsNewRoute =
   Char123LocaleChar125StaffSeasonsNewRouteImport.update({
-    id: '/new',
-    path: '/new',
+    id: "/new",
+    path: "/new",
     getParentRoute: () => Char123LocaleChar125StaffSeasonsRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125StaffEventsNewRoute =
   Char123LocaleChar125StaffEventsNewRouteImport.update({
-    id: '/new',
-    path: '/new',
+    id: "/new",
+    path: "/new",
     getParentRoute: () => Char123LocaleChar125StaffEventsRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125RegisterEventIdRegistrationIdRoute =
   Char123LocaleChar125RegisterEventIdRegistrationIdRouteImport.update({
-    id: '/$registrationId',
-    path: '/$registrationId',
+    id: "/$registrationId",
+    path: "/$registrationId",
     getParentRoute: () => Char123LocaleChar125RegisterEventIdRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125SeasonEventIdRankingsRoute =
   Char123LocaleChar125SeasonEventIdRankingsRouteImport.update({
-    id: '/rankings',
-    path: '/rankings',
+    id: "/rankings",
+    path: "/rankings",
     getParentRoute: () => Char123LocaleChar125SeasonEventIdRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125SeasonEventIdQualificationsRoute =
   Char123LocaleChar125SeasonEventIdQualificationsRouteImport.update({
-    id: '/qualifications',
-    path: '/qualifications',
+    id: "/qualifications",
+    path: "/qualifications",
     getParentRoute: () => Char123LocaleChar125SeasonEventIdRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125SeasonEventIdPlayoffsRoute =
   Char123LocaleChar125SeasonEventIdPlayoffsRouteImport.update({
-    id: '/playoffs',
-    path: '/playoffs',
+    id: "/playoffs",
+    path: "/playoffs",
     getParentRoute: () => Char123LocaleChar125SeasonEventIdRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125SeasonEventIdAwardsRoute =
   Char123LocaleChar125SeasonEventIdAwardsRouteImport.update({
-    id: '/awards',
-    path: '/awards',
+    id: "/awards",
+    path: "/awards",
     getParentRoute: () => Char123LocaleChar125SeasonEventIdRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125StaffSeasonsSeasonIdEditRoute =
   Char123LocaleChar125StaffSeasonsSeasonIdEditRouteImport.update({
-    id: '/$seasonId/edit',
-    path: '/$seasonId/edit',
+    id: "/$seasonId/edit",
+    path: "/$seasonId/edit",
     getParentRoute: () => Char123LocaleChar125StaffSeasonsRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125StaffEventsEventRecordIdEditRoute =
   Char123LocaleChar125StaffEventsEventRecordIdEditRouteImport.update({
-    id: '/$eventRecordId/edit',
-    path: '/$eventRecordId/edit',
+    id: "/$eventRecordId/edit",
+    path: "/$eventRecordId/edit",
     getParentRoute: () => Char123LocaleChar125StaffEventsRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute =
   Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRouteImport.update({
-    id: '/$matchNumber',
-    path: '/$matchNumber',
+    id: "/$matchNumber",
+    path: "/$matchNumber",
     getParentRoute: () => Char123LocaleChar125SeasonEventIdQualificationsRoute,
-  } as any)
+  } as any);
 const Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute =
   Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRouteImport.update({
-    id: '/$matchNumber',
-    path: '/$matchNumber',
+    id: "/$matchNumber",
+    path: "/$matchNumber",
     getParentRoute: () => Char123LocaleChar125SeasonEventIdPlayoffsRoute,
-  } as any)
+  } as any);
 
 export interface FileRoutesByFullPath {
-  '/{-$locale}/$season': typeof Char123LocaleChar125SeasonRouteWithChildren
-  '/{-$locale}/account': typeof Char123LocaleChar125AccountRoute
-  '/{-$locale}/auth': typeof Char123LocaleChar125AuthRouteWithChildren
-  '/{-$locale}/events': typeof Char123LocaleChar125EventsRoute
-  '/{-$locale}/onboarding': typeof Char123LocaleChar125OnboardingRoute
-  '/{-$locale}/register': typeof Char123LocaleChar125RegisterRouteWithChildren
-  '/{-$locale}/staff': typeof Char123LocaleChar125StaffRouteWithChildren
-  '/{-$locale}/teams': typeof Char123LocaleChar125TeamsRouteWithChildren
-  '/{-$locale}/users': typeof Char123LocaleChar125UsersRoute
-  '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
-  '/{-$locale}/$season/$eventId': typeof Char123LocaleChar125SeasonEventIdRouteWithChildren
-  '/{-$locale}/auth/accept-invitation': typeof Char123LocaleChar125AuthAcceptInvitationRoute
-  '/{-$locale}/auth/forgot-password': typeof Char123LocaleChar125AuthForgotPasswordRoute
-  '/{-$locale}/auth/post-verify': typeof Char123LocaleChar125AuthPostVerifyRoute
-  '/{-$locale}/auth/reset-password': typeof Char123LocaleChar125AuthResetPasswordRoute
-  '/{-$locale}/register/$eventId': typeof Char123LocaleChar125RegisterEventIdRouteWithChildren
-  '/{-$locale}/staff/events': typeof Char123LocaleChar125StaffEventsRouteWithChildren
-  '/{-$locale}/staff/registrations': typeof Char123LocaleChar125StaffRegistrationsRoute
-  '/{-$locale}/staff/seasons': typeof Char123LocaleChar125StaffSeasonsRouteWithChildren
-  '/{-$locale}/staff/settings': typeof Char123LocaleChar125StaffSettingsRoute
-  '/{-$locale}/staff/sync': typeof Char123LocaleChar125StaffSyncRoute
-  '/{-$locale}/staff/users': typeof Char123LocaleChar125StaffUsersRoute
-  '/{-$locale}/teams/$teamNumber': typeof Char123LocaleChar125TeamsTeamNumberRoute
-  '/{-$locale}/teams/new': typeof Char123LocaleChar125TeamsNewRoute
-  '/{-$locale}/$season/$eventId/awards': typeof Char123LocaleChar125SeasonEventIdAwardsRoute
-  '/{-$locale}/$season/$eventId/playoffs': typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren
-  '/{-$locale}/$season/$eventId/qualifications': typeof Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren
-  '/{-$locale}/$season/$eventId/rankings': typeof Char123LocaleChar125SeasonEventIdRankingsRoute
-  '/{-$locale}/register/$eventId/$registrationId': typeof Char123LocaleChar125RegisterEventIdRegistrationIdRoute
-  '/{-$locale}/staff/events/new': typeof Char123LocaleChar125StaffEventsNewRoute
-  '/{-$locale}/staff/seasons/new': typeof Char123LocaleChar125StaffSeasonsNewRoute
-  '/{-$locale}/$season/$eventId/playoffs/$matchNumber': typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute
-  '/{-$locale}/$season/$eventId/qualifications/$matchNumber': typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute
-  '/{-$locale}/staff/events/$eventRecordId/edit': typeof Char123LocaleChar125StaffEventsEventRecordIdEditRoute
-  '/{-$locale}/staff/seasons/$seasonId/edit': typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRoute
+  "/{-$locale}/$season": typeof Char123LocaleChar125SeasonRouteWithChildren;
+  "/{-$locale}/account": typeof Char123LocaleChar125AccountRoute;
+  "/{-$locale}/auth": typeof Char123LocaleChar125AuthRouteWithChildren;
+  "/{-$locale}/events": typeof Char123LocaleChar125EventsRoute;
+  "/{-$locale}/onboarding": typeof Char123LocaleChar125OnboardingRoute;
+  "/{-$locale}/register": typeof Char123LocaleChar125RegisterRouteWithChildren;
+  "/{-$locale}/staff": typeof Char123LocaleChar125StaffRouteWithChildren;
+  "/{-$locale}/teams": typeof Char123LocaleChar125TeamsRouteWithChildren;
+  "/{-$locale}/users": typeof Char123LocaleChar125UsersRoute;
+  "/{-$locale}/": typeof Char123LocaleChar125IndexRoute;
+  "/{-$locale}/$season/$eventId": typeof Char123LocaleChar125SeasonEventIdRouteWithChildren;
+  "/{-$locale}/auth/accept-invitation": typeof Char123LocaleChar125AuthAcceptInvitationRoute;
+  "/{-$locale}/auth/forgot-password": typeof Char123LocaleChar125AuthForgotPasswordRoute;
+  "/{-$locale}/auth/post-verify": typeof Char123LocaleChar125AuthPostVerifyRoute;
+  "/{-$locale}/auth/reset-password": typeof Char123LocaleChar125AuthResetPasswordRoute;
+  "/{-$locale}/register/$eventId": typeof Char123LocaleChar125RegisterEventIdRouteWithChildren;
+  "/{-$locale}/staff/events": typeof Char123LocaleChar125StaffEventsRouteWithChildren;
+  "/{-$locale}/staff/registrations": typeof Char123LocaleChar125StaffRegistrationsRoute;
+  "/{-$locale}/staff/seasons": typeof Char123LocaleChar125StaffSeasonsRouteWithChildren;
+  "/{-$locale}/staff/settings": typeof Char123LocaleChar125StaffSettingsRoute;
+  "/{-$locale}/staff/sync": typeof Char123LocaleChar125StaffSyncRoute;
+  "/{-$locale}/staff/users": typeof Char123LocaleChar125StaffUsersRoute;
+  "/{-$locale}/teams/$teamNumber": typeof Char123LocaleChar125TeamsTeamNumberRoute;
+  "/{-$locale}/teams/new": typeof Char123LocaleChar125TeamsNewRoute;
+  "/{-$locale}/$season/$eventId/awards": typeof Char123LocaleChar125SeasonEventIdAwardsRoute;
+  "/{-$locale}/$season/$eventId/playoffs": typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren;
+  "/{-$locale}/$season/$eventId/qualifications": typeof Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren;
+  "/{-$locale}/$season/$eventId/rankings": typeof Char123LocaleChar125SeasonEventIdRankingsRoute;
+  "/{-$locale}/register/$eventId/$registrationId": typeof Char123LocaleChar125RegisterEventIdRegistrationIdRoute;
+  "/{-$locale}/staff/events/new": typeof Char123LocaleChar125StaffEventsNewRoute;
+  "/{-$locale}/staff/seasons/new": typeof Char123LocaleChar125StaffSeasonsNewRoute;
+  "/{-$locale}/$season/$eventId/playoffs/$matchNumber": typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute;
+  "/{-$locale}/$season/$eventId/qualifications/$matchNumber": typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute;
+  "/{-$locale}/staff/events/$eventRecordId/edit": typeof Char123LocaleChar125StaffEventsEventRecordIdEditRoute;
+  "/{-$locale}/staff/seasons/$seasonId/edit": typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRoute;
 }
 export interface FileRoutesByTo {
-  '/{-$locale}/$season': typeof Char123LocaleChar125SeasonRouteWithChildren
-  '/{-$locale}/account': typeof Char123LocaleChar125AccountRoute
-  '/{-$locale}/auth': typeof Char123LocaleChar125AuthRouteWithChildren
-  '/{-$locale}/events': typeof Char123LocaleChar125EventsRoute
-  '/{-$locale}/onboarding': typeof Char123LocaleChar125OnboardingRoute
-  '/{-$locale}/register': typeof Char123LocaleChar125RegisterRouteWithChildren
-  '/{-$locale}/staff': typeof Char123LocaleChar125StaffRouteWithChildren
-  '/{-$locale}/teams': typeof Char123LocaleChar125TeamsRouteWithChildren
-  '/{-$locale}/users': typeof Char123LocaleChar125UsersRoute
-  '/{-$locale}': typeof Char123LocaleChar125IndexRoute
-  '/{-$locale}/$season/$eventId': typeof Char123LocaleChar125SeasonEventIdRouteWithChildren
-  '/{-$locale}/auth/accept-invitation': typeof Char123LocaleChar125AuthAcceptInvitationRoute
-  '/{-$locale}/auth/forgot-password': typeof Char123LocaleChar125AuthForgotPasswordRoute
-  '/{-$locale}/auth/post-verify': typeof Char123LocaleChar125AuthPostVerifyRoute
-  '/{-$locale}/auth/reset-password': typeof Char123LocaleChar125AuthResetPasswordRoute
-  '/{-$locale}/register/$eventId': typeof Char123LocaleChar125RegisterEventIdRouteWithChildren
-  '/{-$locale}/staff/events': typeof Char123LocaleChar125StaffEventsRouteWithChildren
-  '/{-$locale}/staff/registrations': typeof Char123LocaleChar125StaffRegistrationsRoute
-  '/{-$locale}/staff/seasons': typeof Char123LocaleChar125StaffSeasonsRouteWithChildren
-  '/{-$locale}/staff/settings': typeof Char123LocaleChar125StaffSettingsRoute
-  '/{-$locale}/staff/sync': typeof Char123LocaleChar125StaffSyncRoute
-  '/{-$locale}/staff/users': typeof Char123LocaleChar125StaffUsersRoute
-  '/{-$locale}/teams/$teamNumber': typeof Char123LocaleChar125TeamsTeamNumberRoute
-  '/{-$locale}/teams/new': typeof Char123LocaleChar125TeamsNewRoute
-  '/{-$locale}/$season/$eventId/awards': typeof Char123LocaleChar125SeasonEventIdAwardsRoute
-  '/{-$locale}/$season/$eventId/playoffs': typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren
-  '/{-$locale}/$season/$eventId/qualifications': typeof Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren
-  '/{-$locale}/$season/$eventId/rankings': typeof Char123LocaleChar125SeasonEventIdRankingsRoute
-  '/{-$locale}/register/$eventId/$registrationId': typeof Char123LocaleChar125RegisterEventIdRegistrationIdRoute
-  '/{-$locale}/staff/events/new': typeof Char123LocaleChar125StaffEventsNewRoute
-  '/{-$locale}/staff/seasons/new': typeof Char123LocaleChar125StaffSeasonsNewRoute
-  '/{-$locale}/$season/$eventId/playoffs/$matchNumber': typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute
-  '/{-$locale}/$season/$eventId/qualifications/$matchNumber': typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute
-  '/{-$locale}/staff/events/$eventRecordId/edit': typeof Char123LocaleChar125StaffEventsEventRecordIdEditRoute
-  '/{-$locale}/staff/seasons/$seasonId/edit': typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRoute
+  "/{-$locale}/$season": typeof Char123LocaleChar125SeasonRouteWithChildren;
+  "/{-$locale}/account": typeof Char123LocaleChar125AccountRoute;
+  "/{-$locale}/auth": typeof Char123LocaleChar125AuthRouteWithChildren;
+  "/{-$locale}/events": typeof Char123LocaleChar125EventsRoute;
+  "/{-$locale}/onboarding": typeof Char123LocaleChar125OnboardingRoute;
+  "/{-$locale}/register": typeof Char123LocaleChar125RegisterRouteWithChildren;
+  "/{-$locale}/staff": typeof Char123LocaleChar125StaffRouteWithChildren;
+  "/{-$locale}/teams": typeof Char123LocaleChar125TeamsRouteWithChildren;
+  "/{-$locale}/users": typeof Char123LocaleChar125UsersRoute;
+  "/{-$locale}": typeof Char123LocaleChar125IndexRoute;
+  "/{-$locale}/$season/$eventId": typeof Char123LocaleChar125SeasonEventIdRouteWithChildren;
+  "/{-$locale}/auth/accept-invitation": typeof Char123LocaleChar125AuthAcceptInvitationRoute;
+  "/{-$locale}/auth/forgot-password": typeof Char123LocaleChar125AuthForgotPasswordRoute;
+  "/{-$locale}/auth/post-verify": typeof Char123LocaleChar125AuthPostVerifyRoute;
+  "/{-$locale}/auth/reset-password": typeof Char123LocaleChar125AuthResetPasswordRoute;
+  "/{-$locale}/register/$eventId": typeof Char123LocaleChar125RegisterEventIdRouteWithChildren;
+  "/{-$locale}/staff/events": typeof Char123LocaleChar125StaffEventsRouteWithChildren;
+  "/{-$locale}/staff/registrations": typeof Char123LocaleChar125StaffRegistrationsRoute;
+  "/{-$locale}/staff/seasons": typeof Char123LocaleChar125StaffSeasonsRouteWithChildren;
+  "/{-$locale}/staff/settings": typeof Char123LocaleChar125StaffSettingsRoute;
+  "/{-$locale}/staff/sync": typeof Char123LocaleChar125StaffSyncRoute;
+  "/{-$locale}/staff/users": typeof Char123LocaleChar125StaffUsersRoute;
+  "/{-$locale}/teams/$teamNumber": typeof Char123LocaleChar125TeamsTeamNumberRoute;
+  "/{-$locale}/teams/new": typeof Char123LocaleChar125TeamsNewRoute;
+  "/{-$locale}/$season/$eventId/awards": typeof Char123LocaleChar125SeasonEventIdAwardsRoute;
+  "/{-$locale}/$season/$eventId/playoffs": typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren;
+  "/{-$locale}/$season/$eventId/qualifications": typeof Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren;
+  "/{-$locale}/$season/$eventId/rankings": typeof Char123LocaleChar125SeasonEventIdRankingsRoute;
+  "/{-$locale}/register/$eventId/$registrationId": typeof Char123LocaleChar125RegisterEventIdRegistrationIdRoute;
+  "/{-$locale}/staff/events/new": typeof Char123LocaleChar125StaffEventsNewRoute;
+  "/{-$locale}/staff/seasons/new": typeof Char123LocaleChar125StaffSeasonsNewRoute;
+  "/{-$locale}/$season/$eventId/playoffs/$matchNumber": typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute;
+  "/{-$locale}/$season/$eventId/qualifications/$matchNumber": typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute;
+  "/{-$locale}/staff/events/$eventRecordId/edit": typeof Char123LocaleChar125StaffEventsEventRecordIdEditRoute;
+  "/{-$locale}/staff/seasons/$seasonId/edit": typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/{-$locale}/$season': typeof Char123LocaleChar125SeasonRouteWithChildren
-  '/{-$locale}/account': typeof Char123LocaleChar125AccountRoute
-  '/{-$locale}/auth': typeof Char123LocaleChar125AuthRouteWithChildren
-  '/{-$locale}/events': typeof Char123LocaleChar125EventsRoute
-  '/{-$locale}/onboarding': typeof Char123LocaleChar125OnboardingRoute
-  '/{-$locale}/register': typeof Char123LocaleChar125RegisterRouteWithChildren
-  '/{-$locale}/staff': typeof Char123LocaleChar125StaffRouteWithChildren
-  '/{-$locale}/teams': typeof Char123LocaleChar125TeamsRouteWithChildren
-  '/{-$locale}/users': typeof Char123LocaleChar125UsersRoute
-  '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
-  '/{-$locale}/$season/$eventId': typeof Char123LocaleChar125SeasonEventIdRouteWithChildren
-  '/{-$locale}/auth/accept-invitation': typeof Char123LocaleChar125AuthAcceptInvitationRoute
-  '/{-$locale}/auth/forgot-password': typeof Char123LocaleChar125AuthForgotPasswordRoute
-  '/{-$locale}/auth/post-verify': typeof Char123LocaleChar125AuthPostVerifyRoute
-  '/{-$locale}/auth/reset-password': typeof Char123LocaleChar125AuthResetPasswordRoute
-  '/{-$locale}/register/$eventId': typeof Char123LocaleChar125RegisterEventIdRouteWithChildren
-  '/{-$locale}/staff/events': typeof Char123LocaleChar125StaffEventsRouteWithChildren
-  '/{-$locale}/staff/registrations': typeof Char123LocaleChar125StaffRegistrationsRoute
-  '/{-$locale}/staff/seasons': typeof Char123LocaleChar125StaffSeasonsRouteWithChildren
-  '/{-$locale}/staff/settings': typeof Char123LocaleChar125StaffSettingsRoute
-  '/{-$locale}/staff/sync': typeof Char123LocaleChar125StaffSyncRoute
-  '/{-$locale}/staff/users': typeof Char123LocaleChar125StaffUsersRoute
-  '/{-$locale}/teams/$teamNumber': typeof Char123LocaleChar125TeamsTeamNumberRoute
-  '/{-$locale}/teams/new': typeof Char123LocaleChar125TeamsNewRoute
-  '/{-$locale}/$season/$eventId/awards': typeof Char123LocaleChar125SeasonEventIdAwardsRoute
-  '/{-$locale}/$season/$eventId/playoffs': typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren
-  '/{-$locale}/$season/$eventId/qualifications': typeof Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren
-  '/{-$locale}/$season/$eventId/rankings': typeof Char123LocaleChar125SeasonEventIdRankingsRoute
-  '/{-$locale}/register/$eventId/$registrationId': typeof Char123LocaleChar125RegisterEventIdRegistrationIdRoute
-  '/{-$locale}/staff/events/new': typeof Char123LocaleChar125StaffEventsNewRoute
-  '/{-$locale}/staff/seasons/new': typeof Char123LocaleChar125StaffSeasonsNewRoute
-  '/{-$locale}/$season/$eventId/playoffs/$matchNumber': typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute
-  '/{-$locale}/$season/$eventId/qualifications/$matchNumber': typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute
-  '/{-$locale}/staff/events/$eventRecordId/edit': typeof Char123LocaleChar125StaffEventsEventRecordIdEditRoute
-  '/{-$locale}/staff/seasons/$seasonId/edit': typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRoute
+  __root__: typeof rootRouteImport;
+  "/{-$locale}/$season": typeof Char123LocaleChar125SeasonRouteWithChildren;
+  "/{-$locale}/account": typeof Char123LocaleChar125AccountRoute;
+  "/{-$locale}/auth": typeof Char123LocaleChar125AuthRouteWithChildren;
+  "/{-$locale}/events": typeof Char123LocaleChar125EventsRoute;
+  "/{-$locale}/onboarding": typeof Char123LocaleChar125OnboardingRoute;
+  "/{-$locale}/register": typeof Char123LocaleChar125RegisterRouteWithChildren;
+  "/{-$locale}/staff": typeof Char123LocaleChar125StaffRouteWithChildren;
+  "/{-$locale}/teams": typeof Char123LocaleChar125TeamsRouteWithChildren;
+  "/{-$locale}/users": typeof Char123LocaleChar125UsersRoute;
+  "/{-$locale}/": typeof Char123LocaleChar125IndexRoute;
+  "/{-$locale}/$season/$eventId": typeof Char123LocaleChar125SeasonEventIdRouteWithChildren;
+  "/{-$locale}/auth/accept-invitation": typeof Char123LocaleChar125AuthAcceptInvitationRoute;
+  "/{-$locale}/auth/forgot-password": typeof Char123LocaleChar125AuthForgotPasswordRoute;
+  "/{-$locale}/auth/post-verify": typeof Char123LocaleChar125AuthPostVerifyRoute;
+  "/{-$locale}/auth/reset-password": typeof Char123LocaleChar125AuthResetPasswordRoute;
+  "/{-$locale}/register/$eventId": typeof Char123LocaleChar125RegisterEventIdRouteWithChildren;
+  "/{-$locale}/staff/events": typeof Char123LocaleChar125StaffEventsRouteWithChildren;
+  "/{-$locale}/staff/registrations": typeof Char123LocaleChar125StaffRegistrationsRoute;
+  "/{-$locale}/staff/seasons": typeof Char123LocaleChar125StaffSeasonsRouteWithChildren;
+  "/{-$locale}/staff/settings": typeof Char123LocaleChar125StaffSettingsRoute;
+  "/{-$locale}/staff/sync": typeof Char123LocaleChar125StaffSyncRoute;
+  "/{-$locale}/staff/users": typeof Char123LocaleChar125StaffUsersRoute;
+  "/{-$locale}/teams/$teamNumber": typeof Char123LocaleChar125TeamsTeamNumberRoute;
+  "/{-$locale}/teams/new": typeof Char123LocaleChar125TeamsNewRoute;
+  "/{-$locale}/$season/$eventId/awards": typeof Char123LocaleChar125SeasonEventIdAwardsRoute;
+  "/{-$locale}/$season/$eventId/playoffs": typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren;
+  "/{-$locale}/$season/$eventId/qualifications": typeof Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren;
+  "/{-$locale}/$season/$eventId/rankings": typeof Char123LocaleChar125SeasonEventIdRankingsRoute;
+  "/{-$locale}/register/$eventId/$registrationId": typeof Char123LocaleChar125RegisterEventIdRegistrationIdRoute;
+  "/{-$locale}/staff/events/new": typeof Char123LocaleChar125StaffEventsNewRoute;
+  "/{-$locale}/staff/seasons/new": typeof Char123LocaleChar125StaffSeasonsNewRoute;
+  "/{-$locale}/$season/$eventId/playoffs/$matchNumber": typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute;
+  "/{-$locale}/$season/$eventId/qualifications/$matchNumber": typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute;
+  "/{-$locale}/staff/events/$eventRecordId/edit": typeof Char123LocaleChar125StaffEventsEventRecordIdEditRoute;
+  "/{-$locale}/staff/seasons/$seasonId/edit": typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/{-$locale}/$season'
-    | '/{-$locale}/account'
-    | '/{-$locale}/auth'
-    | '/{-$locale}/events'
-    | '/{-$locale}/onboarding'
-    | '/{-$locale}/register'
-    | '/{-$locale}/staff'
-    | '/{-$locale}/teams'
-    | '/{-$locale}/users'
-    | '/{-$locale}/'
-    | '/{-$locale}/$season/$eventId'
-    | '/{-$locale}/auth/accept-invitation'
-    | '/{-$locale}/auth/forgot-password'
-    | '/{-$locale}/auth/post-verify'
-    | '/{-$locale}/auth/reset-password'
-    | '/{-$locale}/register/$eventId'
-    | '/{-$locale}/staff/events'
-    | '/{-$locale}/staff/registrations'
-    | '/{-$locale}/staff/seasons'
-    | '/{-$locale}/staff/settings'
-    | '/{-$locale}/staff/sync'
-    | '/{-$locale}/staff/users'
-    | '/{-$locale}/teams/$teamNumber'
-    | '/{-$locale}/teams/new'
-    | '/{-$locale}/$season/$eventId/awards'
-    | '/{-$locale}/$season/$eventId/playoffs'
-    | '/{-$locale}/$season/$eventId/qualifications'
-    | '/{-$locale}/$season/$eventId/rankings'
-    | '/{-$locale}/register/$eventId/$registrationId'
-    | '/{-$locale}/staff/events/new'
-    | '/{-$locale}/staff/seasons/new'
-    | '/{-$locale}/$season/$eventId/playoffs/$matchNumber'
-    | '/{-$locale}/$season/$eventId/qualifications/$matchNumber'
-    | '/{-$locale}/staff/events/$eventRecordId/edit'
-    | '/{-$locale}/staff/seasons/$seasonId/edit'
-  fileRoutesByTo: FileRoutesByTo
+    | "/{-$locale}/$season"
+    | "/{-$locale}/account"
+    | "/{-$locale}/auth"
+    | "/{-$locale}/events"
+    | "/{-$locale}/onboarding"
+    | "/{-$locale}/register"
+    | "/{-$locale}/staff"
+    | "/{-$locale}/teams"
+    | "/{-$locale}/users"
+    | "/{-$locale}/"
+    | "/{-$locale}/$season/$eventId"
+    | "/{-$locale}/auth/accept-invitation"
+    | "/{-$locale}/auth/forgot-password"
+    | "/{-$locale}/auth/post-verify"
+    | "/{-$locale}/auth/reset-password"
+    | "/{-$locale}/register/$eventId"
+    | "/{-$locale}/staff/events"
+    | "/{-$locale}/staff/registrations"
+    | "/{-$locale}/staff/seasons"
+    | "/{-$locale}/staff/settings"
+    | "/{-$locale}/staff/sync"
+    | "/{-$locale}/staff/users"
+    | "/{-$locale}/teams/$teamNumber"
+    | "/{-$locale}/teams/new"
+    | "/{-$locale}/$season/$eventId/awards"
+    | "/{-$locale}/$season/$eventId/playoffs"
+    | "/{-$locale}/$season/$eventId/qualifications"
+    | "/{-$locale}/$season/$eventId/rankings"
+    | "/{-$locale}/register/$eventId/$registrationId"
+    | "/{-$locale}/staff/events/new"
+    | "/{-$locale}/staff/seasons/new"
+    | "/{-$locale}/$season/$eventId/playoffs/$matchNumber"
+    | "/{-$locale}/$season/$eventId/qualifications/$matchNumber"
+    | "/{-$locale}/staff/events/$eventRecordId/edit"
+    | "/{-$locale}/staff/seasons/$seasonId/edit";
+  fileRoutesByTo: FileRoutesByTo;
   to:
-    | '/{-$locale}/$season'
-    | '/{-$locale}/account'
-    | '/{-$locale}/auth'
-    | '/{-$locale}/events'
-    | '/{-$locale}/onboarding'
-    | '/{-$locale}/register'
-    | '/{-$locale}/staff'
-    | '/{-$locale}/teams'
-    | '/{-$locale}/users'
-    | '/{-$locale}'
-    | '/{-$locale}/$season/$eventId'
-    | '/{-$locale}/auth/accept-invitation'
-    | '/{-$locale}/auth/forgot-password'
-    | '/{-$locale}/auth/post-verify'
-    | '/{-$locale}/auth/reset-password'
-    | '/{-$locale}/register/$eventId'
-    | '/{-$locale}/staff/events'
-    | '/{-$locale}/staff/registrations'
-    | '/{-$locale}/staff/seasons'
-    | '/{-$locale}/staff/settings'
-    | '/{-$locale}/staff/sync'
-    | '/{-$locale}/staff/users'
-    | '/{-$locale}/teams/$teamNumber'
-    | '/{-$locale}/teams/new'
-    | '/{-$locale}/$season/$eventId/awards'
-    | '/{-$locale}/$season/$eventId/playoffs'
-    | '/{-$locale}/$season/$eventId/qualifications'
-    | '/{-$locale}/$season/$eventId/rankings'
-    | '/{-$locale}/register/$eventId/$registrationId'
-    | '/{-$locale}/staff/events/new'
-    | '/{-$locale}/staff/seasons/new'
-    | '/{-$locale}/$season/$eventId/playoffs/$matchNumber'
-    | '/{-$locale}/$season/$eventId/qualifications/$matchNumber'
-    | '/{-$locale}/staff/events/$eventRecordId/edit'
-    | '/{-$locale}/staff/seasons/$seasonId/edit'
+    | "/{-$locale}/$season"
+    | "/{-$locale}/account"
+    | "/{-$locale}/auth"
+    | "/{-$locale}/events"
+    | "/{-$locale}/onboarding"
+    | "/{-$locale}/register"
+    | "/{-$locale}/staff"
+    | "/{-$locale}/teams"
+    | "/{-$locale}/users"
+    | "/{-$locale}"
+    | "/{-$locale}/$season/$eventId"
+    | "/{-$locale}/auth/accept-invitation"
+    | "/{-$locale}/auth/forgot-password"
+    | "/{-$locale}/auth/post-verify"
+    | "/{-$locale}/auth/reset-password"
+    | "/{-$locale}/register/$eventId"
+    | "/{-$locale}/staff/events"
+    | "/{-$locale}/staff/registrations"
+    | "/{-$locale}/staff/seasons"
+    | "/{-$locale}/staff/settings"
+    | "/{-$locale}/staff/sync"
+    | "/{-$locale}/staff/users"
+    | "/{-$locale}/teams/$teamNumber"
+    | "/{-$locale}/teams/new"
+    | "/{-$locale}/$season/$eventId/awards"
+    | "/{-$locale}/$season/$eventId/playoffs"
+    | "/{-$locale}/$season/$eventId/qualifications"
+    | "/{-$locale}/$season/$eventId/rankings"
+    | "/{-$locale}/register/$eventId/$registrationId"
+    | "/{-$locale}/staff/events/new"
+    | "/{-$locale}/staff/seasons/new"
+    | "/{-$locale}/$season/$eventId/playoffs/$matchNumber"
+    | "/{-$locale}/$season/$eventId/qualifications/$matchNumber"
+    | "/{-$locale}/staff/events/$eventRecordId/edit"
+    | "/{-$locale}/staff/seasons/$seasonId/edit";
   id:
-    | '__root__'
-    | '/{-$locale}/$season'
-    | '/{-$locale}/account'
-    | '/{-$locale}/auth'
-    | '/{-$locale}/events'
-    | '/{-$locale}/onboarding'
-    | '/{-$locale}/register'
-    | '/{-$locale}/staff'
-    | '/{-$locale}/teams'
-    | '/{-$locale}/users'
-    | '/{-$locale}/'
-    | '/{-$locale}/$season/$eventId'
-    | '/{-$locale}/auth/accept-invitation'
-    | '/{-$locale}/auth/forgot-password'
-    | '/{-$locale}/auth/post-verify'
-    | '/{-$locale}/auth/reset-password'
-    | '/{-$locale}/register/$eventId'
-    | '/{-$locale}/staff/events'
-    | '/{-$locale}/staff/registrations'
-    | '/{-$locale}/staff/seasons'
-    | '/{-$locale}/staff/settings'
-    | '/{-$locale}/staff/sync'
-    | '/{-$locale}/staff/users'
-    | '/{-$locale}/teams/$teamNumber'
-    | '/{-$locale}/teams/new'
-    | '/{-$locale}/$season/$eventId/awards'
-    | '/{-$locale}/$season/$eventId/playoffs'
-    | '/{-$locale}/$season/$eventId/qualifications'
-    | '/{-$locale}/$season/$eventId/rankings'
-    | '/{-$locale}/register/$eventId/$registrationId'
-    | '/{-$locale}/staff/events/new'
-    | '/{-$locale}/staff/seasons/new'
-    | '/{-$locale}/$season/$eventId/playoffs/$matchNumber'
-    | '/{-$locale}/$season/$eventId/qualifications/$matchNumber'
-    | '/{-$locale}/staff/events/$eventRecordId/edit'
-    | '/{-$locale}/staff/seasons/$seasonId/edit'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/{-$locale}/$season"
+    | "/{-$locale}/account"
+    | "/{-$locale}/auth"
+    | "/{-$locale}/events"
+    | "/{-$locale}/onboarding"
+    | "/{-$locale}/register"
+    | "/{-$locale}/staff"
+    | "/{-$locale}/teams"
+    | "/{-$locale}/users"
+    | "/{-$locale}/"
+    | "/{-$locale}/$season/$eventId"
+    | "/{-$locale}/auth/accept-invitation"
+    | "/{-$locale}/auth/forgot-password"
+    | "/{-$locale}/auth/post-verify"
+    | "/{-$locale}/auth/reset-password"
+    | "/{-$locale}/register/$eventId"
+    | "/{-$locale}/staff/events"
+    | "/{-$locale}/staff/registrations"
+    | "/{-$locale}/staff/seasons"
+    | "/{-$locale}/staff/settings"
+    | "/{-$locale}/staff/sync"
+    | "/{-$locale}/staff/users"
+    | "/{-$locale}/teams/$teamNumber"
+    | "/{-$locale}/teams/new"
+    | "/{-$locale}/$season/$eventId/awards"
+    | "/{-$locale}/$season/$eventId/playoffs"
+    | "/{-$locale}/$season/$eventId/qualifications"
+    | "/{-$locale}/$season/$eventId/rankings"
+    | "/{-$locale}/register/$eventId/$registrationId"
+    | "/{-$locale}/staff/events/new"
+    | "/{-$locale}/staff/seasons/new"
+    | "/{-$locale}/$season/$eventId/playoffs/$matchNumber"
+    | "/{-$locale}/$season/$eventId/qualifications/$matchNumber"
+    | "/{-$locale}/staff/events/$eventRecordId/edit"
+    | "/{-$locale}/staff/seasons/$seasonId/edit";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  Char123LocaleChar125SeasonRoute: typeof Char123LocaleChar125SeasonRouteWithChildren
-  Char123LocaleChar125AccountRoute: typeof Char123LocaleChar125AccountRoute
-  Char123LocaleChar125AuthRoute: typeof Char123LocaleChar125AuthRouteWithChildren
-  Char123LocaleChar125EventsRoute: typeof Char123LocaleChar125EventsRoute
-  Char123LocaleChar125OnboardingRoute: typeof Char123LocaleChar125OnboardingRoute
-  Char123LocaleChar125RegisterRoute: typeof Char123LocaleChar125RegisterRouteWithChildren
-  Char123LocaleChar125StaffRoute: typeof Char123LocaleChar125StaffRouteWithChildren
-  Char123LocaleChar125TeamsRoute: typeof Char123LocaleChar125TeamsRouteWithChildren
-  Char123LocaleChar125UsersRoute: typeof Char123LocaleChar125UsersRoute
-  Char123LocaleChar125IndexRoute: typeof Char123LocaleChar125IndexRoute
+  Char123LocaleChar125SeasonRoute: typeof Char123LocaleChar125SeasonRouteWithChildren;
+  Char123LocaleChar125AccountRoute: typeof Char123LocaleChar125AccountRoute;
+  Char123LocaleChar125AuthRoute: typeof Char123LocaleChar125AuthRouteWithChildren;
+  Char123LocaleChar125EventsRoute: typeof Char123LocaleChar125EventsRoute;
+  Char123LocaleChar125OnboardingRoute: typeof Char123LocaleChar125OnboardingRoute;
+  Char123LocaleChar125RegisterRoute: typeof Char123LocaleChar125RegisterRouteWithChildren;
+  Char123LocaleChar125StaffRoute: typeof Char123LocaleChar125StaffRouteWithChildren;
+  Char123LocaleChar125TeamsRoute: typeof Char123LocaleChar125TeamsRouteWithChildren;
+  Char123LocaleChar125UsersRoute: typeof Char123LocaleChar125UsersRoute;
+  Char123LocaleChar125IndexRoute: typeof Char123LocaleChar125IndexRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/{-$locale}/': {
-      id: '/{-$locale}/'
-      path: '/{-$locale}'
-      fullPath: '/{-$locale}/'
-      preLoaderRoute: typeof Char123LocaleChar125IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/{-$locale}/users': {
-      id: '/{-$locale}/users'
-      path: '/{-$locale}/users'
-      fullPath: '/{-$locale}/users'
-      preLoaderRoute: typeof Char123LocaleChar125UsersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/{-$locale}/teams': {
-      id: '/{-$locale}/teams'
-      path: '/{-$locale}/teams'
-      fullPath: '/{-$locale}/teams'
-      preLoaderRoute: typeof Char123LocaleChar125TeamsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/{-$locale}/staff': {
-      id: '/{-$locale}/staff'
-      path: '/{-$locale}/staff'
-      fullPath: '/{-$locale}/staff'
-      preLoaderRoute: typeof Char123LocaleChar125StaffRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/{-$locale}/register': {
-      id: '/{-$locale}/register'
-      path: '/{-$locale}/register'
-      fullPath: '/{-$locale}/register'
-      preLoaderRoute: typeof Char123LocaleChar125RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/{-$locale}/onboarding': {
-      id: '/{-$locale}/onboarding'
-      path: '/{-$locale}/onboarding'
-      fullPath: '/{-$locale}/onboarding'
-      preLoaderRoute: typeof Char123LocaleChar125OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/{-$locale}/events': {
-      id: '/{-$locale}/events'
-      path: '/{-$locale}/events'
-      fullPath: '/{-$locale}/events'
-      preLoaderRoute: typeof Char123LocaleChar125EventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/{-$locale}/auth': {
-      id: '/{-$locale}/auth'
-      path: '/{-$locale}/auth'
-      fullPath: '/{-$locale}/auth'
-      preLoaderRoute: typeof Char123LocaleChar125AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/{-$locale}/account': {
-      id: '/{-$locale}/account'
-      path: '/{-$locale}/account'
-      fullPath: '/{-$locale}/account'
-      preLoaderRoute: typeof Char123LocaleChar125AccountRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/{-$locale}/$season': {
-      id: '/{-$locale}/$season'
-      path: '/{-$locale}/$season'
-      fullPath: '/{-$locale}/$season'
-      preLoaderRoute: typeof Char123LocaleChar125SeasonRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/{-$locale}/teams/new': {
-      id: '/{-$locale}/teams/new'
-      path: '/new'
-      fullPath: '/{-$locale}/teams/new'
-      preLoaderRoute: typeof Char123LocaleChar125TeamsNewRouteImport
-      parentRoute: typeof Char123LocaleChar125TeamsRoute
-    }
-    '/{-$locale}/teams/$teamNumber': {
-      id: '/{-$locale}/teams/$teamNumber'
-      path: '/$teamNumber'
-      fullPath: '/{-$locale}/teams/$teamNumber'
-      preLoaderRoute: typeof Char123LocaleChar125TeamsTeamNumberRouteImport
-      parentRoute: typeof Char123LocaleChar125TeamsRoute
-    }
-    '/{-$locale}/staff/users': {
-      id: '/{-$locale}/staff/users'
-      path: '/users'
-      fullPath: '/{-$locale}/staff/users'
-      preLoaderRoute: typeof Char123LocaleChar125StaffUsersRouteImport
-      parentRoute: typeof Char123LocaleChar125StaffRoute
-    }
-    '/{-$locale}/staff/sync': {
-      id: '/{-$locale}/staff/sync'
-      path: '/sync'
-      fullPath: '/{-$locale}/staff/sync'
-      preLoaderRoute: typeof Char123LocaleChar125StaffSyncRouteImport
-      parentRoute: typeof Char123LocaleChar125StaffRoute
-    }
-    '/{-$locale}/staff/settings': {
-      id: '/{-$locale}/staff/settings'
-      path: '/settings'
-      fullPath: '/{-$locale}/staff/settings'
-      preLoaderRoute: typeof Char123LocaleChar125StaffSettingsRouteImport
-      parentRoute: typeof Char123LocaleChar125StaffRoute
-    }
-    '/{-$locale}/staff/seasons': {
-      id: '/{-$locale}/staff/seasons'
-      path: '/seasons'
-      fullPath: '/{-$locale}/staff/seasons'
-      preLoaderRoute: typeof Char123LocaleChar125StaffSeasonsRouteImport
-      parentRoute: typeof Char123LocaleChar125StaffRoute
-    }
-    '/{-$locale}/staff/registrations': {
-      id: '/{-$locale}/staff/registrations'
-      path: '/registrations'
-      fullPath: '/{-$locale}/staff/registrations'
-      preLoaderRoute: typeof Char123LocaleChar125StaffRegistrationsRouteImport
-      parentRoute: typeof Char123LocaleChar125StaffRoute
-    }
-    '/{-$locale}/staff/events': {
-      id: '/{-$locale}/staff/events'
-      path: '/events'
-      fullPath: '/{-$locale}/staff/events'
-      preLoaderRoute: typeof Char123LocaleChar125StaffEventsRouteImport
-      parentRoute: typeof Char123LocaleChar125StaffRoute
-    }
-    '/{-$locale}/register/$eventId': {
-      id: '/{-$locale}/register/$eventId'
-      path: '/$eventId'
-      fullPath: '/{-$locale}/register/$eventId'
-      preLoaderRoute: typeof Char123LocaleChar125RegisterEventIdRouteImport
-      parentRoute: typeof Char123LocaleChar125RegisterRoute
-    }
-    '/{-$locale}/auth/reset-password': {
-      id: '/{-$locale}/auth/reset-password'
-      path: '/reset-password'
-      fullPath: '/{-$locale}/auth/reset-password'
-      preLoaderRoute: typeof Char123LocaleChar125AuthResetPasswordRouteImport
-      parentRoute: typeof Char123LocaleChar125AuthRoute
-    }
-    '/{-$locale}/auth/post-verify': {
-      id: '/{-$locale}/auth/post-verify'
-      path: '/post-verify'
-      fullPath: '/{-$locale}/auth/post-verify'
-      preLoaderRoute: typeof Char123LocaleChar125AuthPostVerifyRouteImport
-      parentRoute: typeof Char123LocaleChar125AuthRoute
-    }
-    '/{-$locale}/auth/forgot-password': {
-      id: '/{-$locale}/auth/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/{-$locale}/auth/forgot-password'
-      preLoaderRoute: typeof Char123LocaleChar125AuthForgotPasswordRouteImport
-      parentRoute: typeof Char123LocaleChar125AuthRoute
-    }
-    '/{-$locale}/auth/accept-invitation': {
-      id: '/{-$locale}/auth/accept-invitation'
-      path: '/accept-invitation'
-      fullPath: '/{-$locale}/auth/accept-invitation'
-      preLoaderRoute: typeof Char123LocaleChar125AuthAcceptInvitationRouteImport
-      parentRoute: typeof Char123LocaleChar125AuthRoute
-    }
-    '/{-$locale}/$season/$eventId': {
-      id: '/{-$locale}/$season/$eventId'
-      path: '/$eventId'
-      fullPath: '/{-$locale}/$season/$eventId'
-      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdRouteImport
-      parentRoute: typeof Char123LocaleChar125SeasonRoute
-    }
-    '/{-$locale}/staff/seasons/new': {
-      id: '/{-$locale}/staff/seasons/new'
-      path: '/new'
-      fullPath: '/{-$locale}/staff/seasons/new'
-      preLoaderRoute: typeof Char123LocaleChar125StaffSeasonsNewRouteImport
-      parentRoute: typeof Char123LocaleChar125StaffSeasonsRoute
-    }
-    '/{-$locale}/staff/events/new': {
-      id: '/{-$locale}/staff/events/new'
-      path: '/new'
-      fullPath: '/{-$locale}/staff/events/new'
-      preLoaderRoute: typeof Char123LocaleChar125StaffEventsNewRouteImport
-      parentRoute: typeof Char123LocaleChar125StaffEventsRoute
-    }
-    '/{-$locale}/register/$eventId/$registrationId': {
-      id: '/{-$locale}/register/$eventId/$registrationId'
-      path: '/$registrationId'
-      fullPath: '/{-$locale}/register/$eventId/$registrationId'
-      preLoaderRoute: typeof Char123LocaleChar125RegisterEventIdRegistrationIdRouteImport
-      parentRoute: typeof Char123LocaleChar125RegisterEventIdRoute
-    }
-    '/{-$locale}/$season/$eventId/rankings': {
-      id: '/{-$locale}/$season/$eventId/rankings'
-      path: '/rankings'
-      fullPath: '/{-$locale}/$season/$eventId/rankings'
-      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdRankingsRouteImport
-      parentRoute: typeof Char123LocaleChar125SeasonEventIdRoute
-    }
-    '/{-$locale}/$season/$eventId/qualifications': {
-      id: '/{-$locale}/$season/$eventId/qualifications'
-      path: '/qualifications'
-      fullPath: '/{-$locale}/$season/$eventId/qualifications'
-      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsRouteImport
-      parentRoute: typeof Char123LocaleChar125SeasonEventIdRoute
-    }
-    '/{-$locale}/$season/$eventId/playoffs': {
-      id: '/{-$locale}/$season/$eventId/playoffs'
-      path: '/playoffs'
-      fullPath: '/{-$locale}/$season/$eventId/playoffs'
-      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteImport
-      parentRoute: typeof Char123LocaleChar125SeasonEventIdRoute
-    }
-    '/{-$locale}/$season/$eventId/awards': {
-      id: '/{-$locale}/$season/$eventId/awards'
-      path: '/awards'
-      fullPath: '/{-$locale}/$season/$eventId/awards'
-      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdAwardsRouteImport
-      parentRoute: typeof Char123LocaleChar125SeasonEventIdRoute
-    }
-    '/{-$locale}/staff/seasons/$seasonId/edit': {
-      id: '/{-$locale}/staff/seasons/$seasonId/edit'
-      path: '/$seasonId/edit'
-      fullPath: '/{-$locale}/staff/seasons/$seasonId/edit'
-      preLoaderRoute: typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRouteImport
-      parentRoute: typeof Char123LocaleChar125StaffSeasonsRoute
-    }
-    '/{-$locale}/staff/events/$eventRecordId/edit': {
-      id: '/{-$locale}/staff/events/$eventRecordId/edit'
-      path: '/$eventRecordId/edit'
-      fullPath: '/{-$locale}/staff/events/$eventRecordId/edit'
-      preLoaderRoute: typeof Char123LocaleChar125StaffEventsEventRecordIdEditRouteImport
-      parentRoute: typeof Char123LocaleChar125StaffEventsRoute
-    }
-    '/{-$locale}/$season/$eventId/qualifications/$matchNumber': {
-      id: '/{-$locale}/$season/$eventId/qualifications/$matchNumber'
-      path: '/$matchNumber'
-      fullPath: '/{-$locale}/$season/$eventId/qualifications/$matchNumber'
-      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRouteImport
-      parentRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsRoute
-    }
-    '/{-$locale}/$season/$eventId/playoffs/$matchNumber': {
-      id: '/{-$locale}/$season/$eventId/playoffs/$matchNumber'
-      path: '/$matchNumber'
-      fullPath: '/{-$locale}/$season/$eventId/playoffs/$matchNumber'
-      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRouteImport
-      parentRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsRoute
-    }
+    "/{-$locale}/": {
+      id: "/{-$locale}/";
+      path: "/{-$locale}";
+      fullPath: "/{-$locale}/";
+      preLoaderRoute: typeof Char123LocaleChar125IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/{-$locale}/users": {
+      id: "/{-$locale}/users";
+      path: "/{-$locale}/users";
+      fullPath: "/{-$locale}/users";
+      preLoaderRoute: typeof Char123LocaleChar125UsersRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/{-$locale}/teams": {
+      id: "/{-$locale}/teams";
+      path: "/{-$locale}/teams";
+      fullPath: "/{-$locale}/teams";
+      preLoaderRoute: typeof Char123LocaleChar125TeamsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/{-$locale}/staff": {
+      id: "/{-$locale}/staff";
+      path: "/{-$locale}/staff";
+      fullPath: "/{-$locale}/staff";
+      preLoaderRoute: typeof Char123LocaleChar125StaffRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/{-$locale}/register": {
+      id: "/{-$locale}/register";
+      path: "/{-$locale}/register";
+      fullPath: "/{-$locale}/register";
+      preLoaderRoute: typeof Char123LocaleChar125RegisterRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/{-$locale}/onboarding": {
+      id: "/{-$locale}/onboarding";
+      path: "/{-$locale}/onboarding";
+      fullPath: "/{-$locale}/onboarding";
+      preLoaderRoute: typeof Char123LocaleChar125OnboardingRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/{-$locale}/events": {
+      id: "/{-$locale}/events";
+      path: "/{-$locale}/events";
+      fullPath: "/{-$locale}/events";
+      preLoaderRoute: typeof Char123LocaleChar125EventsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/{-$locale}/auth": {
+      id: "/{-$locale}/auth";
+      path: "/{-$locale}/auth";
+      fullPath: "/{-$locale}/auth";
+      preLoaderRoute: typeof Char123LocaleChar125AuthRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/{-$locale}/account": {
+      id: "/{-$locale}/account";
+      path: "/{-$locale}/account";
+      fullPath: "/{-$locale}/account";
+      preLoaderRoute: typeof Char123LocaleChar125AccountRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/{-$locale}/$season": {
+      id: "/{-$locale}/$season";
+      path: "/{-$locale}/$season";
+      fullPath: "/{-$locale}/$season";
+      preLoaderRoute: typeof Char123LocaleChar125SeasonRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/{-$locale}/teams/new": {
+      id: "/{-$locale}/teams/new";
+      path: "/new";
+      fullPath: "/{-$locale}/teams/new";
+      preLoaderRoute: typeof Char123LocaleChar125TeamsNewRouteImport;
+      parentRoute: typeof Char123LocaleChar125TeamsRoute;
+    };
+    "/{-$locale}/teams/$teamNumber": {
+      id: "/{-$locale}/teams/$teamNumber";
+      path: "/$teamNumber";
+      fullPath: "/{-$locale}/teams/$teamNumber";
+      preLoaderRoute: typeof Char123LocaleChar125TeamsTeamNumberRouteImport;
+      parentRoute: typeof Char123LocaleChar125TeamsRoute;
+    };
+    "/{-$locale}/staff/users": {
+      id: "/{-$locale}/staff/users";
+      path: "/users";
+      fullPath: "/{-$locale}/staff/users";
+      preLoaderRoute: typeof Char123LocaleChar125StaffUsersRouteImport;
+      parentRoute: typeof Char123LocaleChar125StaffRoute;
+    };
+    "/{-$locale}/staff/sync": {
+      id: "/{-$locale}/staff/sync";
+      path: "/sync";
+      fullPath: "/{-$locale}/staff/sync";
+      preLoaderRoute: typeof Char123LocaleChar125StaffSyncRouteImport;
+      parentRoute: typeof Char123LocaleChar125StaffRoute;
+    };
+    "/{-$locale}/staff/settings": {
+      id: "/{-$locale}/staff/settings";
+      path: "/settings";
+      fullPath: "/{-$locale}/staff/settings";
+      preLoaderRoute: typeof Char123LocaleChar125StaffSettingsRouteImport;
+      parentRoute: typeof Char123LocaleChar125StaffRoute;
+    };
+    "/{-$locale}/staff/seasons": {
+      id: "/{-$locale}/staff/seasons";
+      path: "/seasons";
+      fullPath: "/{-$locale}/staff/seasons";
+      preLoaderRoute: typeof Char123LocaleChar125StaffSeasonsRouteImport;
+      parentRoute: typeof Char123LocaleChar125StaffRoute;
+    };
+    "/{-$locale}/staff/registrations": {
+      id: "/{-$locale}/staff/registrations";
+      path: "/registrations";
+      fullPath: "/{-$locale}/staff/registrations";
+      preLoaderRoute: typeof Char123LocaleChar125StaffRegistrationsRouteImport;
+      parentRoute: typeof Char123LocaleChar125StaffRoute;
+    };
+    "/{-$locale}/staff/events": {
+      id: "/{-$locale}/staff/events";
+      path: "/events";
+      fullPath: "/{-$locale}/staff/events";
+      preLoaderRoute: typeof Char123LocaleChar125StaffEventsRouteImport;
+      parentRoute: typeof Char123LocaleChar125StaffRoute;
+    };
+    "/{-$locale}/register/$eventId": {
+      id: "/{-$locale}/register/$eventId";
+      path: "/$eventId";
+      fullPath: "/{-$locale}/register/$eventId";
+      preLoaderRoute: typeof Char123LocaleChar125RegisterEventIdRouteImport;
+      parentRoute: typeof Char123LocaleChar125RegisterRoute;
+    };
+    "/{-$locale}/auth/reset-password": {
+      id: "/{-$locale}/auth/reset-password";
+      path: "/reset-password";
+      fullPath: "/{-$locale}/auth/reset-password";
+      preLoaderRoute: typeof Char123LocaleChar125AuthResetPasswordRouteImport;
+      parentRoute: typeof Char123LocaleChar125AuthRoute;
+    };
+    "/{-$locale}/auth/post-verify": {
+      id: "/{-$locale}/auth/post-verify";
+      path: "/post-verify";
+      fullPath: "/{-$locale}/auth/post-verify";
+      preLoaderRoute: typeof Char123LocaleChar125AuthPostVerifyRouteImport;
+      parentRoute: typeof Char123LocaleChar125AuthRoute;
+    };
+    "/{-$locale}/auth/forgot-password": {
+      id: "/{-$locale}/auth/forgot-password";
+      path: "/forgot-password";
+      fullPath: "/{-$locale}/auth/forgot-password";
+      preLoaderRoute: typeof Char123LocaleChar125AuthForgotPasswordRouteImport;
+      parentRoute: typeof Char123LocaleChar125AuthRoute;
+    };
+    "/{-$locale}/auth/accept-invitation": {
+      id: "/{-$locale}/auth/accept-invitation";
+      path: "/accept-invitation";
+      fullPath: "/{-$locale}/auth/accept-invitation";
+      preLoaderRoute: typeof Char123LocaleChar125AuthAcceptInvitationRouteImport;
+      parentRoute: typeof Char123LocaleChar125AuthRoute;
+    };
+    "/{-$locale}/$season/$eventId": {
+      id: "/{-$locale}/$season/$eventId";
+      path: "/$eventId";
+      fullPath: "/{-$locale}/$season/$eventId";
+      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdRouteImport;
+      parentRoute: typeof Char123LocaleChar125SeasonRoute;
+    };
+    "/{-$locale}/staff/seasons/new": {
+      id: "/{-$locale}/staff/seasons/new";
+      path: "/new";
+      fullPath: "/{-$locale}/staff/seasons/new";
+      preLoaderRoute: typeof Char123LocaleChar125StaffSeasonsNewRouteImport;
+      parentRoute: typeof Char123LocaleChar125StaffSeasonsRoute;
+    };
+    "/{-$locale}/staff/events/new": {
+      id: "/{-$locale}/staff/events/new";
+      path: "/new";
+      fullPath: "/{-$locale}/staff/events/new";
+      preLoaderRoute: typeof Char123LocaleChar125StaffEventsNewRouteImport;
+      parentRoute: typeof Char123LocaleChar125StaffEventsRoute;
+    };
+    "/{-$locale}/register/$eventId/$registrationId": {
+      id: "/{-$locale}/register/$eventId/$registrationId";
+      path: "/$registrationId";
+      fullPath: "/{-$locale}/register/$eventId/$registrationId";
+      preLoaderRoute: typeof Char123LocaleChar125RegisterEventIdRegistrationIdRouteImport;
+      parentRoute: typeof Char123LocaleChar125RegisterEventIdRoute;
+    };
+    "/{-$locale}/$season/$eventId/rankings": {
+      id: "/{-$locale}/$season/$eventId/rankings";
+      path: "/rankings";
+      fullPath: "/{-$locale}/$season/$eventId/rankings";
+      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdRankingsRouteImport;
+      parentRoute: typeof Char123LocaleChar125SeasonEventIdRoute;
+    };
+    "/{-$locale}/$season/$eventId/qualifications": {
+      id: "/{-$locale}/$season/$eventId/qualifications";
+      path: "/qualifications";
+      fullPath: "/{-$locale}/$season/$eventId/qualifications";
+      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsRouteImport;
+      parentRoute: typeof Char123LocaleChar125SeasonEventIdRoute;
+    };
+    "/{-$locale}/$season/$eventId/playoffs": {
+      id: "/{-$locale}/$season/$eventId/playoffs";
+      path: "/playoffs";
+      fullPath: "/{-$locale}/$season/$eventId/playoffs";
+      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteImport;
+      parentRoute: typeof Char123LocaleChar125SeasonEventIdRoute;
+    };
+    "/{-$locale}/$season/$eventId/awards": {
+      id: "/{-$locale}/$season/$eventId/awards";
+      path: "/awards";
+      fullPath: "/{-$locale}/$season/$eventId/awards";
+      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdAwardsRouteImport;
+      parentRoute: typeof Char123LocaleChar125SeasonEventIdRoute;
+    };
+    "/{-$locale}/staff/seasons/$seasonId/edit": {
+      id: "/{-$locale}/staff/seasons/$seasonId/edit";
+      path: "/$seasonId/edit";
+      fullPath: "/{-$locale}/staff/seasons/$seasonId/edit";
+      preLoaderRoute: typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRouteImport;
+      parentRoute: typeof Char123LocaleChar125StaffSeasonsRoute;
+    };
+    "/{-$locale}/staff/events/$eventRecordId/edit": {
+      id: "/{-$locale}/staff/events/$eventRecordId/edit";
+      path: "/$eventRecordId/edit";
+      fullPath: "/{-$locale}/staff/events/$eventRecordId/edit";
+      preLoaderRoute: typeof Char123LocaleChar125StaffEventsEventRecordIdEditRouteImport;
+      parentRoute: typeof Char123LocaleChar125StaffEventsRoute;
+    };
+    "/{-$locale}/$season/$eventId/qualifications/$matchNumber": {
+      id: "/{-$locale}/$season/$eventId/qualifications/$matchNumber";
+      path: "/$matchNumber";
+      fullPath: "/{-$locale}/$season/$eventId/qualifications/$matchNumber";
+      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRouteImport;
+      parentRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsRoute;
+    };
+    "/{-$locale}/$season/$eventId/playoffs/$matchNumber": {
+      id: "/{-$locale}/$season/$eventId/playoffs/$matchNumber";
+      path: "/$matchNumber";
+      fullPath: "/{-$locale}/$season/$eventId/playoffs/$matchNumber";
+      preLoaderRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRouteImport;
+      parentRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsRoute;
+    };
   }
 }
 
 interface Char123LocaleChar125SeasonEventIdPlayoffsRouteChildren {
-  Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute
+  Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute;
 }
 
 const Char123LocaleChar125SeasonEventIdPlayoffsRouteChildren: Char123LocaleChar125SeasonEventIdPlayoffsRouteChildren =
   {
     Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute:
       Char123LocaleChar125SeasonEventIdPlayoffsMatchNumberRoute,
-  }
+  };
 
 const Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren =
   Char123LocaleChar125SeasonEventIdPlayoffsRoute._addFileChildren(
     Char123LocaleChar125SeasonEventIdPlayoffsRouteChildren,
-  )
+  );
 
 interface Char123LocaleChar125SeasonEventIdQualificationsRouteChildren {
-  Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute
+  Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute;
 }
 
 const Char123LocaleChar125SeasonEventIdQualificationsRouteChildren: Char123LocaleChar125SeasonEventIdQualificationsRouteChildren =
   {
     Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute:
       Char123LocaleChar125SeasonEventIdQualificationsMatchNumberRoute,
-  }
+  };
 
 const Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren =
   Char123LocaleChar125SeasonEventIdQualificationsRoute._addFileChildren(
     Char123LocaleChar125SeasonEventIdQualificationsRouteChildren,
-  )
+  );
 
 interface Char123LocaleChar125SeasonEventIdRouteChildren {
-  Char123LocaleChar125SeasonEventIdAwardsRoute: typeof Char123LocaleChar125SeasonEventIdAwardsRoute
-  Char123LocaleChar125SeasonEventIdPlayoffsRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren
-  Char123LocaleChar125SeasonEventIdQualificationsRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren
-  Char123LocaleChar125SeasonEventIdRankingsRoute: typeof Char123LocaleChar125SeasonEventIdRankingsRoute
+  Char123LocaleChar125SeasonEventIdAwardsRoute: typeof Char123LocaleChar125SeasonEventIdAwardsRoute;
+  Char123LocaleChar125SeasonEventIdPlayoffsRoute: typeof Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren;
+  Char123LocaleChar125SeasonEventIdQualificationsRoute: typeof Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren;
+  Char123LocaleChar125SeasonEventIdRankingsRoute: typeof Char123LocaleChar125SeasonEventIdRankingsRoute;
 }
 
 const Char123LocaleChar125SeasonEventIdRouteChildren: Char123LocaleChar125SeasonEventIdRouteChildren =
   {
-    Char123LocaleChar125SeasonEventIdAwardsRoute:
-      Char123LocaleChar125SeasonEventIdAwardsRoute,
+    Char123LocaleChar125SeasonEventIdAwardsRoute: Char123LocaleChar125SeasonEventIdAwardsRoute,
     Char123LocaleChar125SeasonEventIdPlayoffsRoute:
       Char123LocaleChar125SeasonEventIdPlayoffsRouteWithChildren,
     Char123LocaleChar125SeasonEventIdQualificationsRoute:
       Char123LocaleChar125SeasonEventIdQualificationsRouteWithChildren,
-    Char123LocaleChar125SeasonEventIdRankingsRoute:
-      Char123LocaleChar125SeasonEventIdRankingsRoute,
-  }
+    Char123LocaleChar125SeasonEventIdRankingsRoute: Char123LocaleChar125SeasonEventIdRankingsRoute,
+  };
 
 const Char123LocaleChar125SeasonEventIdRouteWithChildren =
   Char123LocaleChar125SeasonEventIdRoute._addFileChildren(
     Char123LocaleChar125SeasonEventIdRouteChildren,
-  )
+  );
 
 interface Char123LocaleChar125SeasonRouteChildren {
-  Char123LocaleChar125SeasonEventIdRoute: typeof Char123LocaleChar125SeasonEventIdRouteWithChildren
+  Char123LocaleChar125SeasonEventIdRoute: typeof Char123LocaleChar125SeasonEventIdRouteWithChildren;
 }
 
-const Char123LocaleChar125SeasonRouteChildren: Char123LocaleChar125SeasonRouteChildren =
-  {
-    Char123LocaleChar125SeasonEventIdRoute:
-      Char123LocaleChar125SeasonEventIdRouteWithChildren,
-  }
+const Char123LocaleChar125SeasonRouteChildren: Char123LocaleChar125SeasonRouteChildren = {
+  Char123LocaleChar125SeasonEventIdRoute: Char123LocaleChar125SeasonEventIdRouteWithChildren,
+};
 
 const Char123LocaleChar125SeasonRouteWithChildren =
-  Char123LocaleChar125SeasonRoute._addFileChildren(
-    Char123LocaleChar125SeasonRouteChildren,
-  )
+  Char123LocaleChar125SeasonRoute._addFileChildren(Char123LocaleChar125SeasonRouteChildren);
 
 interface Char123LocaleChar125AuthRouteChildren {
-  Char123LocaleChar125AuthAcceptInvitationRoute: typeof Char123LocaleChar125AuthAcceptInvitationRoute
-  Char123LocaleChar125AuthForgotPasswordRoute: typeof Char123LocaleChar125AuthForgotPasswordRoute
-  Char123LocaleChar125AuthPostVerifyRoute: typeof Char123LocaleChar125AuthPostVerifyRoute
-  Char123LocaleChar125AuthResetPasswordRoute: typeof Char123LocaleChar125AuthResetPasswordRoute
+  Char123LocaleChar125AuthAcceptInvitationRoute: typeof Char123LocaleChar125AuthAcceptInvitationRoute;
+  Char123LocaleChar125AuthForgotPasswordRoute: typeof Char123LocaleChar125AuthForgotPasswordRoute;
+  Char123LocaleChar125AuthPostVerifyRoute: typeof Char123LocaleChar125AuthPostVerifyRoute;
+  Char123LocaleChar125AuthResetPasswordRoute: typeof Char123LocaleChar125AuthResetPasswordRoute;
 }
 
-const Char123LocaleChar125AuthRouteChildren: Char123LocaleChar125AuthRouteChildren =
-  {
-    Char123LocaleChar125AuthAcceptInvitationRoute:
-      Char123LocaleChar125AuthAcceptInvitationRoute,
-    Char123LocaleChar125AuthForgotPasswordRoute:
-      Char123LocaleChar125AuthForgotPasswordRoute,
-    Char123LocaleChar125AuthPostVerifyRoute:
-      Char123LocaleChar125AuthPostVerifyRoute,
-    Char123LocaleChar125AuthResetPasswordRoute:
-      Char123LocaleChar125AuthResetPasswordRoute,
-  }
+const Char123LocaleChar125AuthRouteChildren: Char123LocaleChar125AuthRouteChildren = {
+  Char123LocaleChar125AuthAcceptInvitationRoute: Char123LocaleChar125AuthAcceptInvitationRoute,
+  Char123LocaleChar125AuthForgotPasswordRoute: Char123LocaleChar125AuthForgotPasswordRoute,
+  Char123LocaleChar125AuthPostVerifyRoute: Char123LocaleChar125AuthPostVerifyRoute,
+  Char123LocaleChar125AuthResetPasswordRoute: Char123LocaleChar125AuthResetPasswordRoute,
+};
 
-const Char123LocaleChar125AuthRouteWithChildren =
-  Char123LocaleChar125AuthRoute._addFileChildren(
-    Char123LocaleChar125AuthRouteChildren,
-  )
+const Char123LocaleChar125AuthRouteWithChildren = Char123LocaleChar125AuthRoute._addFileChildren(
+  Char123LocaleChar125AuthRouteChildren,
+);
 
 interface Char123LocaleChar125RegisterEventIdRouteChildren {
-  Char123LocaleChar125RegisterEventIdRegistrationIdRoute: typeof Char123LocaleChar125RegisterEventIdRegistrationIdRoute
+  Char123LocaleChar125RegisterEventIdRegistrationIdRoute: typeof Char123LocaleChar125RegisterEventIdRegistrationIdRoute;
 }
 
 const Char123LocaleChar125RegisterEventIdRouteChildren: Char123LocaleChar125RegisterEventIdRouteChildren =
   {
     Char123LocaleChar125RegisterEventIdRegistrationIdRoute:
       Char123LocaleChar125RegisterEventIdRegistrationIdRoute,
-  }
+  };
 
 const Char123LocaleChar125RegisterEventIdRouteWithChildren =
   Char123LocaleChar125RegisterEventIdRoute._addFileChildren(
     Char123LocaleChar125RegisterEventIdRouteChildren,
-  )
+  );
 
 interface Char123LocaleChar125RegisterRouteChildren {
-  Char123LocaleChar125RegisterEventIdRoute: typeof Char123LocaleChar125RegisterEventIdRouteWithChildren
+  Char123LocaleChar125RegisterEventIdRoute: typeof Char123LocaleChar125RegisterEventIdRouteWithChildren;
 }
 
-const Char123LocaleChar125RegisterRouteChildren: Char123LocaleChar125RegisterRouteChildren =
-  {
-    Char123LocaleChar125RegisterEventIdRoute:
-      Char123LocaleChar125RegisterEventIdRouteWithChildren,
-  }
+const Char123LocaleChar125RegisterRouteChildren: Char123LocaleChar125RegisterRouteChildren = {
+  Char123LocaleChar125RegisterEventIdRoute: Char123LocaleChar125RegisterEventIdRouteWithChildren,
+};
 
 const Char123LocaleChar125RegisterRouteWithChildren =
-  Char123LocaleChar125RegisterRoute._addFileChildren(
-    Char123LocaleChar125RegisterRouteChildren,
-  )
+  Char123LocaleChar125RegisterRoute._addFileChildren(Char123LocaleChar125RegisterRouteChildren);
 
 interface Char123LocaleChar125StaffEventsRouteChildren {
-  Char123LocaleChar125StaffEventsNewRoute: typeof Char123LocaleChar125StaffEventsNewRoute
-  Char123LocaleChar125StaffEventsEventRecordIdEditRoute: typeof Char123LocaleChar125StaffEventsEventRecordIdEditRoute
+  Char123LocaleChar125StaffEventsNewRoute: typeof Char123LocaleChar125StaffEventsNewRoute;
+  Char123LocaleChar125StaffEventsEventRecordIdEditRoute: typeof Char123LocaleChar125StaffEventsEventRecordIdEditRoute;
 }
 
-const Char123LocaleChar125StaffEventsRouteChildren: Char123LocaleChar125StaffEventsRouteChildren =
-  {
-    Char123LocaleChar125StaffEventsNewRoute:
-      Char123LocaleChar125StaffEventsNewRoute,
-    Char123LocaleChar125StaffEventsEventRecordIdEditRoute:
-      Char123LocaleChar125StaffEventsEventRecordIdEditRoute,
-  }
+const Char123LocaleChar125StaffEventsRouteChildren: Char123LocaleChar125StaffEventsRouteChildren = {
+  Char123LocaleChar125StaffEventsNewRoute: Char123LocaleChar125StaffEventsNewRoute,
+  Char123LocaleChar125StaffEventsEventRecordIdEditRoute:
+    Char123LocaleChar125StaffEventsEventRecordIdEditRoute,
+};
 
 const Char123LocaleChar125StaffEventsRouteWithChildren =
   Char123LocaleChar125StaffEventsRoute._addFileChildren(
     Char123LocaleChar125StaffEventsRouteChildren,
-  )
+  );
 
 interface Char123LocaleChar125StaffSeasonsRouteChildren {
-  Char123LocaleChar125StaffSeasonsNewRoute: typeof Char123LocaleChar125StaffSeasonsNewRoute
-  Char123LocaleChar125StaffSeasonsSeasonIdEditRoute: typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRoute
+  Char123LocaleChar125StaffSeasonsNewRoute: typeof Char123LocaleChar125StaffSeasonsNewRoute;
+  Char123LocaleChar125StaffSeasonsSeasonIdEditRoute: typeof Char123LocaleChar125StaffSeasonsSeasonIdEditRoute;
 }
 
 const Char123LocaleChar125StaffSeasonsRouteChildren: Char123LocaleChar125StaffSeasonsRouteChildren =
   {
-    Char123LocaleChar125StaffSeasonsNewRoute:
-      Char123LocaleChar125StaffSeasonsNewRoute,
+    Char123LocaleChar125StaffSeasonsNewRoute: Char123LocaleChar125StaffSeasonsNewRoute,
     Char123LocaleChar125StaffSeasonsSeasonIdEditRoute:
       Char123LocaleChar125StaffSeasonsSeasonIdEditRoute,
-  }
+  };
 
 const Char123LocaleChar125StaffSeasonsRouteWithChildren =
   Char123LocaleChar125StaffSeasonsRoute._addFileChildren(
     Char123LocaleChar125StaffSeasonsRouteChildren,
-  )
+  );
 
 interface Char123LocaleChar125StaffRouteChildren {
-  Char123LocaleChar125StaffEventsRoute: typeof Char123LocaleChar125StaffEventsRouteWithChildren
-  Char123LocaleChar125StaffRegistrationsRoute: typeof Char123LocaleChar125StaffRegistrationsRoute
-  Char123LocaleChar125StaffSeasonsRoute: typeof Char123LocaleChar125StaffSeasonsRouteWithChildren
-  Char123LocaleChar125StaffSettingsRoute: typeof Char123LocaleChar125StaffSettingsRoute
-  Char123LocaleChar125StaffSyncRoute: typeof Char123LocaleChar125StaffSyncRoute
-  Char123LocaleChar125StaffUsersRoute: typeof Char123LocaleChar125StaffUsersRoute
+  Char123LocaleChar125StaffEventsRoute: typeof Char123LocaleChar125StaffEventsRouteWithChildren;
+  Char123LocaleChar125StaffRegistrationsRoute: typeof Char123LocaleChar125StaffRegistrationsRoute;
+  Char123LocaleChar125StaffSeasonsRoute: typeof Char123LocaleChar125StaffSeasonsRouteWithChildren;
+  Char123LocaleChar125StaffSettingsRoute: typeof Char123LocaleChar125StaffSettingsRoute;
+  Char123LocaleChar125StaffSyncRoute: typeof Char123LocaleChar125StaffSyncRoute;
+  Char123LocaleChar125StaffUsersRoute: typeof Char123LocaleChar125StaffUsersRoute;
 }
 
-const Char123LocaleChar125StaffRouteChildren: Char123LocaleChar125StaffRouteChildren =
-  {
-    Char123LocaleChar125StaffEventsRoute:
-      Char123LocaleChar125StaffEventsRouteWithChildren,
-    Char123LocaleChar125StaffRegistrationsRoute:
-      Char123LocaleChar125StaffRegistrationsRoute,
-    Char123LocaleChar125StaffSeasonsRoute:
-      Char123LocaleChar125StaffSeasonsRouteWithChildren,
-    Char123LocaleChar125StaffSettingsRoute:
-      Char123LocaleChar125StaffSettingsRoute,
-    Char123LocaleChar125StaffSyncRoute: Char123LocaleChar125StaffSyncRoute,
-    Char123LocaleChar125StaffUsersRoute: Char123LocaleChar125StaffUsersRoute,
-  }
+const Char123LocaleChar125StaffRouteChildren: Char123LocaleChar125StaffRouteChildren = {
+  Char123LocaleChar125StaffEventsRoute: Char123LocaleChar125StaffEventsRouteWithChildren,
+  Char123LocaleChar125StaffRegistrationsRoute: Char123LocaleChar125StaffRegistrationsRoute,
+  Char123LocaleChar125StaffSeasonsRoute: Char123LocaleChar125StaffSeasonsRouteWithChildren,
+  Char123LocaleChar125StaffSettingsRoute: Char123LocaleChar125StaffSettingsRoute,
+  Char123LocaleChar125StaffSyncRoute: Char123LocaleChar125StaffSyncRoute,
+  Char123LocaleChar125StaffUsersRoute: Char123LocaleChar125StaffUsersRoute,
+};
 
-const Char123LocaleChar125StaffRouteWithChildren =
-  Char123LocaleChar125StaffRoute._addFileChildren(
-    Char123LocaleChar125StaffRouteChildren,
-  )
+const Char123LocaleChar125StaffRouteWithChildren = Char123LocaleChar125StaffRoute._addFileChildren(
+  Char123LocaleChar125StaffRouteChildren,
+);
 
 interface Char123LocaleChar125TeamsRouteChildren {
-  Char123LocaleChar125TeamsTeamNumberRoute: typeof Char123LocaleChar125TeamsTeamNumberRoute
-  Char123LocaleChar125TeamsNewRoute: typeof Char123LocaleChar125TeamsNewRoute
+  Char123LocaleChar125TeamsTeamNumberRoute: typeof Char123LocaleChar125TeamsTeamNumberRoute;
+  Char123LocaleChar125TeamsNewRoute: typeof Char123LocaleChar125TeamsNewRoute;
 }
 
-const Char123LocaleChar125TeamsRouteChildren: Char123LocaleChar125TeamsRouteChildren =
-  {
-    Char123LocaleChar125TeamsTeamNumberRoute:
-      Char123LocaleChar125TeamsTeamNumberRoute,
-    Char123LocaleChar125TeamsNewRoute: Char123LocaleChar125TeamsNewRoute,
-  }
+const Char123LocaleChar125TeamsRouteChildren: Char123LocaleChar125TeamsRouteChildren = {
+  Char123LocaleChar125TeamsTeamNumberRoute: Char123LocaleChar125TeamsTeamNumberRoute,
+  Char123LocaleChar125TeamsNewRoute: Char123LocaleChar125TeamsNewRoute,
+};
 
-const Char123LocaleChar125TeamsRouteWithChildren =
-  Char123LocaleChar125TeamsRoute._addFileChildren(
-    Char123LocaleChar125TeamsRouteChildren,
-  )
+const Char123LocaleChar125TeamsRouteWithChildren = Char123LocaleChar125TeamsRoute._addFileChildren(
+  Char123LocaleChar125TeamsRouteChildren,
+);
 
 const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125SeasonRoute: Char123LocaleChar125SeasonRouteWithChildren,
@@ -955,22 +910,21 @@ const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125AuthRoute: Char123LocaleChar125AuthRouteWithChildren,
   Char123LocaleChar125EventsRoute: Char123LocaleChar125EventsRoute,
   Char123LocaleChar125OnboardingRoute: Char123LocaleChar125OnboardingRoute,
-  Char123LocaleChar125RegisterRoute:
-    Char123LocaleChar125RegisterRouteWithChildren,
+  Char123LocaleChar125RegisterRoute: Char123LocaleChar125RegisterRouteWithChildren,
   Char123LocaleChar125StaffRoute: Char123LocaleChar125StaffRouteWithChildren,
   Char123LocaleChar125TeamsRoute: Char123LocaleChar125TeamsRouteWithChildren,
   Char123LocaleChar125UsersRoute: Char123LocaleChar125UsersRoute,
   Char123LocaleChar125IndexRoute: Char123LocaleChar125IndexRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
+import type { getRouter } from "./router.tsx";
+import type { createStart } from "@tanstack/react-start";
+declare module "@tanstack/react-start" {
   interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
+    ssr: true;
+    router: Awaited<ReturnType<typeof getRouter>>;
   }
 }
