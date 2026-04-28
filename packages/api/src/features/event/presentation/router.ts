@@ -20,6 +20,12 @@ import {
   updateRegistrationFormVersionForAdmin,
 } from "../application/event.js";
 import {
+  getPublicMatchDetail,
+  listPublicAwards,
+  listPublicMatches,
+  listPublicRankings,
+} from "../application/public-event-data.js";
+import {
   createEventAnnouncementInputSchema,
   createEventDocumentInputSchema,
   createEventInputSchema,
@@ -37,6 +43,12 @@ import {
   updateEventInputSchema,
   updateRegistrationFormVersionInputSchema,
 } from "../schemas/event.js";
+import {
+  getPublicMatchDetailInputSchema,
+  listPublicAwardsInputSchema,
+  listPublicMatchesInputSchema,
+  listPublicRankingsInputSchema,
+} from "../schemas/public-event-data.js";
 
 const requireAdminSession = (
   session: { session: { userId: string }; user: { systemRole?: string | null } } | null,
@@ -127,6 +139,10 @@ export const eventRouter = {
     .input(getPublicEventInputSchema)
     .handler(({ input }) => getPublicEventBySeasonAndCode(input.season, input.eventCode)),
 
+  getPublicMatchDetail: publicProcedure
+    .input(getPublicMatchDetailInputSchema)
+    .handler(({ input }) => getPublicMatchDetail(input.season, input.eventCode, input.matchKey)),
+
   listAdminEvents: publicProcedure
     .input(listAdminEventsInputSchema)
     .handler(({ context, input }) => {
@@ -172,4 +188,16 @@ export const eventRouter = {
 
       return updateRegistrationFormVersionForAdmin(input);
     }),
+
+  listPublicAwards: publicProcedure
+    .input(listPublicAwardsInputSchema)
+    .handler(({ input }) => listPublicAwards(input.season, input.eventCode)),
+
+  listPublicMatches: publicProcedure
+    .input(listPublicMatchesInputSchema)
+    .handler(({ input }) => listPublicMatches(input.season, input.eventCode, input.phase)),
+
+  listPublicRankings: publicProcedure
+    .input(listPublicRankingsInputSchema)
+    .handler(({ input }) => listPublicRankings(input.season, input.eventCode)),
 };
