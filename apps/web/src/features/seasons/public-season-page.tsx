@@ -101,22 +101,23 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
 
               <div className="flex flex-wrap gap-3">
                 {heroCtas.primary ? (
-                  <Button asChild>
-                    <a href={heroCtas.primary.url} rel="noreferrer" target="_blank">
-                      <Download />
-                      {t("season.public.hero.primaryCta")}
-                    </a>
+                  <Button render={<a href={heroCtas.primary.url} rel="noreferrer" target="_blank" />}>
+                    <Download />
+                    {t("season.public.hero.primaryCta")}
                   </Button>
                 ) : null}
 
                 {heroCtas.secondary ? (
-                  <Button asChild variant="secondary">
-                    <a href={heroCtas.secondary.url} rel="noreferrer" target="_blank">
-                      <FileText />
-                      {t("season.public.hero.secondaryCta", {
-                        title: heroCtas.secondary.title,
-                      })}
-                    </a>
+                  <Button
+                    render={
+                      <a href={heroCtas.secondary.url} rel="noreferrer" target="_blank" />
+                    }
+                    variant="secondary"
+                  >
+                    <FileText />
+                    {t("season.public.hero.secondaryCta", {
+                      title: heroCtas.secondary.title,
+                    })}
                   </Button>
                 ) : null}
               </div>
@@ -272,23 +273,28 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
                     </div>
 
                     <div className="flex flex-wrap gap-3 lg:flex-col lg:items-end">
-                      <Button asChild>
-                        <Link
-                          params={{ eventId: event.eventCode, season: data.season.year }}
-                          to={localizePathname("/$season/$eventId", activeLanguage)}
-                        >
-                          {t("season.public.events.viewDetails")}
-                          <ArrowRight />
-                        </Link>
+                      <Button
+                        render={
+                          <Link
+                            params={{ eventId: event.eventCode, season: data.season.year }}
+                            to={localizePathname("/$season/$eventId", activeLanguage)}
+                          />
+                        }
+                      >
+                        {t("season.public.events.viewDetails")}
+                        <ArrowRight />
                       </Button>
                       {event.status === "registration_open" ? (
-                        <Button asChild variant="secondary">
-                          <Link
-                            params={{ eventId: event.eventCode }}
-                            to={localizePathname("/register/$eventId", activeLanguage)}
-                          >
-                            {t("season.public.events.register")}
-                          </Link>
+                        <Button
+                          render={
+                            <Link
+                              params={{ eventId: event.eventCode }}
+                              to={localizePathname("/register/$eventId", activeLanguage)}
+                            />
+                          }
+                          variant="secondary"
+                        >
+                          {t("season.public.events.register")}
                         </Button>
                       ) : null}
                     </div>
@@ -484,10 +490,8 @@ export function PublicSeasonNotFoundState({ season }: { season: string }) {
         <EmptyTitle>{t("season.public.notFound.title", { season })}</EmptyTitle>
         <EmptyDescription>{t("season.public.notFound.description")}</EmptyDescription>
       </EmptyHeader>
-      <Button asChild>
-        <Link to={localizePathname("/events", activeLanguage)}>
-          {t("season.public.notFound.action")}
-        </Link>
+      <Button render={<Link to={localizePathname("/events", activeLanguage)} />}>
+        {t("season.public.notFound.action")}
       </Button>
     </Empty>
   );
