@@ -142,6 +142,8 @@ export const syncClientSecret = pgTable(
     id: text("id").primaryKey(),
     isActive: boolean("is_active").default(true).notNull(),
     lastUsedAt: timestamp("last_used_at"),
+    machineSecretCiphertext: text("machine_secret_ciphertext"),
+    machineSecretIv: text("machine_secret_iv"),
     revokedAt: timestamp("revoked_at"),
     secretHash: text("secret_hash").notNull(),
     syncClientId: text("sync_client_id")
