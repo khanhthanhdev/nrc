@@ -1216,9 +1216,8 @@ function RegistrationFormsEditor({
   }, [latestVersion?.id]);
 
   useEffect(() => {
-    definitionRef.current = selectedVersion?.definition ?? {};
     setDefinitionError(null);
-  }, [selectedVersion]);
+  }, [selectedId]);
 
   const handleDefinitionChange = useCallback((def: Record<string, unknown>) => {
     definitionRef.current = def;
