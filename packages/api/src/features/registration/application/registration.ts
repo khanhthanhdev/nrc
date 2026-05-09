@@ -738,6 +738,7 @@ export const getEventRegistrationForm = async (eventId: string) => {
         isNull(eventRegistrationFormVersionTable.deletedAt),
       ),
     )
+    .orderBy(desc(eventRegistrationFormVersionTable.versionNumber))
     .limit(1);
 
   if (!formVersion) {

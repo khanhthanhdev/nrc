@@ -127,7 +127,9 @@ export function EventRegistrationFormPage({
     },
   });
 
-  if (formQuery.isLoading || statusQuery.isLoading) {
+  const isLoadingExisting = statusQuery.data?.exists && existingRegistrationQuery.isLoading;
+
+  if (formQuery.isLoading || statusQuery.isLoading || isLoadingExisting) {
     return (
       <div className="mx-auto max-w-2xl space-y-6 px-4 py-8">
         <Skeleton className="h-8 w-64" />
