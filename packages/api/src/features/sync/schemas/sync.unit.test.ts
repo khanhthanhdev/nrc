@@ -25,7 +25,7 @@ describe("sync schemas", () => {
   it("accepts valid push payloads", () => {
     const parsed = v.parse(pushSyncBatchRequestSchema, {
       batchId: "batch-1",
-      definitionVersion: "2025.1",
+      definitionVersion: "2026.1",
       producedAt: "2026-04-28T00:00:00.000Z",
       resources: [
         {
@@ -45,10 +45,10 @@ describe("sync schemas", () => {
             },
           ],
           resourceType: "match_results",
-          schemaRef: "season/2025/match_results@2025.1",
+          schemaRef: "season/2026/match_results@2026.1",
         },
       ],
-      schemaVersion: "2026-03-08",
+      schemaVersion: "2026-05-09",
     });
 
     expect(parsed.resources[0]?.resourceType).toBe("match_results");

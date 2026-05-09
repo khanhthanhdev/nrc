@@ -399,8 +399,8 @@ export const getBootstrap = async (client: SyncClientRecord) => {
       seasonDefinition: {
         definitionVersion: SYNC_DEFINITION_VERSION,
         diffLabels: {},
-        gameCode: "nrc-2025",
-        gameName: "NRC 2025",
+        gameCode: "nrc-2026",
+        gameName: "NRC 2026",
         generatedAt,
         matchResultDetailsVersion: SYNC_DEFINITION_VERSION,
         publicViews: {},
