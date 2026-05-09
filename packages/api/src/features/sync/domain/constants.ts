@@ -1,6 +1,6 @@
-export const SYNC_SCHEMA_VERSION = "2026-03-08";
-export const SYNC_DEFINITION_VERSION = "2025.1";
-export const SUPPORTED_SYNC_SEASON = "2025";
+export const SYNC_SCHEMA_VERSION = "2026-05-09";
+export const SYNC_DEFINITION_VERSION = "2026.1";
+export const SUPPORTED_SYNC_SEASON = "2026";
 
 export const MACHINE_PUSH_RESOURCE_TYPES = [
   "inspection_schedule",
