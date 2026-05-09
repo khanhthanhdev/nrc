@@ -337,27 +337,30 @@ export const submitRegistration = async (
   }
 
   const now = new Date();
-  const updatedRows = await db
-    .update(registrationTable)
-    .set({
-      status: "submitted",
-      submittedAt: now,
-      updatedAt: now,
-    })
-    .where(eq(registrationTable.id, registrationId))
-    .returning();
 
-  await db.insert(registrationReviewActionTable).values({
-    actionType: "submitted",
-    actorUserId: userId,
-    createdAt: now,
-    id: crypto.randomUUID(),
-    nextStatus: "submitted",
-    previousStatus: registration.status,
-    registrationId,
+  return db.transaction(async (tx) => {
+    const updatedRows = await tx
+      .update(registrationTable)
+      .set({
+        status: "submitted",
+        submittedAt: now,
+        updatedAt: now,
+      })
+      .where(eq(registrationTable.id, registrationId))
+      .returning();
+
+    await tx.insert(registrationReviewActionTable).values({
+      actionType: "submitted",
+      actorUserId: userId,
+      createdAt: now,
+      id: crypto.randomUUID(),
+      nextStatus: "submitted",
+      previousStatus: registration.status,
+      registrationId,
+    });
+
+    return mapDetail(firstOrThrow(updatedRows));
   });
-
-  return mapDetail(firstOrThrow(updatedRows));
 };
 
 export const updateRegistrationRevision = async (
@@ -443,27 +446,30 @@ export const withdrawRegistration = async (
   }
 
   const now = new Date();
-  const updatedRows = await db
-    .update(registrationTable)
-    .set({
-      status: "withdrawn",
-      updatedAt: now,
-      withdrawnAt: now,
-    })
-    .where(eq(registrationTable.id, input.registrationId))
-    .returning();
 
-  await db.insert(registrationReviewActionTable).values({
-    actionType: "withdrawn",
-    actorUserId: userId,
-    createdAt: now,
-    id: crypto.randomUUID(),
-    nextStatus: "withdrawn",
-    previousStatus: registration.status,
-    registrationId: input.registrationId,
+  return db.transaction(async (tx) => {
+    const updatedRows = await tx
+      .update(registrationTable)
+      .set({
+        status: "withdrawn",
+        updatedAt: now,
+        withdrawnAt: now,
+      })
+      .where(eq(registrationTable.id, input.registrationId))
+      .returning();
+
+    await tx.insert(registrationReviewActionTable).values({
+      actionType: "withdrawn",
+      actorUserId: userId,
+      createdAt: now,
+      id: crypto.randomUUID(),
+      nextStatus: "withdrawn",
+      previousStatus: registration.status,
+      registrationId: input.registrationId,
+    });
+
+    return mapDetail(firstOrThrow(updatedRows));
   });
-
-  return mapDetail(firstOrThrow(updatedRows));
 };
 
 export const listRegistrationReviewActions = async (
@@ -591,29 +597,31 @@ export const reviewRegistration = async (
     });
   }
 
-  const updatedRows = await db
-    .update(registrationTable)
-    .set({
-      ...mapping.timestamps,
-      status: mapping.nextStatus,
-      updatedAt: now,
-    })
-    .where(eq(registrationTable.id, input.registrationId))
-    .returning();
+  return db.transaction(async (tx) => {
+    const updatedRows = await tx
+      .update(registrationTable)
+      .set({
+        ...mapping.timestamps,
+        status: mapping.nextStatus,
+        updatedAt: now,
+      })
+      .where(eq(registrationTable.id, input.registrationId))
+      .returning();
 
-  await db.insert(registrationReviewActionTable).values({
-    actionType: mapping.actionType,
-    actorUserId,
-    comment: input.comment ?? null,
-    createdAt: now,
-    id: crypto.randomUUID(),
-    isVisibleToTeam: true,
-    nextStatus: mapping.nextStatus,
-    previousStatus: registration.status,
-    registrationId: input.registrationId,
+    await tx.insert(registrationReviewActionTable).values({
+      actionType: mapping.actionType,
+      actorUserId,
+      comment: input.comment ?? null,
+      createdAt: now,
+      id: crypto.randomUUID(),
+      isVisibleToTeam: true,
+      nextStatus: mapping.nextStatus,
+      previousStatus: registration.status,
+      registrationId: input.registrationId,
+    });
+
+    return mapDetail(firstOrThrow(updatedRows));
   });
-
-  return mapDetail(firstOrThrow(updatedRows));
 };
 
 export const addRegistrationComment = async (
