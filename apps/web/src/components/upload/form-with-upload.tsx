@@ -67,7 +67,7 @@ const FormWithUpload = ({ onSubmit }: FormWithUploadProps) => {
 
   return (
     <form
-      className="mx-auto max-w-2xl space-y-6"
+      className="mx-auto flex max-w-2xl flex-col gap-6"
       onSubmit={(e) => {
         e.preventDefault();
         form.handleSubmit();
@@ -82,12 +82,12 @@ const FormWithUpload = ({ onSubmit }: FormWithUploadProps) => {
       >
         {(field) => (
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="title" className="block text-sm font-medium text-foreground">
               Title
             </label>
             <input
               id="title"
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 h-10 w-full rounded-sm border border-input bg-background px-3 text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20"
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="Enter title"
@@ -95,7 +95,7 @@ const FormWithUpload = ({ onSubmit }: FormWithUploadProps) => {
               value={field.state.value}
             />
             {field.state.meta.errors && (
-              <p className="mt-1 text-sm text-red-600">{field.state.meta.errors[0]}</p>
+              <p className="mt-1 text-sm text-destructive">{field.state.meta.errors[0]}</p>
             )}
           </div>
         )}
@@ -105,12 +105,12 @@ const FormWithUpload = ({ onSubmit }: FormWithUploadProps) => {
       <form.Field name="description">
         {(field) => (
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="description" className="block text-sm font-medium text-foreground">
               Description
             </label>
             <textarea
               id="description"
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full rounded-sm border border-input bg-background px-3 py-2 text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20"
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="Enter description"
@@ -123,7 +123,7 @@ const FormWithUpload = ({ onSubmit }: FormWithUploadProps) => {
 
       {/* Image Upload */}
       <div>
-        <p className="mb-3 block text-sm font-medium text-gray-700">Images</p>
+        <p className="mb-3 block text-sm font-medium text-foreground">Images</p>
         <ImageUploader
           onError={(uploadError) => {
             setUploadErrors((prev) => ({ ...prev, images: uploadError.message }));
@@ -131,9 +131,9 @@ const FormWithUpload = ({ onSubmit }: FormWithUploadProps) => {
           onSuccess={handleImagesUploaded}
           route={UPLOAD_ROUTES.IMAGES}
         />
-        {uploadErrors.images && <p className="mt-2 text-sm text-red-600">{uploadErrors.images}</p>}
+        {uploadErrors.images && <p className="mt-2 text-sm text-destructive">{uploadErrors.images}</p>}
         {uploadedUrls.images.length > 0 && (
-          <div className="mt-3 text-sm text-green-600">
+          <div className="mt-3 text-sm text-status-success-foreground">
             {uploadedUrls.images.length} image(s) uploaded
           </div>
         )}
@@ -141,7 +141,7 @@ const FormWithUpload = ({ onSubmit }: FormWithUploadProps) => {
 
       {/* Document Upload */}
       <div>
-        <p className="mb-3 block text-sm font-medium text-gray-700">Documents</p>
+        <p className="mb-3 block text-sm font-medium text-foreground">Documents</p>
         <FileUploader
           accept=".pdf,.doc,.docx,.txt"
           onError={(uploadError) => {
@@ -151,10 +151,10 @@ const FormWithUpload = ({ onSubmit }: FormWithUploadProps) => {
           route={UPLOAD_ROUTES.DOCUMENTS}
         />
         {uploadErrors.documents && (
-          <p className="mt-2 text-sm text-red-600">{uploadErrors.documents}</p>
+          <p className="mt-2 text-sm text-destructive">{uploadErrors.documents}</p>
         )}
         {uploadedUrls.documents.length > 0 && (
-          <div className="mt-3 text-sm text-green-600">
+          <div className="mt-3 text-sm text-status-success-foreground">
             {uploadedUrls.documents.length} document(s) uploaded
           </div>
         )}
@@ -162,7 +162,7 @@ const FormWithUpload = ({ onSubmit }: FormWithUploadProps) => {
 
       {/* Submit Button */}
       <button
-        className="w-full rounded bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400"
+        className="h-9 w-full rounded-sm border border-primary bg-primary px-4 py-2 font-normal text-primary-foreground hover:bg-info disabled:cursor-not-allowed disabled:border-border disabled:bg-border disabled:text-muted-foreground"
         disabled={submitMutation.isPending}
         type="submit"
       >
@@ -170,7 +170,7 @@ const FormWithUpload = ({ onSubmit }: FormWithUploadProps) => {
       </button>
 
       {submitMutation.isError && (
-        <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        <div className="rounded-sm border border-destructive/20 bg-danger-soft p-3 text-sm text-destructive">
           {submitMutation.error?.message || "Submission failed"}
         </div>
       )}

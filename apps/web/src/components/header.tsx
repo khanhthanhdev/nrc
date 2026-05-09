@@ -86,9 +86,9 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-20 border-b border-border bg-background/92 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-border bg-white/95">
         <div className="mx-auto flex min-h-20 max-w-360 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3 lg:gap-8">
+          <div className="flex items-center gap-3 lg:gap-10">
             <div className="flex items-center gap-2 lg:hidden">
               {isStaffRoute ? (
                 <SidebarTrigger
@@ -111,22 +111,22 @@ export default function Header() {
             </div>
 
             <Link className="flex items-center gap-3" to={localizePathname("/", activeLanguage)}>
-              <span className="inline-flex size-10 items-center justify-center rounded-full bg-primary/12 text-sm font-semibold tracking-[0.18em] text-primary">
-                S4V
+              <span className="inline-flex size-11 items-center justify-center rounded-md bg-primary text-sm font-bold tracking-[-0.04em] text-white">
+                S
               </span>
-              <span className="text-[0.95rem] font-semibold tracking-[-0.03em] text-foreground sm:text-base">
+              <span className="text-[0.95rem] font-bold text-foreground sm:text-base">
                 STEAM for Vietnam
               </span>
             </Link>
 
-            <nav className="hidden flex-wrap items-center gap-2 lg:flex">
+            <nav className="hidden flex-wrap items-center gap-7 lg:flex">
               {publicNavigation.map(({ labelKey, to }) => (
                 <Link
                   activeProps={{
                     className: "nrc-nav-link-active",
                   }}
                   className={cn(
-                    "nrc-nav-link px-0 py-0",
+                    "nrc-nav-link",
                     isPublicItemActive(pathname, to) && "nrc-nav-link-active",
                   )}
                   key={to}
@@ -193,7 +193,7 @@ export default function Header() {
             ) : (
               <div className="flex items-center gap-3">
                 <Link
-                  className="text-foreground hidden text-sm font-medium sm:inline-flex"
+                  className="hidden text-sm font-bold text-foreground hover:text-primary sm:inline-flex"
                   to={localizePathname("/auth", activeLanguage)}
                 >
                   {t("header.signIn")}

@@ -143,7 +143,7 @@ export function SettingsProfileShowcasePage() {
         </Section>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-background/85 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-background/85 ">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-8 py-3">
           <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-[0.3em]">
             {dirty ? "Unsaved changes" : "All saved"}
@@ -208,7 +208,7 @@ function NativeSelect({
         <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">{icon}</span>
       ) : null}
       <select
-        className={`h-9 w-full appearance-none rounded-lg border border-input bg-background ${icon ? "pl-8" : "pl-3"} pr-9 text-sm outline-none transition-shadow focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/24 ${className ?? ""}`}
+        className={`h-9 w-full appearance-none rounded-lg border border-input bg-background ${icon ? "pl-8" : "pl-3"} pr-9 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/24 ${className ?? ""}`}
         {...props}
       />
       <svg

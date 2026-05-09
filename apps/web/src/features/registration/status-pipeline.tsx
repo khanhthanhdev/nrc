@@ -41,7 +41,7 @@ export function RegistrationStatusPipeline({ status }: { status: string }) {
               <div className="flex w-full flex-col items-center gap-1.5">
                 <div
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-semibold transition-colors",
+                    "flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-semibold",
                     isActive
                       ? "border-primary bg-primary text-primary-foreground"
                       : isCompleted
@@ -84,10 +84,10 @@ export function RegistrationStatusPipeline({ status }: { status: string }) {
           className={cn(
             "rounded-lg px-3 py-2 text-center text-sm font-medium",
             status === "denied"
-              ? "bg-red-50 text-red-700"
+              ? "bg-danger-soft text-destructive"
               : status === "withdrawn"
-                ? "bg-zinc-100 text-zinc-600"
-                : "bg-amber-50 text-amber-700",
+                ? "bg-status-neutral-soft text-status-neutral-foreground"
+                : "bg-status-warning-soft text-status-warning-foreground",
           )}
         >
           {TERMINAL_STATUSES[status]}

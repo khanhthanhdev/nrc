@@ -100,7 +100,7 @@ export function FormsApiKeyShowcasePage() {
                 setCopied(true);
                 window.setTimeout(() => setCopied(false), 1200);
               }}
-              className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground"
+              className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] uppercase tracking-[0.2em] text-muted-foreground hover:bg-foreground/[0.05] hover:text-foreground"
             >
               <CopyIcon className="size-3" />
               {copied ? "Copied" : "Copy"}
@@ -121,7 +121,7 @@ export function FormsApiKeyShowcasePage() {
     <div className="flex min-h-svh items-center justify-center bg-background px-6 py-16 text-foreground">
       <form
         onSubmit={onSubmit}
-        className="w-full max-w-lg rounded-2xl border border-border/60 bg-background/60 p-6 shadow-sm"
+        className="w-full max-w-lg rounded-2xl border border-border/60 bg-background/60 p-6 "
       >
         <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-[0.3em]">
           API · new key
@@ -174,7 +174,7 @@ export function FormsApiKeyShowcasePage() {
                         {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                         <label
                           className={cn(
-                            "flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2.5 transition-colors",
+                            "flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2.5",
                             labelClassName,
                           )}
                         >
@@ -234,7 +234,7 @@ function ExpirySelect({ value, onChange }: { value: string; onChange: (v: string
         id="key-expiry"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-9 w-full appearance-none rounded-lg border border-input bg-background pl-3 pr-9 text-sm outline-none transition-shadow focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/24"
+        className="h-9 w-full appearance-none rounded-lg border border-input bg-background pl-3 pr-9 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/24"
       >
         <option value="7">7 days</option>
         <option value="30">30 days</option>

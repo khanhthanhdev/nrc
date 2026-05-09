@@ -92,8 +92,8 @@ const FileUploader = ({
   );
 
   return (
-    <div className="mx-auto w-full max-w-lg space-y-4">
-      <div className="rounded-lg border-2 border-dashed border-gray-300 p-6">
+    <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
+      <div className="rounded-md border-2 border-dashed border-border bg-muted/40 p-6">
         <input
           id={inputId}
           accept={accept}
@@ -108,31 +108,31 @@ const FileUploader = ({
           htmlFor={inputId}
         >
           <svg
-            className="h-12 w-12 text-gray-400"
+            className="size-12 text-muted-foreground"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
             <path d="M12 4v16m8-8H4" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
           </svg>
-          <p className="mt-2 text-sm text-gray-600">Drop files here or click to select</p>
-          <p className="text-xs text-gray-500">
+          <p className="mt-2 text-sm text-muted-foreground">Drop files here or click to select</p>
+          <p className="text-xs text-muted-foreground">
             Max {maxFiles} files, {(maxFileSize / 1024 / 1024).toFixed(0)}MB each
           </p>
         </label>
       </div>
 
       {selectedFiles.length > 0 && (
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <h3 className="text-sm font-semibold">Selected Files:</h3>
-          <ul className="max-h-48 space-y-1 overflow-y-auto">
+          <ul className="flex max-h-48 flex-col gap-1 overflow-y-auto">
             {selectedFiles.map((file) => (
               <li
                 key={`${file.name}-${file.lastModified}-${file.size}`}
-                className="flex items-center justify-between rounded bg-gray-50 p-2 text-sm"
+                className="flex items-center justify-between rounded-sm bg-muted p-2 text-sm"
               >
                 <span className="truncate">{file.name}</span>
-                <span className="ml-2 text-xs text-gray-500">{formatFileSize(file.size)}</span>
+                <span className="ml-2 text-xs text-muted-foreground">{formatFileSize(file.size)}</span>
               </li>
             ))}
           </ul>
@@ -140,13 +140,13 @@ const FileUploader = ({
       )}
 
       {isError && (
-        <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        <div className="rounded-sm border border-destructive/20 bg-danger-soft p-3 text-sm text-destructive">
           {error?.message || "Upload failed"}
         </div>
       )}
 
       <button
-        className="w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-400"
+        className="h-9 w-full rounded-sm border border-primary bg-primary px-4 py-2 text-primary-foreground hover:bg-info disabled:cursor-not-allowed disabled:border-border disabled:bg-border disabled:text-muted-foreground"
         disabled={isPending || selectedFiles.length === 0}
         type="button"
         onClick={() => form.handleSubmit()}

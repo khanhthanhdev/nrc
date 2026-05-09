@@ -204,22 +204,22 @@ const getErrorMessage = (error: unknown, fallback: string): string =>
 const statusClassName = (status: EventStatus): string => {
   switch (status) {
     case "registration_open": {
-      return "border-emerald-200 bg-emerald-50 text-emerald-700";
+      return "nrc-badge-success";
     }
     case "registration_closed": {
-      return "border-amber-200 bg-amber-50 text-amber-700";
+      return "nrc-badge-warning";
     }
     case "active": {
-      return "border-cyan-200 bg-cyan-50 text-cyan-700";
+      return "nrc-badge-cyan";
     }
     case "completed": {
-      return "border-violet-200 bg-violet-50 text-violet-700";
+      return "nrc-badge-purple";
     }
     case "published": {
-      return "border-sky-200 bg-sky-50 text-sky-700";
+      return "nrc-badge-info";
     }
     default: {
-      return "border-slate-200 bg-slate-100 text-slate-700";
+      return "nrc-badge-neutral";
     }
   }
 };
@@ -557,7 +557,7 @@ export function AdminEventEditorPage({ data }: { data: AdminEventDetailData }) {
               <Badge className={cn("border-transparent", statusClassName(data.event.status))}>
                 {data.event.status.replaceAll("_", " ")}
               </Badge>
-              <Badge className="border-slate-200 bg-slate-100 text-slate-700">
+              <Badge className="nrc-badge-neutral">
                 /{data.event.season}/{data.event.eventCode}
               </Badge>
             </div>

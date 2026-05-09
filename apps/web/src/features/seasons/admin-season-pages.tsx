@@ -569,7 +569,7 @@ export function AdminSeasonEditorPage({ data }: { data: AdminSeasonDetailData })
               <Badge className={cn("border-transparent", lifecycleMeta.badgeClassName)}>
                 {renderStatusLabel(t, lifecycleMeta)}
               </Badge>
-              <Badge className="border-slate-200 bg-slate-100 text-slate-700">
+              <Badge className="nrc-badge-neutral">
                 {data.season.gameCode}
               </Badge>
             </div>
@@ -1231,12 +1231,12 @@ function SeasonDocumentSourceEditor({
           </div>
 
           {uploadedKey ? (
-            <div className="rounded-md border border-emerald-200 bg-emerald-50/70 px-3 py-2 text-sm">
-              <p className="font-medium text-emerald-800">
+            <div className="rounded-md border border-success/20 bg-status-success-soft px-3 py-2 text-sm">
+              <p className="font-medium text-status-success-foreground">
                 {t("season.admin.documents.uploadReady")}
               </p>
               <a
-                className="mt-1 inline-flex items-center gap-1 text-emerald-700 underline underline-offset-4"
+                className="mt-1 inline-flex items-center gap-1 text-status-success-foreground underline underline-offset-4"
                 href={draft.url}
                 rel="noreferrer"
                 target="_blank"

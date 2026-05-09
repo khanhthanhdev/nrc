@@ -90,7 +90,7 @@ export function TableApiKeysShowcasePage() {
           exposed.
         </p>
 
-        <div className="rounded-xl border bg-card shadow-xs/5">
+        <div className="rounded-xl border bg-card">
           <Table>
             <TableHeader>
               <TableRow>

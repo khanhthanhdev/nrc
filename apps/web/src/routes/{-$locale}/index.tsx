@@ -1,103 +1,125 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { resolvePostAuthRoute } from "@/lib/auth-routing";
 import { getSupportedLocale, localizePathname } from "@/lib/locale-routing";
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/utils/auth-client";
 
 const HomeComponent = () => {
-  const navigate = useNavigate();
-  const session = authClient.useSession();
   const { i18n } = useTranslation();
   const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
 
-  useEffect(() => {
-    if (session.isPending) {
-      return;
-    }
-
-    void (async () => {
-      if (!session.data) {
-        await navigate({ to: "/{-$locale}/auth" });
-        return;
-      }
-
-      const to = await resolvePostAuthRoute();
-
-      if (to !== "/") {
-        await navigate({ to: localizePathname(to, activeLanguage) });
-      }
-    })();
-  }, [activeLanguage, navigate, session.data, session.isPending]);
-
   return (
-    <section className="space-y-8">
+    <section className="space-y-16 sm:space-y-20">
       <div className="-mx-4 sm:-mx-6 lg:-mx-8">
-        <section className="nrc-hero overflow-hidden px-6 py-14 sm:px-10 sm:py-18 lg:px-14 lg:py-24">
-          <div className="max-w-3xl space-y-6">
-            <p className="text-sm font-medium uppercase tracking-[0.24em] text-white/70">NRC Web</p>
-            <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.05em] text-white sm:text-5xl lg:text-6xl">
-              Competition operations built with a public-facing calm.
+        <section className="nrc-hero relative overflow-hidden px-6 py-16 sm:px-10 sm:py-20 lg:px-16 lg:py-24">
+          <div className="absolute inset-y-0 right-0 hidden w-1/2 lg:block">
+            <div className="nrc-hero-orbit absolute right-[72px] top-16 size-80" />
+            <div className="nrc-hero-panel absolute right-20 top-[104px] w-[344px]">
+              <div className="mb-5 flex items-center justify-between">
+                <span className="text-sm font-semibold text-white/74">National Robotics</span>
+                <span className="rounded-full bg-white/12 px-3 py-1 text-xs font-semibold text-white">
+                  Live
+                </span>
+              </div>
+              <div className="space-y-3">
+                <div className="h-3 w-4/5 rounded-full bg-white/80" />
+                <div className="h-3 w-3/5 rounded-full bg-cyan-300/80" />
+                <div className="h-3 w-2/3 rounded-full bg-blue-300/80" />
+              </div>
+              <div className="mt-7 grid grid-cols-3 gap-3">
+                {["Teams", "Events", "Awards"].map((label) => (
+                  <div className="rounded-lg border border-white/14 bg-white/8 p-3" key={label}>
+                    <div className="mb-4 h-8 rounded bg-white/14" />
+                    <p className="text-xs font-semibold text-white/76">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="relative max-w-3xl space-y-7">
+            <h1 className="max-w-3xl text-4xl font-bold tracking-[-0.02em] text-white sm:text-5xl lg:text-6xl">
+              National Robotics Competition for Vietnam students.
             </h1>
             <p className="max-w-2xl text-base leading-7 text-white/78 sm:text-lg">
-              Inspired by the STEAM for Vietnam visual language: strong hero contrast, clean white
-              content surfaces, and clear blue calls to action. Public event pages live under
-              `/:season/:eventId`, while teams and staff workflows stay structured and quiet.
+              A public competition hub inspired by STEAM for Vietnam: welcoming education content,
+              strong blue actions, clear event pages, and calm tools for teams and organizers.
             </p>
 
-            <div className="flex flex-wrap gap-3 pt-2">
-              <Button asChild>
+            <div className="flex flex-wrap gap-4 pt-2">
+              <Button asChild size="xl">
                 <Link
                   params={{ eventId: "VNCMP", season: "2025" }}
                   to="/{-$locale}/$season/$eventId"
                 >
-                  Open public event
+                  View competition
                 </Link>
               </Button>
-              <Button asChild variant="outline">
-                <Link to="/{-$locale}/teams">Manage team</Link>
+              <Button
+                asChild
+                className="border-white !bg-transparent !text-white hover:!bg-white/10"
+                size="xl"
+                variant="outline"
+              >
+                <Link to="/{-$locale}/register">Register team</Link>
               </Button>
             </div>
           </div>
         </section>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr_0.9fr]">
-        <div className="nrc-card p-6 sm:p-7">
-          <p className="text-muted-foreground text-sm uppercase tracking-[0.2em]">Public routes</p>
-          <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-foreground">
-            Season and event pages present the competition clearly.
+      <section className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <div className="space-y-5">
+          <h2 className="max-w-xl text-3xl font-bold tracking-[-0.01em] text-foreground sm:text-4xl">
+            Built for learning, competition, and community.
           </h2>
-          <p className="text-muted-foreground mt-3 text-sm leading-6">
-            Rankings, qualifications, playoffs, and awards are organized under a single public event
-            shell so information stays easy to scan.
+          <p className="max-w-lg text-base leading-7 text-muted-foreground">
+            The interface uses the STEAM for Vietnam foundation style: deep navy anchors, generous
+            whitespace, rounded Quicksand typography, and practical blue interaction states.
           </p>
         </div>
 
-        <div className="nrc-card-subtle p-6">
-          <p className="text-muted-foreground text-sm uppercase tracking-[0.2em]">Teams</p>
-          <p className="mt-3 text-xl font-semibold tracking-[-0.03em] text-foreground">
-            Structured team ops
-          </p>
-          <p className="text-muted-foreground mt-2 text-sm leading-6">
-            Team creation, registration, and account settings remain inside light, readable
-            surfaces.
-          </p>
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[
+            ["Khóa học", "Clear public paths for students and mentors."],
+            ["Đội thi", "Team profiles, invitations, and registration."],
+            ["Sự kiện", "Rankings, playoffs, awards, and schedules."],
+          ].map(([title, copy]) => (
+            <div className="nrc-card p-6" key={title}>
+              <h3 className="text-xl font-bold text-foreground">{title}</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
         </div>
+      </section>
 
-        <div className="nrc-card-subtle p-6">
-          <p className="text-muted-foreground text-sm uppercase tracking-[0.2em]">Admin</p>
-          <p className="mt-3 text-xl font-semibold tracking-[-0.03em] text-foreground">
-            Quiet operational UI
-          </p>
-          <p className="text-muted-foreground mt-2 text-sm leading-6">
-            Admin pages keep the same palette, but avoid marketing effects so operational density
-            stays usable.
-          </p>
+      <section className="nrc-section-band -mx-4 px-4 py-12 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-3">
+          {[
+            [
+              "01",
+              "Public pages",
+              "Season and event information stays readable for families, students, and volunteers.",
+            ],
+            [
+              "02",
+              "Team workflows",
+              "Students can manage team identity, members, and registrations in one place.",
+            ],
+            [
+              "03",
+              "Staff operations",
+              "Organizers keep dense admin tasks structured without losing the brand feel.",
+            ],
+          ].map(([number, title, copy]) => (
+            <article className="nrc-card bg-white p-6" key={number}>
+              <p className="text-sm font-bold text-primary">{number}</p>
+              <h3 className="mt-4 text-2xl font-bold text-foreground">{title}</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">{copy}</p>
+            </article>
+          ))}
         </div>
-      </div>
+      </section>
     </section>
   );
 };

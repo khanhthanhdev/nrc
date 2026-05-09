@@ -42,7 +42,7 @@ export function FormsWorkspaceSettingsShowcasePage() {
               <li key={label}>
                 <button
                   type="button"
-                  className={`flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm transition-colors ${
+                  className={`flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm ${
                     active
                       ? "bg-foreground/[0.06] text-foreground"
                       : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
@@ -56,7 +56,7 @@ export function FormsWorkspaceSettingsShowcasePage() {
             <li className="mt-3">
               <button
                 type="button"
-                className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-destructive transition-colors hover:bg-destructive/[0.06]"
+                className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-destructive hover:bg-destructive/[0.06]"
               >
                 <ShieldAlertIcon className="size-4 opacity-70" />
                 Danger zone
@@ -163,7 +163,7 @@ export function FormsWorkspaceSettingsShowcasePage() {
         </main>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-background/85 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-background/85 ">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-10 py-3">
           <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-[0.3em]">
             {dirty ? "Unsaved changes" : "All saved"}
@@ -232,7 +232,7 @@ function NativeSelect({ className, ...props }: React.SelectHTMLAttributes<HTMLSe
   return (
     <div className="relative">
       <select
-        className={`h-9 w-full appearance-none rounded-lg border border-input bg-background pl-3 pr-9 text-sm outline-none transition-shadow focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/24 ${className ?? ""}`}
+        className={`h-9 w-full appearance-none rounded-lg border border-input bg-background pl-3 pr-9 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/24 ${className ?? ""}`}
         {...props}
       />
       <svg

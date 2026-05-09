@@ -148,7 +148,7 @@ export function TableAuditLogShowcasePage() {
           </Button>
         </header>
 
-        <div className="rounded-xl border bg-card shadow-xs/5">
+        <div className="rounded-xl border bg-card ">
           {/* Active filter chips bar */}
           <div className="flex flex-col gap-2 border-b p-3">
             <div className="flex items-center gap-2">

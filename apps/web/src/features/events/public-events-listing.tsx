@@ -40,19 +40,19 @@ const STATUS_OPTIONS: PublicEventStatus[] = [
 const statusClassName = (status: string): string => {
   switch (status) {
     case "registration_open": {
-      return "border-emerald-200 bg-emerald-50 text-emerald-700";
+      return "nrc-badge-success";
     }
     case "registration_closed": {
-      return "border-amber-200 bg-amber-50 text-amber-700";
+      return "nrc-badge-warning";
     }
     case "active": {
-      return "border-blue-200 bg-blue-50 text-blue-700";
+      return "nrc-badge-info";
     }
     case "completed": {
-      return "border-zinc-200 bg-zinc-50 text-zinc-600";
+      return "nrc-badge-purple";
     }
     default: {
-      return "border-zinc-200 bg-zinc-50 text-zinc-500";
+      return "nrc-badge-neutral";
     }
   }
 };
@@ -146,15 +146,13 @@ export function PublicEventsListingPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {eventsQuery.data.items.map((event) => (
               <div
-                className="group rounded-2xl border bg-card p-6 transition-colors hover:border-primary/30"
+                className="group rounded-2xl border bg-card p-6 hover:border-primary/30"
                 key={event.id}
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <h2 className="text-lg font-semibold text-foreground">{event.name}</h2>
-                    <Badge
-                      className={cn("shrink-0 border-transparent", statusClassName(event.status))}
-                    >
+                    <Badge className={cn("shrink-0", statusClassName(event.status))}>
                       {event.status.replaceAll("_", " ")}
                     </Badge>
                   </div>

@@ -123,49 +123,49 @@ export const getSeasonEventStatusMeta = (status: PublicSeasonEvent["status"]): S
   switch (status) {
     case "registration_open": {
       return {
-        badgeClassName: "border-emerald-200 bg-emerald-50 text-emerald-700",
+        badgeClassName: "nrc-badge-success",
         labelKey: "season.status.registrationOpen",
       };
     }
     case "registration_closed": {
       return {
-        badgeClassName: "border-amber-200 bg-amber-50 text-amber-700",
+        badgeClassName: "nrc-badge-warning",
         labelKey: "season.status.registrationClosed",
       };
     }
     case "published": {
       return {
-        badgeClassName: "border-sky-200 bg-sky-50 text-sky-700",
+        badgeClassName: "nrc-badge-info",
         labelKey: "season.status.published",
       };
     }
     case "active": {
       return {
-        badgeClassName: "border-cyan-200 bg-cyan-50 text-cyan-700",
+        badgeClassName: "nrc-badge-cyan",
         labelKey: "season.status.active",
       };
     }
     case "completed": {
       return {
-        badgeClassName: "border-violet-200 bg-violet-50 text-violet-700",
+        badgeClassName: "nrc-badge-purple",
         labelKey: "season.status.completed",
       };
     }
     case "archived": {
       return {
-        badgeClassName: "border-slate-200 bg-slate-100 text-slate-700",
+        badgeClassName: "nrc-badge-neutral",
         labelKey: "season.status.archived",
       };
     }
     case "draft": {
       return {
-        badgeClassName: "border-slate-200 bg-slate-100 text-slate-700",
+        badgeClassName: "nrc-badge-neutral",
         labelKey: "season.status.draft",
       };
     }
     default: {
       return {
-        badgeClassName: "border-slate-200 bg-slate-100 text-slate-700",
+        badgeClassName: "nrc-badge-neutral",
         labelKey: "season.status.unknown",
       };
     }
@@ -175,11 +175,11 @@ export const getSeasonEventStatusMeta = (status: PublicSeasonEvent["status"]): S
 export const getSeasonLifecycleMeta = (isActive: boolean): SeasonStatusMeta =>
   isActive
     ? {
-        badgeClassName: "border-emerald-200 bg-emerald-50 text-emerald-700",
+        badgeClassName: "nrc-badge-success",
         labelKey: "season.admin.lifecycle.active",
       }
     : {
-        badgeClassName: "border-slate-200 bg-slate-100 text-slate-700",
+        badgeClassName: "nrc-badge-neutral",
         labelKey: "season.admin.lifecycle.archived",
       };
 

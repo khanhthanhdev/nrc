@@ -21,23 +21,23 @@ import { orpc } from "@/utils/orpc";
 const statusClassName = (status: string): string => {
   switch (status) {
     case "approved": {
-      return "border-emerald-200 bg-emerald-50 text-emerald-700";
+      return "nrc-badge-success";
     }
     case "denied": {
-      return "border-red-200 bg-red-50 text-red-700";
+      return "border-destructive/20 bg-danger-soft text-destructive";
     }
     case "needs_revision": {
-      return "border-amber-200 bg-amber-50 text-amber-700";
+      return "nrc-badge-warning";
     }
     case "submitted":
     case "under_review": {
-      return "border-blue-200 bg-blue-50 text-blue-700";
+      return "nrc-badge-info";
     }
     case "withdrawn": {
-      return "border-zinc-200 bg-zinc-50 text-zinc-500";
+      return "nrc-badge-neutral";
     }
     default: {
-      return "border-zinc-200 bg-zinc-50 text-zinc-600";
+      return "nrc-badge-neutral";
     }
   }
 };

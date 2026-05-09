@@ -79,7 +79,7 @@ export function TimelinesNotificationsShowcasePage() {
   return (
     <div className="min-h-svh bg-background px-10 py-10">
       <div className="mx-auto max-w-md">
-        <div className="overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-border bg-background ">
           <div className="flex items-center justify-between border-border/60 border-b px-4 py-3">
             <div className="flex items-center gap-2">
               <BellIcon className="size-4 opacity-70" />
@@ -154,7 +154,7 @@ function Section({ label, children }: { label: string; children: React.ReactNode
 function Item({ n }: { n: Notif }) {
   return (
     <li
-      className={`relative flex items-start gap-3 px-4 py-3 transition-colors hover:bg-foreground/[0.02] ${
+      className={`relative flex items-start gap-3 px-4 py-3 hover:bg-foreground/[0.02] ${
         n.unread ? "bg-foreground/[0.015]" : ""
       }`}
     >

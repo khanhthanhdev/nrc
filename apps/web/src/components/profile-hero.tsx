@@ -53,7 +53,7 @@ export function ProfileHeroShowcasePage() {
   return (
     <div className="min-h-svh bg-background text-foreground">
       {/* Cover banner */}
-      <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-indigo-500/30 via-foreground/[0.04] to-teal-500/30">
+      <div className="relative h-48 w-full overflow-hidden bg-foreground/[0.04]">
         <div
           aria-hidden
           className="absolute inset-0"
@@ -109,7 +109,7 @@ export function ProfileHeroShowcasePage() {
             <button
               key={t}
               type="button"
-              className={`border-b-2 px-1 py-3 text-sm transition-colors ${
+              className={`border-b-2 px-1 py-3 text-sm ${
                 i === 0
                   ? "border-foreground text-foreground"
                   : "border-transparent text-muted-foreground hover:text-foreground"

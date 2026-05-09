@@ -54,7 +54,7 @@ export function LayoutsAppShellShowcasePage() {
       <header className="col-span-2 flex h-14 items-center gap-4 border-b border-border/60 bg-background px-4">
         <button
           type="button"
-          className="flex items-center gap-2 rounded-md border border-border bg-card px-2 py-1.5 transition-colors hover:bg-foreground/[0.03]"
+          className="flex items-center gap-2 rounded-md border border-border bg-card px-2 py-1.5 hover:bg-foreground/[0.03]"
         >
           <span className="size-6 rounded bg-gradient-to-br from-emerald-500/80 to-sky-500/70" />
           <span className="font-medium text-sm">Acme Inc.</span>
@@ -94,7 +94,7 @@ export function LayoutsAppShellShowcasePage() {
                   <button
                     type="button"
                     onClick={() => setActiveItem(item.key)}
-                    className={`flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm transition-colors ${
+                    className={`flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm ${
                       active
                         ? "bg-foreground/[0.06] text-foreground"
                         : "text-muted-foreground hover:bg-foreground/[0.04]"
@@ -122,7 +122,7 @@ export function LayoutsAppShellShowcasePage() {
                   <button
                     type="button"
                     onClick={() => setActiveItem(p.key)}
-                    className={`flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm transition-colors ${
+                    className={`flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm ${
                       active
                         ? "bg-foreground/[0.06] text-foreground"
                         : "text-muted-foreground hover:bg-foreground/[0.04]"
@@ -148,7 +148,7 @@ export function LayoutsAppShellShowcasePage() {
                   <button
                     type="button"
                     onClick={() => setActiveItem(t.key)}
-                    className={`flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm transition-colors ${
+                    className={`flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm ${
                       active
                         ? "bg-foreground/[0.06] text-foreground"
                         : "text-muted-foreground hover:bg-foreground/[0.04]"
@@ -164,7 +164,7 @@ export function LayoutsAppShellShowcasePage() {
 
           <button
             type="button"
-            className="mt-auto flex items-center gap-2 border-t border-border/60 px-3 py-2.5 text-left transition-colors hover:bg-foreground/[0.03]"
+            className="mt-auto flex items-center gap-2 border-t border-border/60 px-3 py-2.5 text-left hover:bg-foreground/[0.03]"
           >
             <Avatar className="size-7">
               <AvatarFallback>SB</AvatarFallback>

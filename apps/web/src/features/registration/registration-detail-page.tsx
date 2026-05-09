@@ -36,23 +36,23 @@ import { RegistrationStatusPipeline } from "./status-pipeline";
 const statusClassName = (status: string): string => {
   switch (status) {
     case "approved": {
-      return "border-emerald-200 bg-emerald-50 text-emerald-700";
+      return "nrc-badge-success";
     }
     case "denied": {
-      return "border-red-200 bg-red-50 text-red-700";
+      return "border-destructive/20 bg-danger-soft text-destructive";
     }
     case "needs_revision": {
-      return "border-amber-200 bg-amber-50 text-amber-700";
+      return "nrc-badge-warning";
     }
     case "submitted":
     case "under_review": {
-      return "border-blue-200 bg-blue-50 text-blue-700";
+      return "nrc-badge-info";
     }
     case "withdrawn": {
-      return "border-zinc-200 bg-zinc-50 text-zinc-500";
+      return "nrc-badge-neutral";
     }
     default: {
-      return "border-zinc-200 bg-zinc-50 text-zinc-600";
+      return "nrc-badge-neutral";
     }
   }
 };
@@ -206,12 +206,12 @@ export function RegistrationDetailPage({
                     className={cn(
                       "mt-0.5 h-2 w-2 shrink-0 rounded-full",
                       action.actionType === "approved"
-                        ? "bg-emerald-500"
+                        ? "bg-success"
                         : action.actionType === "denied"
-                          ? "bg-red-500"
+                          ? "bg-destructive"
                           : action.actionType === "requested_changes"
-                            ? "bg-amber-500"
-                            : "bg-zinc-400",
+                            ? "bg-warning"
+                            : "bg-muted-foreground",
                     )}
                   />
                   <div className="min-w-0 flex-1">

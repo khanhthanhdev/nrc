@@ -119,7 +119,7 @@ export function TableMembersShowcasePage() {
           </Button>
         </header>
 
-        <div className="rounded-xl border bg-card shadow-xs/5">
+        <div className="rounded-xl border bg-card ">
           <Table>
             <TableHeader>
               <TableRow>

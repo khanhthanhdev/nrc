@@ -22,9 +22,9 @@ export function Input({
   ...props
 }: InputProps): React.ReactElement {
   const inputClassName = cn(
-    "h-8.5 w-full min-w-0 rounded-[inherit] px-[calc(--spacing(3)-1px)] leading-8.5 outline-none [transition:background-color_5000000s_ease-in-out_0s] placeholder:text-muted-foreground/72 sm:h-7.5 sm:leading-7.5",
-    size === "sm" && "h-7.5 px-[calc(--spacing(2.5)-1px)] leading-7.5 sm:h-6.5 sm:leading-6.5",
-    size === "lg" && "h-9.5 leading-9.5 sm:h-8.5 sm:leading-8.5",
+    "h-10 w-full min-w-0 rounded-[inherit] px-3 leading-10 outline-none [transition:background-color_5000000s_ease-in-out_0s] placeholder:text-muted-foreground",
+    size === "sm" && "h-9 px-3 leading-9 text-sm",
+    size === "lg" && "h-11 px-4 leading-11",
     props.type === "search" &&
       "[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none [&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none",
     props.type === "file" &&
@@ -36,7 +36,7 @@ export function Input({
       className={
         cn(
           !unstyled &&
-            "relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-has-disabled:not-has-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-autofill:bg-foreground/4 has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] sm:text-sm dark:bg-input/32 dark:has-autofill:bg-foreground/8 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:not-has-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
+            "relative inline-flex w-full rounded-sm border border-input bg-background text-base text-foreground ring-ring/20 has-focus-visible:border-ring has-focus-visible:ring-2 has-aria-invalid:border-destructive has-aria-invalid:ring-destructive/20 has-autofill:bg-foreground/4 has-disabled:bg-muted has-disabled:text-muted-foreground has-disabled:opacity-100",
           className,
         ) || undefined
       }

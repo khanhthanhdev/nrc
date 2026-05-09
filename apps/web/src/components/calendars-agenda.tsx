@@ -152,7 +152,7 @@ function Section({ label, date, slots }: { label: string; date: string; slots: S
           ) : (
             <li
               key={i}
-              className="grid grid-cols-[80px_1fr] gap-3 rounded-xl border border-border/60 bg-background/40 px-3 py-3 transition-colors hover:bg-background/60"
+              className="grid grid-cols-[80px_1fr] gap-3 rounded-xl border border-border/60 bg-background/40 px-3 py-3 hover:bg-background/60"
             >
               <div className="font-mono text-[11px]">
                 <div className="text-foreground">{s.start}</div>

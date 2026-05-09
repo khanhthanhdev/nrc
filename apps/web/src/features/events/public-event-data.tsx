@@ -70,13 +70,13 @@ interface PublicMatchDetailProps {
 }
 
 const allianceStyles: Record<AllianceColor, string> = {
-  blue: "border-sky-500/30 bg-sky-500/10 text-sky-900 dark:text-sky-100",
-  red: "border-red-500/30 bg-red-500/10 text-red-900 dark:text-red-100",
+  blue: "border-info/30 bg-status-info-soft text-status-info-foreground",
+  red: "border-destructive/30 bg-danger-soft text-destructive",
 };
 
 const allianceHeadStyles: Record<AllianceColor, string> = {
-  blue: "text-sky-700 dark:text-sky-200",
-  red: "text-red-700 dark:text-red-200",
+  blue: "text-status-info-foreground",
+  red: "text-destructive",
 };
 
 const scoreRows = [

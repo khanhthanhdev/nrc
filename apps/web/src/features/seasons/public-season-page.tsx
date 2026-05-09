@@ -65,8 +65,8 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
     <div className="space-y-8">
       <section className="-mx-4 sm:-mx-6 lg:-mx-8">
         <div className="nrc-hero relative overflow-hidden px-6 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12">
-          <div className="absolute inset-y-0 right-0 hidden w-1/2 bg-[radial-gradient(circle_at_top_right,rgba(84,201,194,0.2),transparent_52%),radial-gradient(circle_at_center,rgba(68,122,255,0.25),transparent_48%)] lg:block" />
-          <div className="absolute -top-20 left-1/2 h-56 w-56 rounded-full bg-white/6 blur-3xl" />
+          <div className="absolute inset-y-0 right-0 hidden w-1/2 lg:block" />
+          <div className="absolute -top-20 left-1/2 h-56 w-56 rounded-full bg-white/6" />
 
           <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
             <div className="space-y-6">
@@ -123,7 +123,7 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
               </div>
             </div>
 
-            <div className="space-y-3 rounded-[28px] border border-white/12 bg-white/7 p-4 backdrop-blur">
+            <div className="space-y-3 rounded-[28px] border border-white/12 bg-white/7 p-4">
               <div className="space-y-1">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
                   {t("season.public.switcher.label")}
@@ -176,8 +176,8 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
                               className={cn(
                                 "border-transparent",
                                 option.isActive
-                                  ? "bg-emerald-50 text-emerald-700"
-                                  : "bg-slate-100 text-slate-700",
+                                  ? "nrc-badge-success"
+                                  : "nrc-badge-neutral",
                               )}
                             >
                               {option.isActive
@@ -324,7 +324,7 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
             <div className="grid gap-3">
               {data.documents.map((document) => (
                 <a
-                  className="nrc-card flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:border-primary/25 hover:bg-sky-50/40"
+                  className="nrc-card flex items-center justify-between gap-4 px-5 py-4 hover:border-primary/25 hover:bg-sky-50/40"
                   href={document.url}
                   key={document.id}
                   rel="noreferrer"
@@ -335,7 +335,7 @@ export function PublicSeasonPage({ data }: PublicSeasonPageProps) {
                       <p className="truncate text-base font-semibold text-foreground">
                         {document.title}
                       </p>
-                      <Badge className="border-slate-200 bg-slate-100 text-slate-700">
+                      <Badge className="nrc-badge-neutral">
                         {document.kind}
                       </Badge>
                     </div>

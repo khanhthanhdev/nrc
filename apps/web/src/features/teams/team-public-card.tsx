@@ -22,7 +22,7 @@ export function TeamPublicCard({ team }: TeamPublicCardProps) {
 
   return (
     <Link
-      className="nrc-card-subtle flex items-start gap-4 p-4 transition-colors hover:bg-muted/50"
+      className="nrc-card-subtle flex items-start gap-4 p-4 hover:bg-muted/50"
       params={{ teamNumber: team.teamNumber }}
       search={{ tab: undefined }}
       to={localizePathname("/teams/$teamNumber", activeLanguage)}

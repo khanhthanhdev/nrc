@@ -37,7 +37,7 @@ interface TeamProfileShellProps {
 type TeamMediaField = "avatarUrl" | "coverImageUrl";
 
 const tabClassName =
-  "border-b-2 border-transparent px-1 py-4 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground";
+  "border-b-2 border-transparent px-1 py-4 text-sm font-medium text-muted-foreground hover:text-foreground";
 const activeTabClassName = "border-primary text-foreground";
 
 const tabSearch = (tab: TeamProfileTab) => (tab === "overview" ? { tab: undefined } : { tab });
@@ -163,14 +163,14 @@ export function TeamProfileShell({
             <div className="flex flex-col gap-4 pb-5 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end">
                 <div className="relative -mt-14 size-28 shrink-0 sm:-mt-16 sm:size-36">
-                  <Avatar className="size-full border-4 border-background bg-background shadow-sm">
+                  <Avatar className="size-full border-4 border-background bg-background">
                     <AvatarImage alt={team.name} src={avatarUrl} />
                     <AvatarFallback className="text-3xl font-semibold">{initials}</AvatarFallback>
                   </Avatar>
                   {showManageTabs && (
                     <Button
                       aria-label={t("routes.team.profile.changeTeamLogo")}
-                      className="absolute right-1 bottom-1 rounded-full bg-background shadow-sm"
+                      className="absolute right-1 bottom-1 rounded-full bg-background"
                       disabled={isSavingAvatar}
                       onClick={() => setUploadDialogField("avatarUrl")}
                       size="icon-sm"
