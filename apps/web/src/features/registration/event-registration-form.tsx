@@ -110,10 +110,16 @@ export function EventRegistrationFormPage({
   });
 
   const submitMutation = useMutation({
-    mutationFn: async () =>
-      client.registration.submitRegistration({
-        registrationId: statusQuery.data?.registrationId ?? "",
-      }),
+    mutationFn: async () => {
+      const registrationId = statusQuery.data?.registrationId ?? "";
+
+      await client.registration.updateRegistrationRevision({
+        payload,
+        registrationId,
+      });
+
+      return client.registration.submitRegistration({ registrationId });
+    },
     onError: (error) => toast.error(getErrorMessage(error, "Could not submit registration.")),
     onSuccess: async () => {
       toast.success("Registration submitted for review!");
