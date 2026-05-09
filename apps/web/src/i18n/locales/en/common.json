@@ -593,5 +593,26 @@
     "submission": "Your Submission",
     "title": "Registration Detail",
     "withdraw": "Withdraw Registration"
+  },
+  "formBuilder": {
+    "addField": "Add field",
+    "empty": "No fields yet. Click \"Add field\" to start building your registration form.",
+    "fieldCount": "{{count}} field(s)",
+    "fieldLabel": "Label",
+    "fieldName": "Field key",
+    "fieldNameHint": "Unique key used in data. Letters, numbers, underscores.",
+    "fieldType": "Type",
+    "hidePreview": "Hide preview",
+    "moveDown": "Move down",
+    "moveUp": "Move up",
+    "options": "Options",
+    "optionsHint": "One option per line.",
+    "placeholder": "Placeholder",
+    "previewDescription": "This is how the form will appear to teams.",
+    "previewEmpty": "Add fields to see a preview of the form.",
+    "previewTitle": "Form Preview",
+    "removeField": "Remove field",
+    "required": "Required",
+    "showPreview": "Show preview"
   }
 }

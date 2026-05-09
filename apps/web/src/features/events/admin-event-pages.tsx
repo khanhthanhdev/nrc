@@ -25,6 +25,8 @@ import type {
   AdminRegistrationFormVersion,
 } from "./types";
 
+import { RegistrationFormBuilder } from "./registration-form-builder";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -1206,41 +1208,32 @@ function RegistrationFormsEditor({
     () => versions.find((version) => version.id === selectedId) ?? null,
     [selectedId, versions],
   );
-  const [definitionText, setDefinitionText] = useState("{}");
-  const [jsonError, setJsonError] = useState<string | null>(null);
+  const [definition, setDefinition] = useState<Record<string, unknown>>({});
+  const [definitionError, setDefinitionError] = useState<string | null>(null);
 
   useEffect(() => {
     setSelectedId(latestVersion?.id ?? null);
   }, [latestVersion?.id]);
 
   useEffect(() => {
-    setDefinitionText(JSON.stringify(selectedVersion?.definition ?? {}, null, 2));
-    setJsonError(null);
+    setDefinition(selectedVersion?.definition ?? {});
+    setDefinitionError(null);
   }, [selectedVersion]);
-
-  const parseDefinition = (): Record<string, unknown> => {
-    const parsed = JSON.parse(definitionText) as unknown;
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      throw new Error("Definition must be a JSON object.");
-    }
-
-    return parsed as Record<string, unknown>;
-  };
 
   const createMutation = useMutation({
     mutationFn: async (isPublished: boolean) =>
       client.event.createRegistrationFormVersion({
-        definition: parseDefinition(),
+        definition,
         eventId,
         isPublished,
       }),
     onError: (error) => {
       const message = getErrorMessage(error, "Registration form version could not be created.");
-      setJsonError(message);
+      setDefinitionError(message);
       toast.error(message);
     },
     onSuccess: async () => {
-      setJsonError(null);
+      setDefinitionError(null);
       toast.success("Registration form version created.");
       await onChanged();
     },
@@ -1253,18 +1246,18 @@ function RegistrationFormsEditor({
       }
 
       return client.event.updateRegistrationFormVersion({
-        definition: parseDefinition(),
+        definition,
         eventId,
         id: selectedVersion.id,
       });
     },
     onError: (error) => {
       const message = getErrorMessage(error, "Registration form version could not be updated.");
-      setJsonError(message);
+      setDefinitionError(message);
       toast.error(message);
     },
     onSuccess: async () => {
-      setJsonError(null);
+      setDefinitionError(null);
       toast.success("Registration form version updated.");
       await onChanged();
     },
@@ -1291,7 +1284,7 @@ function RegistrationFormsEditor({
   });
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+    <div className="grid gap-6">
       <Card className="nrc-card">
         <CardHeader className="border-b border-border">
           <CardTitle>Registration form versions</CardTitle>
@@ -1302,7 +1295,7 @@ function RegistrationFormsEditor({
         <CardContent className="space-y-3 pt-6">
           {versions.length === 0 ? (
             <AdminEventState
-              description="Create version 1 from a JSON object definition."
+              description="Create the first version using the form builder below."
               icon={<FileText />}
               title="No form versions"
             />
@@ -1354,16 +1347,16 @@ function RegistrationFormsEditor({
           <CardTitle>
             {selectedVersion ? `Version ${selectedVersion.versionNumber}` : "New version"}
           </CardTitle>
-          <CardDescription>Definition must parse to a JSON object.</CardDescription>
+          <CardDescription>
+            Add fields, set their type and order, then save or publish.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
-          <Textarea
-            className="min-h-80 font-mono text-xs"
-            onChange={(event) => setDefinitionText(event.target.value)}
-            spellCheck={false}
-            value={definitionText}
+          <RegistrationFormBuilder
+            definition={definition}
+            onChange={setDefinition}
           />
-          {jsonError ? <p className="text-sm text-destructive">{jsonError}</p> : null}
+          {definitionError ? <p className="text-sm text-destructive">{definitionError}</p> : null}
           <div className="flex flex-wrap justify-end gap-2">
             <Button
               disabled={!selectedVersion || selectedVersion.isPublished || updateMutation.isPending}
