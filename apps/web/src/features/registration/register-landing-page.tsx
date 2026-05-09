@@ -116,7 +116,7 @@ export function RegisterLandingPage({
                     <Skeleton className="h-16 w-full" key={`event-skel-${index}`} />
                   ))}
                 </div>
-              ) : !eventsQuery.data || eventsQuery.data.length === 0 ? (
+              ) : !eventsQuery.data || eventsQuery.data.items.length === 0 ? (
                 <Empty>
                   <EmptyMedia>
                     <CalendarDays />
@@ -130,7 +130,7 @@ export function RegisterLandingPage({
                 </Empty>
               ) : (
                 <div className="space-y-3">
-                  {eventsQuery.data.map((event) => (
+                  {eventsQuery.data.items.map((event) => (
                     <div
                       className="flex items-center justify-between gap-4 rounded-lg border p-4"
                       key={event.id}

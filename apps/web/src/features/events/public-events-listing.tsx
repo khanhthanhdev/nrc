@@ -127,7 +127,7 @@ export function PublicEventsListingPage() {
             <EmptyDescription>{eventsQuery.error.message}</EmptyDescription>
           </EmptyHeader>
         </Empty>
-      ) : !eventsQuery.data || eventsQuery.data.length === 0 ? (
+      ) : !eventsQuery.data || eventsQuery.data.items.length === 0 ? (
         <Empty>
           <EmptyMedia>
             <CalendarDays />
@@ -144,7 +144,7 @@ export function PublicEventsListingPage() {
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {eventsQuery.data.map((event) => (
+            {eventsQuery.data.items.map((event) => (
               <div
                 className="group rounded-2xl border bg-card p-6 transition-colors hover:border-primary/30"
                 key={event.id}
@@ -217,7 +217,7 @@ export function PublicEventsListingPage() {
               {t("publicEvents.page", "Page")} {page}
             </span>
             <Button
-              disabled={!eventsQuery.data || eventsQuery.data.length < 20}
+              disabled={!eventsQuery.data || eventsQuery.data.page >= eventsQuery.data.totalPages}
               onClick={() => setPage((p) => p + 1)}
               size="sm"
               variant="outline"
