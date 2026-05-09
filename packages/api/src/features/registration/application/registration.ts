@@ -14,6 +14,7 @@ import { and, desc, eq, isNull } from "drizzle-orm";
 import type {
   AddRegistrationCommentInput,
   CreateRegistrationInput,
+  GetTeamEventRegistrationStatusInput,
   ListAdminRegistrationsByEventInput,
   ListRegistrationReviewActionsInput,
   ListTeamRegistrationsInput,
@@ -721,5 +722,83 @@ export const getAdminRegistrationDetail = async (
       revisionNumber: r.revisionNumber,
       submittedAt: toIso(r.submittedAt),
     })),
+  };
+};
+
+// ── Public form + status check ─────────────────────────────────────────
+
+export const getEventRegistrationForm = async (eventId: string) => {
+  const [formVersion] = await db
+    .select()
+    .from(eventRegistrationFormVersionTable)
+    .where(
+      and(
+        eq(eventRegistrationFormVersionTable.eventId, eventId),
+        eq(eventRegistrationFormVersionTable.isPublished, true),
+        isNull(eventRegistrationFormVersionTable.deletedAt),
+      ),
+    )
+    .orderBy(desc(eventRegistrationFormVersionTable.versionNumber))
+    .limit(1);
+
+  if (!formVersion) {
+    throw new ORPCError("NOT_FOUND", {
+      message: "No published registration form found for this event.",
+    });
+  }
+
+  return {
+    definition: formVersion.definition,
+    formVersionId: formVersion.id,
+    versionNumber: formVersion.versionNumber,
+  };
+};
+
+export const getTeamEventRegistrationStatus = async (
+  userId: string,
+  input: GetTeamEventRegistrationStatusInput,
+) => {
+  const [membership] = await db
+    .select()
+    .from(teamMembership)
+    .where(
+      and(
+        eq(teamMembership.userId, userId),
+        eq(teamMembership.organizationId, input.teamId),
+        eq(teamMembership.isActive, true),
+        isNull(teamMembership.deletedAt),
+      ),
+    )
+    .limit(1);
+
+  if (!membership) {
+    throw new ORPCError("FORBIDDEN", {
+      message: "You are not a member of this team.",
+    });
+  }
+
+  const [registration] = await db
+    .select({
+      id: registrationTable.id,
+      status: registrationTable.status,
+    })
+    .from(registrationTable)
+    .where(
+      and(
+        eq(registrationTable.eventId, input.eventId),
+        eq(registrationTable.teamId, input.teamId),
+        isNull(registrationTable.deletedAt),
+      ),
+    )
+    .limit(1);
+
+  if (!registration) {
+    return { exists: false as const };
+  }
+
+  return {
+    exists: true as const,
+    registrationId: registration.id,
+    status: registration.status,
   };
 };

@@ -74,6 +74,17 @@ export const addRegistrationCommentInputSchema = v.object({
   registrationId: trimmedString(128),
 });
 
+// ── Public form / status-check schemas ─────────────────────────────────
+
+export const getEventRegistrationFormInputSchema = v.object({
+  eventId: trimmedString(128),
+});
+
+export const getTeamEventRegistrationStatusInputSchema = v.object({
+  eventId: trimmedString(128),
+  teamId: trimmedString(128),
+});
+
 // ── Public event listing schema ────────────────────────────────────────
 
 export const listPublicEventsInputSchema = v.optional(
@@ -113,4 +124,10 @@ export type ListAdminRegistrationsByEventInput = v.InferOutput<
 >;
 export type ReviewRegistrationInput = v.InferOutput<typeof reviewRegistrationInputSchema>;
 export type AddRegistrationCommentInput = v.InferOutput<typeof addRegistrationCommentInputSchema>;
+export type GetEventRegistrationFormInput = v.InferOutput<
+  typeof getEventRegistrationFormInputSchema
+>;
+export type GetTeamEventRegistrationStatusInput = v.InferOutput<
+  typeof getTeamEventRegistrationStatusInputSchema
+>;
 export type ListPublicEventsInput = v.InferOutput<typeof listPublicEventsInputSchema>;

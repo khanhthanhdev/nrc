@@ -5,7 +5,9 @@ import {
   addRegistrationComment,
   createRegistration,
   getAdminRegistrationDetail,
+  getEventRegistrationForm,
   getRegistrationDetail,
+  getTeamEventRegistrationStatus,
   listAdminRegistrationsByEvent,
   listRegistrationReviewActions,
   listTeamRegistrations,
@@ -18,7 +20,9 @@ import { listPublicEvents } from "../application/public-events.js";
 import {
   addRegistrationCommentInputSchema,
   createRegistrationInputSchema,
+  getEventRegistrationFormInputSchema,
   getRegistrationInputSchema,
+  getTeamEventRegistrationStatusInputSchema,
   listAdminRegistrationsByEventInputSchema,
   listPublicEventsInputSchema,
   listRegistrationReviewActionsInputSchema,
@@ -152,7 +156,19 @@ export const registrationRouter = {
       return addRegistrationComment(currentSession.session.userId, input);
     }),
 
-  // ── Public event listing ───────────────────────────────────────────
+  // ── Public event listing + form ────────────────────────────────────
+
+  getEventRegistrationForm: publicProcedure
+    .input(getEventRegistrationFormInputSchema)
+    .handler(({ input }) => getEventRegistrationForm(input.eventId)),
+
+  getTeamEventRegistrationStatus: publicProcedure
+    .input(getTeamEventRegistrationStatusInputSchema)
+    .handler(({ context, input }) => {
+      const currentSession = requireSession(context.session);
+
+      return getTeamEventRegistrationStatus(currentSession.session.userId, input);
+    }),
 
   listPublicEvents: publicProcedure
     .input(listPublicEventsInputSchema)

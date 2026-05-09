@@ -1,10 +1,10 @@
-import { Outlet, createFileRoute, Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useNavigate, useRouterState } from "@tanstack/react-router";
 
-import { authClient } from "@/utils/auth-client";
-import { Button } from "@/components/ui/button";
+import { RegisterLandingPage } from "@/features/registration/register-landing-page";
 import { stripLocaleFromPathname } from "@/lib/locale-routing";
-import { useCurrentTeamSummary } from "@/lib/team-access";
 import { useRequireAuth } from "@/lib/route-guards";
+import { useCurrentTeamSummary } from "@/lib/team-access";
+import { authClient } from "@/utils/auth-client";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -39,31 +39,10 @@ const RegisterPage = () => {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-8">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-semibold">Register</h1>
-        <p className="text-muted-foreground text-sm">
-          Open `/register/:eventId` for event registration and `/register/:eventId/:registrationId`
-          for registration detail.
-        </p>
-      </div>
-
-      <div className="rounded-2xl border p-4">
-        <p className="text-sm">
-          Current team role:{" "}
-          <span className="font-medium">{teamQuery.data?.membershipRole ?? "none"}</span>
-        </p>
-        <p className="text-muted-foreground mt-2 text-sm">
-          Non-owner team members stay read-only on registration detail.
-        </p>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        <Button asChild>
-          <Link to="/{-$locale}/teams">Manage team</Link>
-        </Button>
-      </div>
-    </div>
+    <RegisterLandingPage
+      teamId={teamQuery.data?.organizationId ?? null}
+      teamName={teamQuery.data?.teamName ?? null}
+    />
   );
 };
 
