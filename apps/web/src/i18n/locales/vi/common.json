@@ -593,5 +593,26 @@
     "submission": "Bai nop cua ban",
     "title": "Chi tiet dang ky",
     "withdraw": "Rut dang ky"
+  },
+  "formBuilder": {
+    "addField": "Them truong",
+    "empty": "Chua co truong nao. Nhan \"Them truong\" de bat dau xay dung bieu mau dang ky.",
+    "fieldCount": "{{count}} truong",
+    "fieldLabel": "Nhan",
+    "fieldName": "Khoa truong",
+    "fieldNameHint": "Khoa duy nhat dung trong du lieu. Chi cho phep chu, so, gach duoi.",
+    "fieldType": "Loai",
+    "hidePreview": "An xem truoc",
+    "moveDown": "Di chuyen xuong",
+    "moveUp": "Di chuyen len",
+    "options": "Tuy chon",
+    "optionsHint": "Moi tuy chon tren mot dong.",
+    "placeholder": "Goi y",
+    "previewDescription": "Day la cach bieu mau se hien thi cho cac doi.",
+    "previewEmpty": "Them truong de xem truoc bieu mau.",
+    "previewTitle": "Xem truoc bieu mau",
+    "removeField": "Xoa truong",
+    "required": "Bat buoc",
+    "showPreview": "Xem truoc"
   }
 }
