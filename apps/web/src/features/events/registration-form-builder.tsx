@@ -72,6 +72,25 @@ const definitionToFields = (definition: Record<string, unknown>): FormField[] =>
     });
   }
 
+  if (Object.keys(definition).length > 0) {
+    return Object.entries(definition).map(([key, fieldDef]) => {
+      if (fieldDef && typeof fieldDef === "object" && !Array.isArray(fieldDef)) {
+        const def = fieldDef as Record<string, unknown>;
+
+        return {
+          label: typeof def.label === "string" ? def.label : key,
+          name: key,
+          options: Array.isArray(def.options) ? (def.options as string[]) : undefined,
+          placeholder: typeof def.placeholder === "string" ? def.placeholder : "",
+          required: typeof def.required === "boolean" ? def.required : false,
+          type: typeof def.type === "string" ? (def.type as FormField["type"]) : "text",
+        };
+      }
+
+      return { label: key, name: key, placeholder: "", required: false, type: "text" as const };
+    });
+  }
+
   return [];
 };
 
