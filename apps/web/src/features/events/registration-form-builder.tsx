@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   ArrowDown,
@@ -355,6 +355,11 @@ export function RegistrationFormBuilder({
     definitionToFields(definition),
   );
   const [showPreview, setShowPreview] = useState(false);
+
+  useEffect(() => {
+    onChange(fieldsToDefinition(definitionToFields(definition)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sync parent on mount only
+  }, []);
 
   const syncFields = useCallback(
     (updated: FormField[]) => {
