@@ -765,6 +765,8 @@ export const getTeamEventRegistrationStatus = async (
       and(
         eq(teamMembership.userId, userId),
         eq(teamMembership.organizationId, input.teamId),
+        eq(teamMembership.isActive, true),
+        isNull(teamMembership.deletedAt),
       ),
     )
     .limit(1);
