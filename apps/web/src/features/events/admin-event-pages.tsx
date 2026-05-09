@@ -1354,6 +1354,7 @@ function RegistrationFormsEditor({
         <CardContent className="space-y-4 pt-6">
           <RegistrationFormBuilder
             definition={definition}
+            key={selectedId ?? "new"}
             onChange={setDefinition}
           />
           {definitionError ? <p className="text-sm text-destructive">{definitionError}</p> : null}
