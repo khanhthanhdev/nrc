@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -1208,7 +1208,7 @@ function RegistrationFormsEditor({
     () => versions.find((version) => version.id === selectedId) ?? null,
     [selectedId, versions],
   );
-  const [definition, setDefinition] = useState<Record<string, unknown>>({});
+  const definitionRef = useRef<Record<string, unknown>>(selectedVersion?.definition ?? {});
   const [definitionError, setDefinitionError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -1216,14 +1216,18 @@ function RegistrationFormsEditor({
   }, [latestVersion?.id]);
 
   useEffect(() => {
-    setDefinition(selectedVersion?.definition ?? {});
+    definitionRef.current = selectedVersion?.definition ?? {};
     setDefinitionError(null);
   }, [selectedVersion]);
+
+  const handleDefinitionChange = useCallback((def: Record<string, unknown>) => {
+    definitionRef.current = def;
+  }, []);
 
   const createMutation = useMutation({
     mutationFn: async (isPublished: boolean) =>
       client.event.createRegistrationFormVersion({
-        definition,
+        definition: definitionRef.current,
         eventId,
         isPublished,
       }),
@@ -1246,7 +1250,7 @@ function RegistrationFormsEditor({
       }
 
       return client.event.updateRegistrationFormVersion({
-        definition,
+        definition: definitionRef.current,
         eventId,
         id: selectedVersion.id,
       });
@@ -1353,9 +1357,9 @@ function RegistrationFormsEditor({
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
           <RegistrationFormBuilder
-            definition={definition}
+            definition={selectedVersion?.definition ?? {}}
             key={selectedId ?? "new"}
-            onChange={setDefinition}
+            onChange={handleDefinitionChange}
           />
           {definitionError ? <p className="text-sm text-destructive">{definitionError}</p> : null}
           <div className="flex flex-wrap justify-end gap-2">
