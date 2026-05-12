@@ -128,15 +128,10 @@ const registerStaffEventsSuite = (): void => {
       await expect(page.getByText("Schedule published")).toBeVisible();
 
       await page.getByRole("tab", { name: "Registration form" }).click();
-      await page.locator("textarea.font-mono").fill(
-        JSON.stringify(
-          {
-            fields: [{ key: "teamName", label: "Team name", type: "text" }],
-          },
-          null,
-          2,
-        ),
-      );
+      await page.getByRole("button", { name: "Add field" }).click();
+      await page.getByText("Field 1").click();
+      await page.locator("#field-label-0").fill("Team name");
+      await page.locator("#field-name-0").fill("team_name");
       // Wait for sonner toasts so they do not intercept the click below.
       await waitForVisibleToastsToClear(page);
       await page.getByRole("button", { name: "Create and publish" }).click();

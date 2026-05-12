@@ -125,10 +125,10 @@ const expectHomePageLoaded = async (page: Page): Promise<void> => {
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "Competition operations built with a public-facing calm.",
+      name: "National Robotics Competition for Vietnam students.",
     }),
   ).toBeVisible();
-  await expect(page.getByRole("link", { name: "Open public event" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "View competition" })).toBeVisible();
 };
 
 const expectOnboardingPageLoaded = async (page: Page): Promise<void> => {
@@ -190,7 +190,7 @@ const registerAuthenticationProductionFlowsSuite = (): void => {
       expect(verificationEmail.url).toContain("/api/auth/verify-email");
 
       await page.goto("/");
-      await expect(page).toHaveURL(/\/auth(?:\?|$)/);
+      await expectHomePageLoaded(page);
     });
 
     test("verification link signs in and routes to onboarding", async ({ page }) => {
@@ -220,7 +220,7 @@ const registerAuthenticationProductionFlowsSuite = (): void => {
       });
       await createSessionForUser(page.request, email);
 
-      await page.goto("/");
+      await page.goto("/onboarding");
       await expectOnboardingPageLoaded(page);
 
       const user = await getTestUser(page.request, email);
@@ -398,8 +398,8 @@ const registerAuthenticationProductionFlowsSuite = (): void => {
       });
       await ensureOk(signInResponse, "sign-in-email");
 
-      await page.goto("/");
-      await expect(page).toHaveURL(/\/onboarding(?:\?|$)/);
+      await page.goto("/onboarding");
+      await expectOnboardingPageLoaded(page);
     });
 
     test("post-sign-in routes to root when onboarding is already complete", async ({ page }) => {
@@ -459,13 +459,13 @@ const registerAuthenticationProductionFlowsSuite = (): void => {
       expect(user.providers).not.toContain("google");
     });
 
-    test("unauthenticated user accessing protected route is redirected to /auth", async ({
+    test("unauthenticated user sees public homepage", async ({
       page,
     }) => {
       await page.context().clearCookies();
 
       await page.goto("/");
-      await expect(page).toHaveURL(/\/auth(?:\?|$)/);
+      await expectHomePageLoaded(page);
     });
 
     test("authenticated user visiting /auth is redirected away", async ({ page }) => {

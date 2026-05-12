@@ -59,7 +59,7 @@ const registerWebsiteNavigationSuite = (): void => {
       await expect(page.getByRole("link", { name: "Home" })).toBeVisible();
       await expect(page.getByRole("link", { name: "Events" })).toBeVisible();
       await expect(page.getByRole("link", { name: "Teams" })).toBeVisible();
-      await expect(page.getByRole("link", { name: "Register" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Register", exact: true })).toBeVisible();
       await expect(page.getByRole("link", { name: "Staff" })).toHaveCount(0);
       await expect(page.getByRole("link", { name: "Users" })).toHaveCount(0);
 
