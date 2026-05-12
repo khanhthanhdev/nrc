@@ -5,100 +5,393 @@ import {
   createSeasonAnnouncementInputSchema,
   createSeasonDocumentInputSchema,
   createSeasonInputSchema,
+  deleteSeasonAnnouncementInputSchema,
+  deleteSeasonDocumentInputSchema,
+  deleteSeasonInputSchema,
+  getAdminSeasonInputSchema,
   getPublicSeasonPageInputSchema,
+  listAdminSeasonsInputSchema,
+  seasonYearSchema,
+  sortOrderSchema,
+  updateSeasonAnnouncementInputSchema,
+  updateSeasonDocumentInputSchema,
   updateSeasonInputSchema,
 } from "./season.js";
 
-describe("season schemas", () => {
-  it("accepts a valid public season page input", () => {
-    const result = v.safeParse(getPublicSeasonPageInputSchema, {
-      year: "2026",
-    });
-
-    expect(result.success).toBe(true);
+describe("seasonYearSchema", () => {
+  it("accepts valid 4-digit years", () => {
+    expect(v.safeParse(seasonYearSchema, "2026").success).toBe(true);
+    expect(v.safeParse(seasonYearSchema, "2025").success).toBe(true);
+    expect(v.safeParse(seasonYearSchema, "1999").success).toBe(true);
   });
 
-  it("rejects invalid season years", () => {
-    const result = v.safeParse(getPublicSeasonPageInputSchema, {
-      year: "26",
-    });
-
-    expect(result.success).toBe(false);
+  it("trims whitespace", () => {
+    const result = v.parse(seasonYearSchema, "  2026  ");
+    expect(result).toBe("2026");
   });
 
-  it("applies create season defaults", () => {
-    const parsed = v.parse(createSeasonInputSchema, {
-      gameCode: "ITD-2026",
-      theme: "Into the Deep",
-      year: "2026",
-    });
-
-    expect(parsed).toEqual({
-      gameCode: "ITD-2026",
-      isActive: true,
-      theme: "Into the Deep",
-      year: "2026",
-    });
+  it("rejects 2-digit years", () => {
+    expect(v.safeParse(seasonYearSchema, "26").success).toBe(false);
   });
 
-  it("rejects blank season fields after trim", () => {
-    const result = v.safeParse(createSeasonInputSchema, {
+  it("rejects 5-digit years", () => {
+    expect(v.safeParse(seasonYearSchema, "20260").success).toBe(false);
+  });
+
+  it("rejects non-numeric strings", () => {
+    expect(v.safeParse(seasonYearSchema, "abcd").success).toBe(false);
+  });
+
+  it("rejects empty strings", () => {
+    expect(v.safeParse(seasonYearSchema, "").success).toBe(false);
+  });
+});
+
+describe("sortOrderSchema", () => {
+  it("accepts 0", () => {
+    expect(v.safeParse(sortOrderSchema, 0).success).toBe(true);
+  });
+
+  it("accepts positive integers", () => {
+    expect(v.safeParse(sortOrderSchema, 100).success).toBe(true);
+  });
+
+  it("accepts max value 10000", () => {
+    expect(v.safeParse(sortOrderSchema, 10_000).success).toBe(true);
+  });
+
+  it("rejects negative numbers", () => {
+    expect(v.safeParse(sortOrderSchema, -1).success).toBe(false);
+  });
+
+  it("rejects values over 10000", () => {
+    expect(v.safeParse(sortOrderSchema, 10_001).success).toBe(false);
+  });
+
+  it("rejects non-integers", () => {
+    expect(v.safeParse(sortOrderSchema, 1.5).success).toBe(false);
+  });
+});
+
+describe("getPublicSeasonPageInputSchema", () => {
+  it("accepts valid year", () => {
+    expect(v.safeParse(getPublicSeasonPageInputSchema, { year: "2026" }).success).toBe(true);
+  });
+
+  it("rejects invalid year", () => {
+    expect(v.safeParse(getPublicSeasonPageInputSchema, { year: "26" }).success).toBe(false);
+  });
+});
+
+describe("listAdminSeasonsInputSchema", () => {
+  it("accepts undefined input with defaults", () => {
+    const result = v.parse(listAdminSeasonsInputSchema, undefined);
+    expect(result.includeDeleted).toBe(false);
+  });
+
+  it("accepts empty object with defaults", () => {
+    const result = v.parse(listAdminSeasonsInputSchema, {});
+    expect(result.includeDeleted).toBe(false);
+  });
+
+  it("accepts includeDeleted true", () => {
+    const result = v.parse(listAdminSeasonsInputSchema, { includeDeleted: true });
+    expect(result.includeDeleted).toBe(true);
+  });
+});
+
+describe("getAdminSeasonInputSchema", () => {
+  it("accepts valid year", () => {
+    expect(v.safeParse(getAdminSeasonInputSchema, { year: "2026" }).success).toBe(true);
+  });
+
+  it("rejects invalid year", () => {
+    expect(v.safeParse(getAdminSeasonInputSchema, { year: "abc" }).success).toBe(false);
+  });
+});
+
+describe("createSeasonInputSchema", () => {
+  const validInput = {
+    gameCode: "ITD-2026",
+    theme: "Into the Deep",
+    year: "2026",
+  };
+
+  it("accepts valid minimal input", () => {
+    expect(v.safeParse(createSeasonInputSchema, validInput).success).toBe(true);
+  });
+
+  it("accepts input with all optional fields", () => {
+    expect(v.safeParse(createSeasonInputSchema, {
+      ...validInput,
+      description: "Explore the unknown depths",
+      isActive: false,
+    }).success).toBe(true);
+  });
+
+  it("defaults isActive to true", () => {
+    const result = v.parse(createSeasonInputSchema, validInput);
+    expect(result.isActive).toBe(true);
+  });
+
+  it("rejects unknown keys (strictObject)", () => {
+    expect(v.safeParse(createSeasonInputSchema, {
+      ...validInput,
+      unknownField: "nope",
+    }).success).toBe(false);
+  });
+
+  it("rejects blank gameCode after trim", () => {
+    expect(v.safeParse(createSeasonInputSchema, {
+      ...validInput,
       gameCode: "   ",
-      theme: "   ",
-      year: "2026",
-    });
-
-    expect(result.success).toBe(false);
+    }).success).toBe(false);
   });
 
-  it("requires isActive on season update", () => {
-    const result = v.safeParse(updateSeasonInputSchema, {
+  it("rejects blank theme after trim", () => {
+    expect(v.safeParse(createSeasonInputSchema, {
+      ...validInput,
+      theme: "   ",
+    }).success).toBe(false);
+  });
+
+  it("rejects gameCode exceeding 50 chars", () => {
+    expect(v.safeParse(createSeasonInputSchema, {
+      ...validInput,
+      gameCode: "A".repeat(51),
+    }).success).toBe(false);
+  });
+
+  it("rejects theme exceeding 255 chars", () => {
+    expect(v.safeParse(createSeasonInputSchema, {
+      ...validInput,
+      theme: "A".repeat(256),
+    }).success).toBe(false);
+  });
+
+  it("rejects description exceeding 4000 chars", () => {
+    expect(v.safeParse(createSeasonInputSchema, {
+      ...validInput,
+      description: "A".repeat(4001),
+    }).success).toBe(false);
+  });
+
+  it("accepts null description", () => {
+    expect(v.safeParse(createSeasonInputSchema, {
+      ...validInput,
+      description: null,
+    }).success).toBe(true);
+  });
+});
+
+describe("updateSeasonInputSchema", () => {
+  const validInput = {
+    gameCode: "ITD-2026",
+    isActive: true,
+    theme: "Into the Deep",
+    year: "2026",
+  };
+
+  it("accepts valid input", () => {
+    expect(v.safeParse(updateSeasonInputSchema, validInput).success).toBe(true);
+  });
+
+  it("requires isActive field", () => {
+    expect(v.safeParse(updateSeasonInputSchema, {
       gameCode: "ITD-2026",
       theme: "Into the Deep",
       year: "2026",
-    });
-
-    expect(result.success).toBe(false);
+    }).success).toBe(false);
   });
 
-  it("applies create document defaults and validates URLs", () => {
-    const parsed = v.parse(createSeasonDocumentInputSchema, {
-      kind: "pdf",
-      seasonYear: "2026",
-      title: "Game Manual",
-      url: "https://example.com/manual.pdf",
-    });
+  it("does not use strictObject (allows extra keys)", () => {
+    expect(v.safeParse(updateSeasonInputSchema, {
+      ...validInput,
+      extra: "field",
+    }).success).toBe(true);
+  });
+});
 
-    expect(parsed.sortOrder).toBe(0);
+describe("deleteSeasonInputSchema", () => {
+  it("accepts valid year", () => {
+    expect(v.safeParse(deleteSeasonInputSchema, { year: "2026" }).success).toBe(true);
+  });
 
-    const invalidUrl = v.safeParse(createSeasonDocumentInputSchema, {
-      kind: "pdf",
-      seasonYear: "2026",
-      title: "Game Manual",
+  it("rejects invalid year", () => {
+    expect(v.safeParse(deleteSeasonInputSchema, { year: "26" }).success).toBe(false);
+  });
+});
+
+describe("createSeasonDocumentInputSchema", () => {
+  const validInput = {
+    kind: "pdf",
+    seasonYear: "2026",
+    title: "Game Manual",
+    url: "https://example.com/manual.pdf",
+  };
+
+  it("accepts valid input", () => {
+    expect(v.safeParse(createSeasonDocumentInputSchema, validInput).success).toBe(true);
+  });
+
+  it("defaults sortOrder to 0", () => {
+    const result = v.parse(createSeasonDocumentInputSchema, validInput);
+    expect(result.sortOrder).toBe(0);
+  });
+
+  it("rejects invalid URL", () => {
+    expect(v.safeParse(createSeasonDocumentInputSchema, {
+      ...validInput,
       url: "not-a-url",
-    });
-
-    expect(invalidUrl.success).toBe(false);
+    }).success).toBe(false);
   });
 
-  it("applies announcement defaults and validates timestamps", () => {
-    const parsed = v.parse(createSeasonAnnouncementInputSchema, {
-      body: "Registration opens this week.",
-      publishedAt: "2026-10-01T10:00:00.000Z",
+  it("rejects URL exceeding 2000 chars", () => {
+    expect(v.safeParse(createSeasonDocumentInputSchema, {
+      ...validInput,
+      url: `https://example.com/${"a".repeat(2000)}`,
+    }).success).toBe(false);
+  });
+
+  it("rejects blank kind", () => {
+    expect(v.safeParse(createSeasonDocumentInputSchema, {
+      ...validInput,
+      kind: "   ",
+    }).success).toBe(false);
+  });
+
+  it("rejects kind exceeding 80 chars", () => {
+    expect(v.safeParse(createSeasonDocumentInputSchema, {
+      ...validInput,
+      kind: "A".repeat(81),
+    }).success).toBe(false);
+  });
+
+  it("rejects blank title", () => {
+    expect(v.safeParse(createSeasonDocumentInputSchema, {
+      ...validInput,
+      title: "   ",
+    }).success).toBe(false);
+  });
+});
+
+describe("updateSeasonDocumentInputSchema", () => {
+  const validInput = {
+    id: "document-1",
+    kind: "pdf",
+    seasonYear: "2026",
+    sortOrder: 1,
+    title: "Game Manual",
+    url: "https://example.com/manual.pdf",
+  };
+
+  it("accepts valid input", () => {
+    expect(v.safeParse(updateSeasonDocumentInputSchema, validInput).success).toBe(true);
+  });
+
+  it("rejects blank id", () => {
+    expect(v.safeParse(updateSeasonDocumentInputSchema, {
+      ...validInput,
+      id: "   ",
+    }).success).toBe(false);
+  });
+});
+
+describe("deleteSeasonDocumentInputSchema", () => {
+  it("accepts valid input", () => {
+    expect(v.safeParse(deleteSeasonDocumentInputSchema, {
+      id: "document-1",
       seasonYear: "2026",
-      title: "Registration Open",
-    });
+    }).success).toBe(true);
+  });
 
-    expect(parsed.isPinned).toBe(false);
-    expect(parsed.sortOrder).toBe(0);
+  it("rejects blank id", () => {
+    expect(v.safeParse(deleteSeasonDocumentInputSchema, {
+      id: "   ",
+      seasonYear: "2026",
+    }).success).toBe(false);
+  });
+});
 
-    const invalidTimestamp = v.safeParse(createSeasonAnnouncementInputSchema, {
-      body: "Registration opens this week.",
+describe("createSeasonAnnouncementInputSchema", () => {
+  const validInput = {
+    body: "Registration opens this week.",
+    publishedAt: "2026-10-01T10:00:00.000Z",
+    seasonYear: "2026",
+    title: "Registration Open",
+  };
+
+  it("accepts valid input", () => {
+    expect(v.safeParse(createSeasonAnnouncementInputSchema, validInput).success).toBe(true);
+  });
+
+  it("defaults isPinned to false", () => {
+    const result = v.parse(createSeasonAnnouncementInputSchema, validInput);
+    expect(result.isPinned).toBe(false);
+  });
+
+  it("defaults sortOrder to 0", () => {
+    const result = v.parse(createSeasonAnnouncementInputSchema, validInput);
+    expect(result.sortOrder).toBe(0);
+  });
+
+  it("rejects invalid publishedAt", () => {
+    expect(v.safeParse(createSeasonAnnouncementInputSchema, {
+      ...validInput,
       publishedAt: "tomorrow",
-      seasonYear: "2026",
-      title: "Registration Open",
-    });
+    }).success).toBe(false);
+  });
 
-    expect(invalidTimestamp.success).toBe(false);
+  it("rejects blank body", () => {
+    expect(v.safeParse(createSeasonAnnouncementInputSchema, {
+      ...validInput,
+      body: "   ",
+    }).success).toBe(false);
+  });
+
+  it("rejects body exceeding 10000 chars", () => {
+    expect(v.safeParse(createSeasonAnnouncementInputSchema, {
+      ...validInput,
+      body: "A".repeat(10_001),
+    }).success).toBe(false);
+  });
+});
+
+describe("updateSeasonAnnouncementInputSchema", () => {
+  const validInput = {
+    body: "Updated body.",
+    id: "announcement-1",
+    isPinned: true,
+    publishedAt: "2026-10-01T10:00:00.000Z",
+    seasonYear: "2026",
+    sortOrder: 0,
+    title: "Updated Title",
+  };
+
+  it("accepts valid input", () => {
+    expect(v.safeParse(updateSeasonAnnouncementInputSchema, validInput).success).toBe(true);
+  });
+
+  it("rejects blank id", () => {
+    expect(v.safeParse(updateSeasonAnnouncementInputSchema, {
+      ...validInput,
+      id: "   ",
+    }).success).toBe(false);
+  });
+});
+
+describe("deleteSeasonAnnouncementInputSchema", () => {
+  it("accepts valid input", () => {
+    expect(v.safeParse(deleteSeasonAnnouncementInputSchema, {
+      id: "announcement-1",
+      seasonYear: "2026",
+    }).success).toBe(true);
+  });
+
+  it("rejects blank id", () => {
+    expect(v.safeParse(deleteSeasonAnnouncementInputSchema, {
+      id: "   ",
+      seasonYear: "2026",
+    }).success).toBe(false);
   });
 });

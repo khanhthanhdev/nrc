@@ -8,6 +8,7 @@ import {
   GripVertical,
   Plus,
   Trash2,
+  Upload,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -29,7 +30,7 @@ interface FormField {
   options?: string[];
   placeholder?: string;
   required?: boolean;
-  type: "checkbox" | "number" | "select" | "text" | "textarea";
+  type: "checkbox" | "file" | "image" | "number" | "select" | "text" | "textarea";
 }
 
 const FIELD_TYPES: { label: string; value: FormField["type"] }[] = [
@@ -38,6 +39,8 @@ const FIELD_TYPES: { label: string; value: FormField["type"] }[] = [
   { label: "Textarea", value: "textarea" },
   { label: "Select (dropdown)", value: "select" },
   { label: "Checkbox", value: "checkbox" },
+  { label: "File upload", value: "file" },
+  { label: "Image upload", value: "image" },
 ];
 
 const createEmptyField = (order: number): FormField => ({
@@ -345,6 +348,15 @@ function FormPreview({ fields }: { fields: FormField[] }) {
                 </option>
               ))}
             </NativeSelect>
+          ) : field.type === "file" || field.type === "image" ? (
+            <div className="flex items-center gap-3 rounded-md border border-dashed p-4">
+              <Upload className="h-5 w-5 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">
+                {field.type === "image"
+                  ? t("formBuilder.previewImageUpload", "Click or drag to upload an image")
+                  : t("formBuilder.previewFileUpload", "Click or drag to upload a file")}
+              </span>
+            </div>
           ) : (
             <Input
               disabled
