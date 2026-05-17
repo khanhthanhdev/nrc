@@ -786,7 +786,7 @@ CREATE INDEX "registration_team_id_idx" ON "registration" USING btree ("team_id"
 CREATE INDEX "registration_status_idx" ON "registration" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "registration_deleted_by_user_id_idx" ON "registration" USING btree ("deleted_by_user_id");--> statement-breakpoint
 CREATE INDEX "registration_deleted_at_idx" ON "registration" USING btree ("deleted_at");--> statement-breakpoint
-CREATE UNIQUE INDEX "registration_event_team_unique" ON "registration" USING btree ("event_id","team_id") WHERE "registration"."deleted_at" IS NULL;--> statement-breakpoint
+CREATE UNIQUE INDEX "registration_event_team_unique" ON "registration" USING btree ("event_id","team_id") WHERE "registration"."deleted_at" IS NULL AND "registration"."status" <> 'withdrawn';--> statement-breakpoint
 CREATE INDEX "season_announcement_season_year_idx" ON "season_announcement" USING btree ("season_year");--> statement-breakpoint
 CREATE INDEX "season_announcement_published_at_idx" ON "season_announcement" USING btree ("published_at");--> statement-breakpoint
 CREATE INDEX "season_announcement_sort_order_idx" ON "season_announcement" USING btree ("sort_order");--> statement-breakpoint

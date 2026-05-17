@@ -3087,7 +3087,7 @@
             }
           ],
           "isUnique": true,
-          "where": "\"registration\".\"deleted_at\" IS NULL",
+          "where": "\"registration\".\"deleted_at\" IS NULL AND \"registration\".\"status\" <> 'withdrawn'",
           "concurrently": false,
           "method": "btree",
           "with": {}

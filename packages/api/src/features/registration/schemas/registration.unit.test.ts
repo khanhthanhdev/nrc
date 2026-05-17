@@ -19,51 +19,77 @@ import {
 
 describe("createRegistrationInputSchema", () => {
   it("accepts valid input", () => {
-    expect(v.safeParse(createRegistrationInputSchema, {
+    expect(
+      v.safeParse(createRegistrationInputSchema, {
+        eventId: "event-1",
+        payload: { teamSize: 5 },
+        teamId: "team-1",
+      }).success,
+    ).toBe(true);
+  });
+
+  it("sanitizes form payload strings", () => {
+    const result = v.parse(createRegistrationInputSchema, {
       eventId: "event-1",
-      payload: { teamSize: 5 },
+      payload: {
+        website: "javascript:alert(1)",
+        teamName: "<script>alert(1)</script>",
+      },
       teamId: "team-1",
-    }).success).toBe(true);
+    });
+
+    expect(result.payload.teamName).toBe("&lt;script&gt;alert(1)&lt;&#x2F;script&gt;");
+    expect(result.payload.website).toBe("[BLOCKED: DANGEROUS_SCHEME]");
   });
 
   it("rejects blank eventId", () => {
-    expect(v.safeParse(createRegistrationInputSchema, {
-      eventId: "   ",
-      payload: { teamSize: 5 },
-      teamId: "team-1",
-    }).success).toBe(false);
+    expect(
+      v.safeParse(createRegistrationInputSchema, {
+        eventId: "   ",
+        payload: { teamSize: 5 },
+        teamId: "team-1",
+      }).success,
+    ).toBe(false);
   });
 
   it("rejects blank teamId", () => {
-    expect(v.safeParse(createRegistrationInputSchema, {
-      eventId: "event-1",
-      payload: { teamSize: 5 },
-      teamId: "   ",
-    }).success).toBe(false);
+    expect(
+      v.safeParse(createRegistrationInputSchema, {
+        eventId: "event-1",
+        payload: { teamSize: 5 },
+        teamId: "   ",
+      }).success,
+    ).toBe(false);
   });
 
   it("rejects array payload", () => {
-    expect(v.safeParse(createRegistrationInputSchema, {
-      eventId: "event-1",
-      payload: [],
-      teamId: "team-1",
-    }).success).toBe(false);
+    expect(
+      v.safeParse(createRegistrationInputSchema, {
+        eventId: "event-1",
+        payload: [],
+        teamId: "team-1",
+      }).success,
+    ).toBe(false);
   });
 
   it("rejects null payload", () => {
-    expect(v.safeParse(createRegistrationInputSchema, {
-      eventId: "event-1",
-      payload: null,
-      teamId: "team-1",
-    }).success).toBe(false);
+    expect(
+      v.safeParse(createRegistrationInputSchema, {
+        eventId: "event-1",
+        payload: null,
+        teamId: "team-1",
+      }).success,
+    ).toBe(false);
   });
 
   it("rejects primitive payload", () => {
-    expect(v.safeParse(createRegistrationInputSchema, {
-      eventId: "event-1",
-      payload: "string",
-      teamId: "team-1",
-    }).success).toBe(false);
+    expect(
+      v.safeParse(createRegistrationInputSchema, {
+        eventId: "event-1",
+        payload: "string",
+        teamId: "team-1",
+      }).success,
+    ).toBe(false);
   });
 });
 
@@ -119,6 +145,7 @@ describe("submitRegistrationInputSchema", () => {
 describe("updateRegistrationRevisionInputSchema", () => {
   it("accepts valid input", () => {
     expect(v.safeParse(updateRegistrationRevisionInputSchema, {
+      expectedRevisionNumber: 1,
       payload: { teamSize: 6 },
       registrationId: "reg-1",
     }).success).toBe(true);
@@ -126,6 +153,7 @@ describe("updateRegistrationRevisionInputSchema", () => {
 
   it("rejects array payload", () => {
     expect(v.safeParse(updateRegistrationRevisionInputSchema, {
+      expectedRevisionNumber: 1,
       payload: [],
       registrationId: "reg-1",
     }).success).toBe(false);
@@ -133,8 +161,17 @@ describe("updateRegistrationRevisionInputSchema", () => {
 
   it("rejects blank registrationId", () => {
     expect(v.safeParse(updateRegistrationRevisionInputSchema, {
+      expectedRevisionNumber: 1,
       payload: { key: "value" },
       registrationId: "   ",
+    }).success).toBe(false);
+  });
+
+  it("rejects stale or invalid revision version", () => {
+    expect(v.safeParse(updateRegistrationRevisionInputSchema, {
+      expectedRevisionNumber: -1,
+      payload: { key: "value" },
+      registrationId: "reg-1",
     }).success).toBe(false);
   });
 });

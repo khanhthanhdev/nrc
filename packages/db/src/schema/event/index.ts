@@ -357,7 +357,7 @@ export const registrationTable = pgTable(
     index("registration_deleted_at_idx").on(table.deletedAt),
     uniqueIndex("registration_event_team_unique")
       .on(table.eventId, table.teamId)
-      .where(sql`${table.deletedAt} IS NULL`),
+      .where(sql`${table.deletedAt} IS NULL AND ${table.status} <> 'withdrawn'`),
   ],
 );
 

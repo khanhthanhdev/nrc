@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -55,6 +55,7 @@ export function EventRegistrationFormPage({
     }),
     enabled: Boolean(teamId),
     retry: false,
+    staleTime: 30_000,
   });
 
   const existingRegistrationQuery = useQuery({
@@ -65,18 +66,49 @@ export function EventRegistrationFormPage({
     retry: false,
   });
 
-  if (
-    !initialized &&
-    existingRegistrationQuery.data?.revisions &&
-    existingRegistrationQuery.data.revisions.length > 0
-  ) {
-    const latestRevision = existingRegistrationQuery.data.revisions[0];
+  const draftStorageKey = teamId
+    ? `nrc.registrationDraft.${eventId}.${teamId}.${statusQuery.data?.registrationId ?? "new"}`
+    : null;
+
+  useEffect(() => {
+    if (initialized || !draftStorageKey || statusQuery.isLoading || existingRegistrationQuery.isLoading) {
+      return;
+    }
+
+    const latestRevision = existingRegistrationQuery.data?.revisions[0];
 
     if (latestRevision) {
       setPayload(latestRevision.payload as Record<string, unknown>);
       setInitialized(true);
+      return;
     }
-  }
+
+    const savedDraft = window.localStorage.getItem(draftStorageKey);
+
+    if (savedDraft) {
+      try {
+        setPayload(JSON.parse(savedDraft) as Record<string, unknown>);
+      } catch {
+        window.localStorage.removeItem(draftStorageKey);
+      }
+    }
+
+    setInitialized(true);
+  }, [
+    draftStorageKey,
+    existingRegistrationQuery.data,
+    existingRegistrationQuery.isLoading,
+    initialized,
+    statusQuery.isLoading,
+  ]);
+
+  useEffect(() => {
+    if (!draftStorageKey || !initialized) {
+      return;
+    }
+
+    window.localStorage.setItem(draftStorageKey, JSON.stringify(payload));
+  }, [draftStorageKey, initialized, payload]);
 
   const createMutation = useMutation({
     mutationFn: async () =>
@@ -88,6 +120,9 @@ export function EventRegistrationFormPage({
     onError: (error) => toast.error(getErrorMessage(error, "Could not create registration.")),
     onSuccess: async (data) => {
       toast.success("Registration draft created.");
+      if (draftStorageKey) {
+        window.localStorage.removeItem(draftStorageKey);
+      }
       await queryClient.invalidateQueries();
       void navigate({
         params: { eventId, registrationId: data.id },
@@ -96,9 +131,13 @@ export function EventRegistrationFormPage({
     },
   });
 
+  const expectedRevisionNumber =
+    existingRegistrationQuery.data?.registration.currentRevisionNumber ?? 0;
+
   const updateMutation = useMutation({
     mutationFn: async () =>
       client.registration.updateRegistrationRevision({
+        expectedRevisionNumber,
         payload,
         registrationId: statusQuery.data?.registrationId ?? "",
       }),
@@ -114,6 +153,7 @@ export function EventRegistrationFormPage({
       const registrationId = statusQuery.data?.registrationId ?? "";
 
       await client.registration.updateRegistrationRevision({
+        expectedRevisionNumber,
         payload,
         registrationId,
       });
@@ -123,6 +163,9 @@ export function EventRegistrationFormPage({
     onError: (error) => toast.error(getErrorMessage(error, "Could not submit registration.")),
     onSuccess: async () => {
       toast.success("Registration submitted for review!");
+      if (draftStorageKey) {
+        window.localStorage.removeItem(draftStorageKey);
+      }
       await queryClient.invalidateQueries();
       if (statusQuery.data?.registrationId) {
         void navigate({

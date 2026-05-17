@@ -4,11 +4,16 @@ import type { Hono } from "hono";
 import {
   account,
   db,
+  eventRegistrationFormVersionTable,
   eventTable,
+  member,
+  organization,
   seasonAnnouncementTable,
   seasonDocumentTable,
   seasonTable,
   session as authSession,
+  team,
+  teamMembership,
   user,
 } from "@nrc-full/db";
 import { env } from "@nrc-full/env/server";
@@ -24,6 +29,10 @@ import {
 
 interface EmailPayload {
   email?: string;
+}
+
+interface CreateSessionPayload extends EmailPayload {
+  activeOrganizationId?: string;
 }
 
 interface SeedGoogleUserPayload extends EmailPayload {
@@ -75,6 +84,17 @@ interface SeedSeasonPagePayload {
   isActive?: boolean;
   theme: string;
   year: string;
+}
+
+interface SeedTeamPayload extends EmailPayload {
+  role?: "TEAM_LEADER" | "TEAM_MEMBER" | "TEAM_MENTOR";
+  teamName?: string;
+  teamNumber?: string;
+}
+
+interface SeedRegistrationFormPayload {
+  definition?: Record<string, unknown>;
+  eventId?: string;
 }
 
 const SESSION_COOKIE_NAME = "better-auth.session_token";
@@ -172,7 +192,7 @@ export const registerE2ETestRoute = (app: Hono<EvlogVariables>): void => {
   });
 
   app.post("/api/test/auth/clear-captured-email", async (c) => {
-    const body = await c.req.json().catch(() => null);
+    const body = (await c.req.json().catch(() => null)) as CreateSessionPayload | null;
     const normalizedEmail = parseEmailPayload(body);
 
     if (!normalizedEmail) {
@@ -282,6 +302,10 @@ export const registerE2ETestRoute = (app: Hono<EvlogVariables>): void => {
     const expiresAt = new Date(now.getTime() + SESSION_MAX_AGE_SECONDS * 1000);
 
     await db.insert(authSession).values({
+      activeOrganizationId:
+        typeof body?.activeOrganizationId === "string" && body.activeOrganizationId.trim().length > 0
+          ? body.activeOrganizationId.trim()
+          : null,
       expiresAt,
       id: crypto.randomUUID().replaceAll("-", ""),
       ipAddress: "127.0.0.1",
@@ -301,12 +325,74 @@ export const registerE2ETestRoute = (app: Hono<EvlogVariables>): void => {
 
     return c.json(
       {
+        activeOrganizationId: body?.activeOrganizationId ?? null,
         cookieName: SESSION_COOKIE_NAME,
         created: true,
         email: normalizedEmail,
       },
       200,
     );
+  });
+
+  app.post("/api/test/data/seed-team", async (c) => {
+    const body = (await c.req.json().catch(() => null)) as SeedTeamPayload | null;
+    const normalizedEmail = parseEmailPayload(body);
+
+    if (!normalizedEmail) {
+      return c.json({ error: "email is required" }, 400);
+    }
+
+    const existingUser = await findUserByEmail(normalizedEmail);
+
+    if (!existingUser) {
+      return c.json({ error: "User not found" }, 404);
+    }
+
+    const now = new Date();
+    const organizationId = crypto.randomUUID();
+    const teamId = crypto.randomUUID();
+    const teamNumber = body?.teamNumber?.trim() || `PW-${teamId.slice(0, 8)}`;
+    const teamName = body?.teamName?.trim() || `Playwright Team ${teamNumber}`;
+    const role = body?.role ?? "TEAM_MENTOR";
+
+    await db.insert(organization).values({
+      createdAt: now,
+      id: organizationId,
+      name: teamName,
+      slug: teamNumber.toLowerCase(),
+      teamNumber,
+      updatedAt: now,
+    });
+
+    await db.insert(team).values({
+      createdAt: now,
+      createdByUserId: existingUser.id,
+      id: teamId,
+      name: teamName,
+      organizationId,
+      teamNumber,
+      updatedAt: now,
+    });
+
+    await db.insert(member).values({
+      createdAt: now,
+      id: crypto.randomUUID(),
+      organizationId,
+      role,
+      userId: existingUser.id,
+    });
+
+    await db.insert(teamMembership).values({
+      createdAt: now,
+      id: crypto.randomUUID(),
+      isActive: true,
+      role,
+      teamId,
+      updatedAt: now,
+      userId: existingUser.id,
+    });
+
+    return c.json({ organizationId, role, teamId, teamName, teamNumber }, 200);
   });
 
   app.post("/api/test/data/seed-season-page", async (c) => {
@@ -375,30 +461,42 @@ export const registerE2ETestRoute = (app: Hono<EvlogVariables>): void => {
       );
     }
 
+    const seededEvents: { eventCode: string; id: string; name: string }[] = [];
+
     if (body?.events?.length) {
       await db.insert(eventTable).values(
-        body.events.map((event, index) => ({
-          createdAt: now,
-          description: event.summary?.trim() || null,
-          eventCode: event.eventCode.trim(),
-          eventEndsAt: new Date(event.eventEndsAt),
-          eventKey: `${year}-${event.eventCode.trim()}-${index}`,
-          eventStartsAt: new Date(event.eventStartsAt),
-          id: event.id ?? crypto.randomUUID(),
-          location: event.location?.trim() || null,
-          maxParticipants: event.maxParticipants ?? null,
-          name: event.name.trim(),
-          registrationEndsAt: event.registrationEndsAt ? new Date(event.registrationEndsAt) : null,
-          registrationStartsAt: event.registrationStartsAt
-            ? new Date(event.registrationStartsAt)
-            : null,
-          season: year,
-          status: event.status ?? "published",
-          summary: event.summary?.trim() || null,
-          timezone: event.timezone?.trim() || "Asia/Ho_Chi_Minh",
-          updatedAt: now,
-          venue: event.venue?.trim() || null,
-        })),
+        body.events.map((event, index) => {
+          const eventId = event.id ?? crypto.randomUUID();
+
+          seededEvents.push({
+            eventCode: event.eventCode.trim(),
+            id: eventId,
+            name: event.name.trim(),
+          });
+
+          return {
+            createdAt: now,
+            description: event.summary?.trim() || null,
+            eventCode: event.eventCode.trim(),
+            eventEndsAt: new Date(event.eventEndsAt),
+            eventKey: `${year}-${event.eventCode.trim()}-${index}`,
+            eventStartsAt: new Date(event.eventStartsAt),
+            id: eventId,
+            location: event.location?.trim() || null,
+            maxParticipants: event.maxParticipants ?? null,
+            name: event.name.trim(),
+            registrationEndsAt: event.registrationEndsAt ? new Date(event.registrationEndsAt) : null,
+            registrationStartsAt: event.registrationStartsAt
+              ? new Date(event.registrationStartsAt)
+              : null,
+            season: year,
+            status: event.status ?? "published",
+            summary: event.summary?.trim() || null,
+            timezone: event.timezone?.trim() || "Asia/Ho_Chi_Minh",
+            updatedAt: now,
+            venue: event.venue?.trim() || null,
+          };
+        }),
       );
     }
 
@@ -406,11 +504,49 @@ export const registerE2ETestRoute = (app: Hono<EvlogVariables>): void => {
       {
         announcements: body?.announcements?.length ?? 0,
         documents: body?.documents?.length ?? 0,
+        eventIds: seededEvents,
         events: body?.events?.length ?? 0,
         season: year,
       },
       200,
     );
+  });
+
+  app.post("/api/test/data/seed-registration-form", async (c) => {
+    const body = (await c.req.json().catch(() => null)) as SeedRegistrationFormPayload | null;
+    const eventId = body?.eventId?.trim();
+
+    if (!eventId) {
+      return c.json({ error: "eventId is required" }, 400);
+    }
+
+    const [event] = await db
+      .select({ id: eventTable.id })
+      .from(eventTable)
+      .where(and(eq(eventTable.id, eventId), isNull(eventTable.deletedAt)))
+      .limit(1);
+
+    if (!event) {
+      return c.json({ error: "Event not found" }, 404);
+    }
+
+    const now = new Date();
+    const formId = crypto.randomUUID();
+
+    await db.insert(eventRegistrationFormVersionTable).values({
+      createdAt: now,
+      definition: body?.definition ?? {
+        fields: [{ label: "Team name", name: "team_name", required: true, type: "text" }],
+      },
+      eventId,
+      id: formId,
+      isPublished: true,
+      publishedAt: now,
+      updatedAt: now,
+      versionNumber: 1,
+    });
+
+    return c.json({ eventId, formId, versionNumber: 1 }, 200);
   });
 
   app.post("/api/test/data/reset-database", async (c) => {

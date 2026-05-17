@@ -290,6 +290,34 @@ describe("registration integration", () => {
     await db.delete(eventTable).where(eq(eventTable.id, noFormEventId));
   });
 
+  it("returns gone when creating registration for a deleted event", async () => {
+    const deletedEventId = crypto.randomUUID();
+
+    await db.insert(eventTable).values({
+      createdAt: new Date(),
+      deletedAt: new Date(),
+      eventCode: "DELEDEV",
+      eventEndsAt: new Date("2096-10-12"),
+      eventKey: `${SEASON}/DELEDEV`,
+      eventStartsAt: new Date("2096-10-10"),
+      id: deletedEventId,
+      name: "Deleted Event",
+      season: SEASON,
+      status: "registration_open",
+      updatedAt: new Date(),
+    });
+
+    await expect(
+      createRegistration(MENTOR_ID, {
+        eventId: deletedEventId,
+        payload: { teamName: "Fail" },
+        teamId: TEAM_ID,
+      }),
+    ).rejects.toMatchObject({ code: "GONE" });
+
+    await db.delete(eventTable).where(eq(eventTable.id, deletedEventId));
+  });
+
   // ── Submit Registration ─────────────────────────────────────────
 
   it("submits a draft registration", async () => {
@@ -338,6 +366,7 @@ describe("registration integration", () => {
     });
 
     const updated = await updateRegistrationRevision(MENTOR_ID, {
+      expectedRevisionNumber: draft.currentRevisionNumber,
       payload: { motivation: "Updated motivation", teamName: "Rev2" },
       registrationId: draft.id,
     });
@@ -346,6 +375,34 @@ describe("registration integration", () => {
 
     const detail = await getRegistrationDetail(MENTOR_ID, draft.id);
     expect(detail.revisions).toHaveLength(2);
+  });
+
+  it("returns gone when updating a registration after event deletion", async () => {
+    const draft = await createRegistration(MENTOR_ID, {
+      eventId: EVENT_ID,
+      payload: { teamName: "Deleted Event Revision" },
+      teamId: TEAM_ID,
+    });
+
+    await db
+      .update(eventTable)
+      .set({ deletedAt: new Date(), updatedAt: new Date() })
+      .where(eq(eventTable.id, EVENT_ID));
+
+    try {
+      await expect(
+        updateRegistrationRevision(MENTOR_ID, {
+          expectedRevisionNumber: draft.currentRevisionNumber,
+          payload: { teamName: "Should Fail" },
+          registrationId: draft.id,
+        }),
+      ).rejects.toMatchObject({ code: "GONE" });
+    } finally {
+      await db
+        .update(eventTable)
+        .set({ deletedAt: null, updatedAt: new Date() })
+        .where(eq(eventTable.id, EVENT_ID));
+    }
   });
 
   it("adds revision after request_changes", async () => {
@@ -366,6 +423,7 @@ describe("registration integration", () => {
 
     // Team updates
     const updated = await updateRegistrationRevision(MENTOR_ID, {
+      expectedRevisionNumber: draft.currentRevisionNumber,
       payload: { motivation: "Added detail!", teamName: "Review Me Updated" },
       registrationId: draft.id,
     });
@@ -523,6 +581,7 @@ describe("registration integration", () => {
 
     // 4. Team updates revision
     const updated = await updateRegistrationRevision(MENTOR_ID, {
+      expectedRevisionNumber: draft.currentRevisionNumber,
       payload: { motivation: "Detailed motivation here!", teamName: "Full Lifecycle V2" },
       registrationId: draft.id,
     });

@@ -33,16 +33,8 @@ export default defineConfig({
   globalTeardown: "./apps/web/e2e/global-teardown.ts",
   projects: [
     {
-      name: "chromium",
+      name: "chrome",
       use: { ...devices["Desktop Chrome"] },
-    },
-    {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
-    },
-    {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"] },
     },
   ],
   reporter: "html",

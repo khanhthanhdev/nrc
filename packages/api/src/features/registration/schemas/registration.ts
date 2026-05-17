@@ -1,7 +1,11 @@
 import * as v from "valibot";
 
+import { sanitizePayload } from "../../../shared/sanitize.js";
+
 const trimmedString = (maxLength: number) =>
   v.pipe(v.string(), v.trim(), v.minLength(1), v.maxLength(maxLength));
+
+const MAX_PAYLOAD_SIZE = 100_000; // 100KB limit
 
 const jsonObjectSchema = v.pipe(
   v.unknown(),
@@ -9,7 +13,11 @@ const jsonObjectSchema = v.pipe(
     (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value),
     "Payload must be a JSON object.",
   ),
-  v.transform((value) => value as Record<string, unknown>),
+  v.check(
+    (value) => JSON.stringify(value).length <= MAX_PAYLOAD_SIZE,
+    "Payload exceeds maximum size of 100KB.",
+  ),
+  v.transform((value) => sanitizePayload(value as Record<string, unknown>)),
 );
 
 // ── Public / Team-mentor registration schemas ──────────────────────────
@@ -33,6 +41,7 @@ export const submitRegistrationInputSchema = v.object({
 });
 
 export const updateRegistrationRevisionInputSchema = v.object({
+  expectedRevisionNumber: v.pipe(v.number(), v.integer(), v.minValue(0)),
   payload: jsonObjectSchema,
   registrationId: trimmedString(128),
 });

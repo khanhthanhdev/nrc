@@ -41,7 +41,7 @@ export const authRateLimiter = rateLimiter({
     code: "RATE_LIMITED",
     message: "Too many auth requests. Please try again later.",
   },
-  skip: (c) => c.req.method === "OPTIONS",
+  skip: (c) => process.env.ENABLE_E2E_TEST_HELPERS === "1" || c.req.method === "OPTIONS",
   standardHeaders: "draft-6",
   windowMs: authRateLimitWindowMs,
 });

@@ -9,7 +9,9 @@ import {
   teamMembership,
 } from "@nrc-full/db";
 import { ORPCError } from "@orpc/server";
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, ne } from "drizzle-orm";
+
+import { logSecurityEvent } from "../../../shared/security-logger.js";
 
 import type {
   AddRegistrationCommentInput,
@@ -37,6 +39,68 @@ const firstOrThrow = <T>(rows: T[], message = "Unexpected empty result."): T => 
   }
 
   return row;
+};
+
+const isUniqueConstraintError = (error: unknown, constraintName: string): boolean =>
+  Boolean(
+    error &&
+      typeof error === "object" &&
+      (("code" in error && error.code === "23505") ||
+        ("constraint" in error && error.constraint === constraintName)),
+  );
+
+const requireAcceptingRegistrationEvent = async (
+  eventId: string,
+  query: Pick<typeof db, "select"> = db,
+): Promise<void> => {
+  const now = new Date();
+  const [event] = await query
+    .select({
+      deletedAt: eventTable.deletedAt,
+      eventStartsAt: eventTable.eventStartsAt,
+      id: eventTable.id,
+      registrationEndsAt: eventTable.registrationEndsAt,
+      registrationStartsAt: eventTable.registrationStartsAt,
+      status: eventTable.status,
+    })
+    .from(eventTable)
+    .where(eq(eventTable.id, eventId))
+    .for("update")
+    .limit(1);
+
+  if (!event) {
+    throw new ORPCError("NOT_FOUND", { message: "Event not found." });
+  }
+
+  if (event.deletedAt) {
+    throw new ORPCError("GONE", {
+      message: "Event has been deleted.",
+    });
+  }
+
+  if (event.status !== "registration_open") {
+    throw new ORPCError("BAD_REQUEST", {
+      message: "Registration is not open for this event.",
+    });
+  }
+
+  if (event.registrationStartsAt && now < event.registrationStartsAt) {
+    throw new ORPCError("BAD_REQUEST", {
+      message: "Registration has not started for this event.",
+    });
+  }
+
+  if (event.registrationEndsAt && now > event.registrationEndsAt) {
+    throw new ORPCError("BAD_REQUEST", {
+      message: "Registration has closed for this event.",
+    });
+  }
+
+  if (now > event.eventStartsAt) {
+    throw new ORPCError("BAD_REQUEST", {
+      message: "Registration cannot be submitted after the event has started.",
+    });
+  }
 };
 
 // ── Response shapes ────────────────────────────────────────────────────
@@ -117,7 +181,35 @@ const mapReviewAction = (r: ReviewActionRecord): ReviewActionItem => ({
   previousStatus: r.previousStatus,
 });
 
+const verifyTeamOwnership = async (userId: string, teamId: string): Promise<void> => {
+  const [membership] = await db
+    .select({ role: teamMembership.role })
+    .from(teamMembership)
+    .where(
+      and(
+        eq(teamMembership.userId, userId),
+        eq(teamMembership.teamId, teamId),
+        eq(teamMembership.isActive, true),
+        isNull(teamMembership.deletedAt),
+      ),
+    )
+    .limit(1);
+
+  if (!membership) {
+    logSecurityEvent("CROSS_TEAM_ACCESS_ATTEMPT", {
+      userId,
+      teamId,
+      reason: "User attempted to access team without membership",
+    });
+    throw new ORPCError("FORBIDDEN", {
+      message: "You are not a member of this team.",
+    });
+  }
+};
+
 const requireTeamMentorOrLeader = async (userId: string, teamId: string): Promise<void> => {
+  await verifyTeamOwnership(userId, teamId);
+
   const [membership] = await db
     .select({ role: teamMembership.role })
     .from(teamMembership)
@@ -139,6 +231,8 @@ const requireTeamMentorOrLeader = async (userId: string, teamId: string): Promis
 };
 
 const requireTeamMentor = async (userId: string, teamId: string): Promise<void> => {
+  await verifyTeamOwnership(userId, teamId);
+
   const [membership] = await db
     .select({ role: teamMembership.role })
     .from(teamMembership)
@@ -167,25 +261,7 @@ export const createRegistration = async (
 ): Promise<RegistrationDetail> => {
   await requireTeamMentor(userId, input.teamId);
 
-  const [event] = await db
-    .select({
-      id: eventTable.id,
-      status: eventTable.status,
-    })
-    .from(eventTable)
-    .where(and(eq(eventTable.id, input.eventId), isNull(eventTable.deletedAt)))
-    .limit(1);
-
-  if (!event) {
-    throw new ORPCError("NOT_FOUND", { message: "Event not found." });
-  }
-
-  if (event.status !== "registration_open") {
-    throw new ORPCError("BAD_REQUEST", {
-      message: "Registration is not open for this event.",
-    });
-  }
-
+  // Check for existing registration BEFORE transaction
   const [existingReg] = await db
     .select({ id: registrationTable.id })
     .from(registrationTable)
@@ -193,6 +269,7 @@ export const createRegistration = async (
       and(
         eq(registrationTable.eventId, input.eventId),
         eq(registrationTable.teamId, input.teamId),
+        ne(registrationTable.status, "withdrawn"),
         isNull(registrationTable.deletedAt),
       ),
     )
@@ -204,44 +281,61 @@ export const createRegistration = async (
     });
   }
 
-  const [publishedForm] = await db
-    .select({ id: eventRegistrationFormVersionTable.id })
-    .from(eventRegistrationFormVersionTable)
-    .where(
-      and(
-        eq(eventRegistrationFormVersionTable.eventId, input.eventId),
-        eq(eventRegistrationFormVersionTable.isPublished, true),
-        isNull(eventRegistrationFormVersionTable.deletedAt),
-      ),
-    )
-    .limit(1);
-
-  if (!publishedForm) {
-    throw new ORPCError("BAD_REQUEST", {
-      message: "No published registration form found for this event.",
-    });
-  }
-
   const now = new Date();
   const registrationId = crypto.randomUUID();
   const revisionId = crypto.randomUUID();
 
   return db.transaction(async (tx) => {
-    const registrationRows = await tx
-      .insert(registrationTable)
-      .values({
-        createdAt: now,
-        createdByUserId: userId,
-        currentRevisionNumber: 1,
-        eventId: input.eventId,
-        formVersionId: publishedForm.id,
-        id: registrationId,
-        status: "draft",
-        teamId: input.teamId,
-        updatedAt: now,
-      })
-      .returning();
+    await requireAcceptingRegistrationEvent(input.eventId, tx);
 
+    // Get published form version
+    const [publishedForm] = await tx
+      .select({ id: eventRegistrationFormVersionTable.id })
+      .from(eventRegistrationFormVersionTable)
+      .where(
+        and(
+          eq(eventRegistrationFormVersionTable.eventId, input.eventId),
+          eq(eventRegistrationFormVersionTable.isPublished, true),
+          isNull(eventRegistrationFormVersionTable.deletedAt),
+        ),
+      )
+      .limit(1);
+
+    if (!publishedForm) {
+      throw new ORPCError("BAD_REQUEST", {
+        message: "No published registration form found for this event.",
+      });
+    }
+
+    // Create registration
+    let registrationRows: RegistrationRecord[];
+
+    try {
+      registrationRows = await tx
+        .insert(registrationTable)
+        .values({
+          createdAt: now,
+          createdByUserId: userId,
+          currentRevisionNumber: 1,
+          eventId: input.eventId,
+          formVersionId: publishedForm.id,
+          id: registrationId,
+          status: "draft",
+          teamId: input.teamId,
+          updatedAt: now,
+        })
+        .returning();
+    } catch (error) {
+      if (isUniqueConstraintError(error, "registration_event_team_unique")) {
+        throw new ORPCError("CONFLICT", {
+          message: "This team is already registered for this event.",
+        });
+      }
+
+      throw error;
+    }
+
+    // Create initial revision
     await tx.insert(registrationRevisionTable).values({
       createdAt: now,
       id: revisionId,
@@ -340,6 +434,8 @@ export const submitRegistration = async (
   const now = new Date();
 
   return db.transaction(async (tx) => {
+    await requireAcceptingRegistrationEvent(registration.eventId, tx);
+
     const updatedRows = await tx
       .update(registrationTable)
       .set({
@@ -389,9 +485,40 @@ export const updateRegistrationRevision = async (
   }
 
   const now = new Date();
-  const nextRevisionNumber = registration.currentRevisionNumber + 1;
 
   return db.transaction(async (tx) => {
+    await requireAcceptingRegistrationEvent(registration.eventId, tx);
+
+    const [lockedRegistration] = await tx
+      .select()
+      .from(registrationTable)
+      .where(
+        and(eq(registrationTable.id, input.registrationId), isNull(registrationTable.deletedAt)),
+      )
+      .for("update")
+      .limit(1);
+
+    if (!lockedRegistration) {
+      throw new ORPCError("NOT_FOUND", { message: "Registration not found." });
+    }
+
+    if (
+      lockedRegistration.status !== "draft" &&
+      lockedRegistration.status !== "needs_revision"
+    ) {
+      throw new ORPCError("BAD_REQUEST", {
+        message: "Registration can only be updated when in draft or needs_revision status.",
+      });
+    }
+
+    if (input.expectedRevisionNumber !== lockedRegistration.currentRevisionNumber) {
+      throw new ORPCError("CONFLICT", {
+        message: "Registration has changed. Reload before saving.",
+      });
+    }
+
+    const nextRevisionNumber = lockedRegistration.currentRevisionNumber + 1;
+
     await tx.insert(registrationRevisionTable).values({
       createdAt: now,
       id: crypto.randomUUID(),

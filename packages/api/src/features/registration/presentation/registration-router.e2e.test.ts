@@ -193,6 +193,7 @@ describe("registrationRouter e2e", () => {
   it("rejects unauthenticated updateRegistrationRevision", async () => {
     const client = createClient(null);
     await expect(client.registration.updateRegistrationRevision({
+      expectedRevisionNumber: 1,
       payload: { key: "value" },
       registrationId: "reg-1",
     })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
@@ -308,11 +309,13 @@ describe("registrationRouter e2e", () => {
 
     const client = createClient(TEST_SESSION);
     const result = await client.registration.updateRegistrationRevision({
+      expectedRevisionNumber: 1,
       payload: { teamSize: 6 },
       registrationId: "reg-1",
     });
 
     expect(updateRegistrationRevisionMock).toHaveBeenCalledWith("user-1", {
+      expectedRevisionNumber: 1,
       payload: { teamSize: 6 },
       registrationId: "reg-1",
     });
@@ -538,11 +541,13 @@ describe("registrationRouter e2e", () => {
 
     // Step 2: Update revision
     const updated = await client.registration.updateRegistrationRevision({
+      expectedRevisionNumber: 1,
       payload: { teamSize: 6, members: ["Alice", "Bob", "Charlie"] },
       registrationId: "reg-1",
     });
     expect(updated.currentRevisionNumber).toBe(2);
     expect(updateRegistrationRevisionMock).toHaveBeenCalledWith("user-1", {
+      expectedRevisionNumber: 1,
       payload: { teamSize: 6, members: ["Alice", "Bob", "Charlie"] },
       registrationId: "reg-1",
     });
@@ -655,6 +660,7 @@ describe("registrationRouter e2e", () => {
 
     // Team updates revision
     const updated = await client.registration.updateRegistrationRevision({
+      expectedRevisionNumber: 1,
       payload: { teamSize: 6, members: ["Alice", "Bob", "Charlie"], details: "Detailed bios" },
       registrationId: "reg-1",
     });
