@@ -394,4 +394,120 @@ describe("seasonRouter e2e", () => {
     ).rejects.toMatchObject({ code: "BAD_REQUEST" });
     expect(createSeasonForAdminMock).not.toHaveBeenCalled();
   });
+
+  it("forwards updateSeason to application layer", async () => {
+    const updatedSeason = {
+      ...ADMIN_DETAIL,
+      season: { ...ADMIN_DETAIL.season, theme: "Updated Theme" },
+    };
+    updateSeasonForAdminMock.mockResolvedValue(updatedSeason);
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.season.updateSeason({
+      gameCode: "ITD-2026",
+      isActive: true,
+      theme: "Updated Theme",
+      year: "2026",
+    });
+
+    expect(updateSeasonForAdminMock).toHaveBeenCalledWith(
+      expect.objectContaining({ year: "2026", theme: "Updated Theme" }),
+    );
+    expect(result).toEqual(updatedSeason);
+  });
+
+  it("forwards updateSeasonDocument to application layer", async () => {
+    const updatedDoc = { ...ADMIN_DOCUMENT, title: "Updated Manual" };
+    updateSeasonDocumentForAdminMock.mockResolvedValue(updatedDoc);
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.season.updateSeasonDocument({
+      id: "document-1",
+      kind: "pdf",
+      seasonYear: "2026",
+      sortOrder: 1,
+      title: "Updated Manual",
+      url: "https://example.com/manual.pdf",
+    });
+
+    expect(updateSeasonDocumentForAdminMock).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "document-1", title: "Updated Manual" }),
+    );
+    expect(result).toEqual(updatedDoc);
+  });
+
+  it("forwards deleteSeasonDocument to application layer", async () => {
+    deleteSeasonDocumentForAdminMock.mockResolvedValue({ success: true });
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.season.deleteSeasonDocument({ id: "document-1", seasonYear: "2026" });
+
+    expect(deleteSeasonDocumentForAdminMock).toHaveBeenCalledWith("user-admin", {
+      id: "document-1",
+      seasonYear: "2026",
+    });
+    expect(result).toEqual({ success: true });
+  });
+
+  it("forwards updateSeasonAnnouncement to application layer", async () => {
+    const updatedAnnouncement = { ...ADMIN_ANNOUNCEMENT, body: "Updated body." };
+    updateSeasonAnnouncementForAdminMock.mockResolvedValue(updatedAnnouncement);
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.season.updateSeasonAnnouncement({
+      body: "Updated body.",
+      id: "announcement-1",
+      isPinned: true,
+      publishedAt: "2026-09-01T00:00:00.000Z",
+      seasonYear: "2026",
+      sortOrder: 0,
+      title: "Registration Open",
+    });
+
+    expect(updateSeasonAnnouncementForAdminMock).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "announcement-1", body: "Updated body." }),
+    );
+    expect(result).toEqual(updatedAnnouncement);
+  });
+
+  it("forwards deleteSeasonAnnouncement to application layer", async () => {
+    deleteSeasonAnnouncementForAdminMock.mockResolvedValue({ success: true });
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.season.deleteSeasonAnnouncement({ id: "announcement-1", seasonYear: "2026" });
+
+    expect(deleteSeasonAnnouncementForAdminMock).toHaveBeenCalledWith("user-admin", {
+      id: "announcement-1",
+      seasonYear: "2026",
+    });
+    expect(result).toEqual({ success: true });
+  });
+
+  it("rejects unauthenticated updateSeason", async () => {
+    const client = createClient(null);
+
+    await expect(
+      client.season.updateSeason({
+        gameCode: "ITD-2026",
+        isActive: true,
+        theme: "Into the Deep",
+        year: "2026",
+      }),
+    ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    expect(updateSeasonForAdminMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects manager access to updateSeason", async () => {
+    const client = createClient(MANAGER_SESSION);
+
+    await expect(
+      client.season.updateSeason({
+        gameCode: "ITD-2026",
+        isActive: true,
+        theme: "Into the Deep",
+        year: "2026",
+      }),
+    ).rejects.toMatchObject({ code: "FORBIDDEN" });
+    expect(updateSeasonForAdminMock).not.toHaveBeenCalled();
+  });
 });

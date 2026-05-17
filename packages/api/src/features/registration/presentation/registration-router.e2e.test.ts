@@ -509,4 +509,292 @@ describe("registrationRouter e2e", () => {
     })).rejects.toMatchObject({ code: "BAD_REQUEST" });
     expect(reviewRegistrationMock).not.toHaveBeenCalled();
   });
+
+  // ── Full team registration lifecycle ───────────────────────────────
+
+  it("handles full registration lifecycle: create → update → submit", async () => {
+    const draftReg = { ...REGISTRATION_DETAIL, status: "draft" as const };
+    const updatedReg = { ...REGISTRATION_DETAIL, status: "draft" as const, currentRevisionNumber: 2 };
+    const submittedReg = { ...REGISTRATION_DETAIL, status: "submitted" as const, submittedAt: "2026-01-15T00:00:00.000Z" };
+
+    createRegistrationMock.mockResolvedValue(draftReg);
+    updateRegistrationRevisionMock.mockResolvedValue(updatedReg);
+    submitRegistrationMock.mockResolvedValue(submittedReg);
+
+    const client = createClient(TEST_SESSION);
+
+    // Step 1: Create registration
+    const created = await client.registration.createRegistration({
+      eventId: "event-1",
+      payload: { teamSize: 5, members: ["Alice", "Bob"] },
+      teamId: "team-1",
+    });
+    expect(created.status).toBe("draft");
+    expect(createRegistrationMock).toHaveBeenCalledWith("user-1", {
+      eventId: "event-1",
+      payload: { teamSize: 5, members: ["Alice", "Bob"] },
+      teamId: "team-1",
+    });
+
+    // Step 2: Update revision
+    const updated = await client.registration.updateRegistrationRevision({
+      payload: { teamSize: 6, members: ["Alice", "Bob", "Charlie"] },
+      registrationId: "reg-1",
+    });
+    expect(updated.currentRevisionNumber).toBe(2);
+    expect(updateRegistrationRevisionMock).toHaveBeenCalledWith("user-1", {
+      payload: { teamSize: 6, members: ["Alice", "Bob", "Charlie"] },
+      registrationId: "reg-1",
+    });
+
+    // Step 3: Submit for review
+    const submitted = await client.registration.submitRegistration({
+      registrationId: "reg-1",
+    });
+    expect(submitted.status).toBe("submitted");
+    expect(submitted.submittedAt).toBeDefined();
+    expect(submitRegistrationMock).toHaveBeenCalledWith("user-1", "reg-1");
+  });
+
+  it("handles team registration withdrawal after submission", async () => {
+    const submittedReg = { ...REGISTRATION_DETAIL, status: "submitted" as const };
+    const withdrawnReg = { ...REGISTRATION_DETAIL, status: "withdrawn" as const, withdrawnAt: "2026-01-20T00:00:00.000Z" };
+
+    getRegistrationDetailMock.mockResolvedValue({
+      registration: submittedReg,
+      revisions: [{ id: "rev-1", revisionNumber: 1, payload: {}, submittedAt: "2026-01-15T00:00:00.000Z", createdAt: "2026-01-15T00:00:00.000Z" }],
+    });
+    withdrawRegistrationMock.mockResolvedValue(withdrawnReg);
+
+    const client = createClient(TEST_SESSION);
+
+    // Get registration details
+    const detail = await client.registration.getRegistration({ registrationId: "reg-1" });
+    expect(detail.registration.status).toBe("submitted");
+
+    // Withdraw registration
+    const withdrawn = await client.registration.withdrawRegistration({ registrationId: "reg-1" });
+    expect(withdrawn.status).toBe("withdrawn");
+    expect(withdrawn.withdrawnAt).toBeDefined();
+    expect(withdrawRegistrationMock).toHaveBeenCalledWith("user-1", { registrationId: "reg-1" });
+  });
+
+  // ── Admin registration review workflow ──────────────────────────────
+
+  it("handles admin review workflow: list → detail → approve", async () => {
+    const submittedReg = { ...REGISTRATION_DETAIL, status: "submitted" as const };
+    const approvedReg = { ...REGISTRATION_DETAIL, status: "approved" as const, approvedAt: "2026-01-20T00:00:00.000Z" };
+
+    listAdminRegistrationsByEventMock.mockResolvedValue([{
+      ...submittedReg,
+      teamName: "NRC Alpha",
+      teamNumber: "02323",
+    }]);
+    getAdminRegistrationDetailMock.mockResolvedValue({
+      registration: { ...submittedReg, teamName: "NRC Alpha", teamNumber: "02323" },
+      reviewActions: [],
+      revisions: [{ id: "rev-1", revisionNumber: 1, payload: {}, submittedAt: "2026-01-15T00:00:00.000Z", createdAt: "2026-01-15T00:00:00.000Z" }],
+    });
+    reviewRegistrationMock.mockResolvedValue(approvedReg);
+
+    const client = createClient(ADMIN_SESSION);
+
+    // Step 1: List registrations for event
+    const list = await client.registration.listAdminRegistrationsByEvent({
+      eventId: "event-1",
+      status: "submitted",
+    });
+    expect(list).toHaveLength(1);
+    expect(list?.[0]?.teamName).toBe("NRC Alpha");
+    expect(listAdminRegistrationsByEventMock).toHaveBeenCalledWith({ eventId: "event-1", status: "submitted" });
+
+    // Step 2: Get registration detail
+    const detail = await client.registration.getAdminRegistrationDetail({ registrationId: "reg-1" });
+    expect(detail.registration.teamName).toBe("NRC Alpha");
+    expect(detail.revisions).toHaveLength(1);
+    expect(getAdminRegistrationDetailMock).toHaveBeenCalledWith("reg-1");
+
+    // Step 3: Approve registration
+    const approved = await client.registration.reviewRegistration({
+      action: "approve",
+      comment: "Team meets all requirements",
+      registrationId: "reg-1",
+    });
+    expect(approved.status).toBe("approved");
+    expect(approved.approvedAt).toBeDefined();
+    expect(reviewRegistrationMock).toHaveBeenCalledWith("user-admin", {
+      action: "approve",
+      comment: "Team meets all requirements",
+      registrationId: "reg-1",
+    });
+  });
+
+  it("handles admin review workflow: request changes → team updates → resubmit", async () => {
+    const needsRevisionReg = { ...REGISTRATION_DETAIL, status: "needs_revision" as const };
+    const draftReg = { ...REGISTRATION_DETAIL, status: "draft" as const, currentRevisionNumber: 2 };
+    const resubmittedReg = { ...REGISTRATION_DETAIL, status: "submitted" as const, currentRevisionNumber: 2 };
+
+    reviewRegistrationMock.mockResolvedValue(needsRevisionReg);
+    updateRegistrationRevisionMock.mockResolvedValue(draftReg);
+    submitRegistrationMock.mockResolvedValue(resubmittedReg);
+
+    const client = createClient(ADMIN_SESSION);
+
+    // Admin requests changes
+    const needsRevision = await client.registration.reviewRegistration({
+      action: "request_changes",
+      comment: "Please add more details about team members",
+      registrationId: "reg-1",
+    });
+    expect(needsRevision.status).toBe("needs_revision");
+    expect(reviewRegistrationMock).toHaveBeenCalledWith("user-admin", {
+      action: "request_changes",
+      comment: "Please add more details about team members",
+      registrationId: "reg-1",
+    });
+
+    // Team updates revision
+    const updated = await client.registration.updateRegistrationRevision({
+      payload: { teamSize: 6, members: ["Alice", "Bob", "Charlie"], details: "Detailed bios" },
+      registrationId: "reg-1",
+    });
+    expect(updated.currentRevisionNumber).toBe(2);
+
+    // Team resubmits
+    const resubmitted = await client.registration.submitRegistration({ registrationId: "reg-1" });
+    expect(resubmitted.status).toBe("submitted");
+    expect(resubmitted.currentRevisionNumber).toBe(2);
+  });
+
+  it("handles admin deny workflow", async () => {
+    const deniedReg = { ...REGISTRATION_DETAIL, status: "denied" as const, deniedAt: "2026-01-20T00:00:00.000Z" };
+
+    reviewRegistrationMock.mockResolvedValue(deniedReg);
+
+    const client = createClient(ADMIN_SESSION);
+
+    const denied = await client.registration.reviewRegistration({
+      action: "deny",
+      comment: "Team does not meet eligibility requirements",
+      registrationId: "reg-1",
+    });
+    expect(denied.status).toBe("denied");
+    expect(denied.deniedAt).toBeDefined();
+    expect(reviewRegistrationMock).toHaveBeenCalledWith("user-admin", {
+      action: "deny",
+      comment: "Team does not meet eligibility requirements",
+      registrationId: "reg-1",
+    });
+  });
+
+  it("allows admin to add comments visible to team", async () => {
+    const commentAction = {
+      ...REVIEW_ACTION,
+      actionType: "comment_added" as const,
+      comment: "Please clarify your team size",
+      isVisibleToTeam: true,
+    };
+    addRegistrationCommentMock.mockResolvedValue(commentAction);
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.registration.addRegistrationComment({
+      comment: "Please clarify your team size",
+      isVisibleToTeam: true,
+      registrationId: "reg-1",
+    });
+
+    expect(result.comment).toBe("Please clarify your team size");
+    expect(result.isVisibleToTeam).toBe(true);
+    expect(addRegistrationCommentMock).toHaveBeenCalledWith("user-admin", {
+      comment: "Please clarify your team size",
+      isVisibleToTeam: true,
+      registrationId: "reg-1",
+    });
+  });
+
+  it("allows admin to add internal comments not visible to team", async () => {
+    const internalComment = {
+      ...REVIEW_ACTION,
+      actionType: "comment_added" as const,
+      comment: "Internal note: check with legal",
+      isVisibleToTeam: false,
+    };
+    addRegistrationCommentMock.mockResolvedValue(internalComment);
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.registration.addRegistrationComment({
+      comment: "Internal note: check with legal",
+      isVisibleToTeam: false,
+      registrationId: "reg-1",
+    });
+
+    expect(result.isVisibleToTeam).toBe(false);
+    expect(addRegistrationCommentMock).toHaveBeenCalledWith("user-admin", {
+      comment: "Internal note: check with legal",
+      isVisibleToTeam: false,
+      registrationId: "reg-1",
+    });
+  });
+
+  it("allows manager to review registrations", async () => {
+    reviewRegistrationMock.mockResolvedValue({ ...REGISTRATION_DETAIL, status: "approved" });
+
+    const client = createClient(MANAGER_SESSION);
+    const result = await client.registration.reviewRegistration({
+      action: "approve",
+      registrationId: "reg-1",
+    });
+
+    expect(result.status).toBe("approved");
+    expect(reviewRegistrationMock).toHaveBeenCalledWith("user-manager", {
+      action: "approve",
+      registrationId: "reg-1",
+    });
+  });
+
+  it("allows manager to add comments", async () => {
+    addRegistrationCommentMock.mockResolvedValue(REVIEW_ACTION);
+
+    const client = createClient(MANAGER_SESSION);
+    await client.registration.addRegistrationComment({
+      comment: "Test",
+      registrationId: "reg-1",
+    });
+
+    expect(addRegistrationCommentMock).toHaveBeenCalledWith("user-manager", {
+      comment: "Test",
+      isVisibleToTeam: true,
+      registrationId: "reg-1",
+    });
+  });
+
+  it("forwards listRegistrationReviewActions to show audit trail", async () => {
+    const reviewActions = [
+      { ...REVIEW_ACTION, actionType: "submitted" as const, nextStatus: "submitted" as const, previousStatus: "draft" as const },
+      { ...REVIEW_ACTION, id: "action-2", actionType: "approved" as const, nextStatus: "approved" as const, previousStatus: "submitted" as const },
+    ];
+    listRegistrationReviewActionsMock.mockResolvedValue(reviewActions);
+
+    const client = createClient(TEST_SESSION);
+    const result = await client.registration.listRegistrationReviewActions({
+      registrationId: "reg-1",
+    });
+
+    expect(result).toHaveLength(2);
+    expect(result?.[0]?.actionType).toBe("submitted");
+    expect(result?.[1]?.actionType).toBe("approved");
+    expect(listRegistrationReviewActionsMock).toHaveBeenCalledWith("user-1", { registrationId: "reg-1" });
+  });
+
+  it("surfaces errors when team tries to review their own registration", async () => {
+    reviewRegistrationMock.mockRejectedValue(
+      new ORPCError("FORBIDDEN", { message: "Cannot review your own registration." }),
+    );
+
+    const client = createClient(TEST_SESSION);
+    await expect(client.registration.reviewRegistration({
+      action: "approve",
+      registrationId: "reg-1",
+    })).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
 });

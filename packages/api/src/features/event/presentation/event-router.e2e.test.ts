@@ -29,29 +29,36 @@ const publishRegistrationFormVersionForAdminMock = vi.fn();
 const getPublicMatchDetailMock = vi.fn();
 const listPublicMatchesMock = vi.fn();
 const listPublicRankingsMock = vi.fn();
+const listPublicAwardsMock = vi.fn();
+const updateEventDocumentForAdminMock = vi.fn();
+const updateEventAnnouncementForAdminMock = vi.fn();
+const deleteEventDocumentForAdminMock = vi.fn();
+const deleteEventAnnouncementForAdminMock = vi.fn();
+const updateRegistrationFormVersionForAdminMock = vi.fn();
+const deleteRegistrationFormVersionForAdminMock = vi.fn();
 
 vi.mock("../application/event.js", () => ({
   createEventAnnouncementForAdmin: createEventAnnouncementForAdminMock,
   createEventDocumentForAdmin: createEventDocumentForAdminMock,
   createEventForAdmin: createEventForAdminMock,
   createRegistrationFormVersionForAdmin: createRegistrationFormVersionForAdminMock,
-  deleteEventAnnouncementForAdmin: vi.fn(),
-  deleteEventDocumentForAdmin: vi.fn(),
+  deleteEventAnnouncementForAdmin: deleteEventAnnouncementForAdminMock,
+  deleteEventDocumentForAdmin: deleteEventDocumentForAdminMock,
   deleteEventForAdmin: deleteEventForAdminMock,
-  deleteRegistrationFormVersionForAdmin: vi.fn(),
+  deleteRegistrationFormVersionForAdmin: deleteRegistrationFormVersionForAdminMock,
   getAdminEventById: getAdminEventByIdMock,
   getPublicEventBySeasonAndCode: getPublicEventBySeasonAndCodeMock,
   listAdminEvents: listAdminEventsMock,
   publishRegistrationFormVersionForAdmin: publishRegistrationFormVersionForAdminMock,
-  updateEventAnnouncementForAdmin: vi.fn(),
-  updateEventDocumentForAdmin: vi.fn(),
+  updateEventAnnouncementForAdmin: updateEventAnnouncementForAdminMock,
+  updateEventDocumentForAdmin: updateEventDocumentForAdminMock,
   updateEventForAdmin: updateEventForAdminMock,
-  updateRegistrationFormVersionForAdmin: vi.fn(),
+  updateRegistrationFormVersionForAdmin: updateRegistrationFormVersionForAdminMock,
 }));
 
 vi.mock("../application/public-event-data.js", () => ({
   getPublicMatchDetail: getPublicMatchDetailMock,
-  listPublicAwards: vi.fn(),
+  listPublicAwards: listPublicAwardsMock,
   listPublicMatches: listPublicMatchesMock,
   listPublicRankings: listPublicRankingsMock,
 }));
@@ -145,6 +152,16 @@ const ADMIN_DOCUMENT: AdminEventDocument = {
   url: "https://example.com/venue.pdf",
 };
 
+const ADMIN_ANNOUNCEMENT = {
+  body: "Registration is now open.",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  id: "announcement-1",
+  isPinned: true,
+  publishedAt: "2026-09-01T00:00:00.000Z",
+  title: "Registration Open",
+  updatedAt: "2026-09-01T00:00:00.000Z",
+};
+
 const FORM_VERSION: AdminRegistrationFormVersion = {
   createdAt: "2026-01-01T00:00:00.000Z",
   definition: { fields: [] },
@@ -232,6 +249,13 @@ describe("eventRouter e2e", () => {
     getPublicMatchDetailMock.mockReset();
     listPublicMatchesMock.mockReset();
     listPublicRankingsMock.mockReset();
+    listPublicAwardsMock.mockReset();
+    updateEventDocumentForAdminMock.mockReset();
+    updateEventAnnouncementForAdminMock.mockReset();
+    deleteEventDocumentForAdminMock.mockReset();
+    deleteEventAnnouncementForAdminMock.mockReset();
+    updateRegistrationFormVersionForAdminMock.mockReset();
+    deleteRegistrationFormVersionForAdminMock.mockReset();
   });
 
   it("allows public event reads by season and event code", async () => {
@@ -449,5 +473,219 @@ describe("eventRouter e2e", () => {
       }),
     ).rejects.toMatchObject({ code: "BAD_REQUEST" });
     expect(createEventForAdminMock).not.toHaveBeenCalled();
+  });
+
+  it("allows public award reads", async () => {
+    const awards = [
+      {
+        awardKey: "winner",
+        awardName: "Tournament Winner",
+        eventCode: "VNCMP",
+        season: "2026",
+        teamNumber: "101",
+      },
+    ];
+    listPublicAwardsMock.mockResolvedValue(awards);
+
+    const client = createClient(null);
+    const result = await client.event.listPublicAwards({
+      eventCode: "VNCMP",
+      season: "2026",
+    });
+
+    expect(listPublicAwardsMock).toHaveBeenCalledWith("2026", "VNCMP");
+    expect(result).toEqual(awards);
+  });
+
+  it("forwards updateEvent to application layer", async () => {
+    updateEventForAdminMock.mockResolvedValue(ADMIN_DETAIL);
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.event.updateEvent({
+      eventCode: "VNCMP",
+      eventEndsAt: "2026-07-12T10:00:00.000Z",
+      eventStartsAt: "2026-07-10T10:00:00.000Z",
+      id: "event-1",
+      name: "Vietnam Championship Updated",
+      season: "2026",
+      status: "published",
+    });
+
+    expect(updateEventForAdminMock).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "event-1", name: "Vietnam Championship Updated" }),
+    );
+    expect(result).toEqual(ADMIN_DETAIL);
+  });
+
+  it("forwards updateEventDocument to application layer", async () => {
+    const updatedDoc = { ...ADMIN_DOCUMENT, title: "Updated Packet" };
+    updateEventDocumentForAdminMock.mockResolvedValue(updatedDoc);
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.event.updateEventDocument({
+      eventId: "event-1",
+      id: "document-1",
+      isPublic: true,
+      kind: "pdf",
+      sortOrder: 0,
+      title: "Updated Packet",
+      url: "https://example.com/venue.pdf",
+    });
+
+    expect(updateEventDocumentForAdminMock).toHaveBeenCalledWith(
+      expect.objectContaining({ eventId: "event-1", id: "document-1", title: "Updated Packet" }),
+    );
+    expect(result).toEqual(updatedDoc);
+  });
+
+  it("forwards deleteEventDocument to application layer", async () => {
+    deleteEventDocumentForAdminMock.mockResolvedValue({ success: true });
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.event.deleteEventDocument({ eventId: "event-1", id: "document-1" });
+
+    expect(deleteEventDocumentForAdminMock).toHaveBeenCalledWith("user-admin", { eventId: "event-1", id: "document-1" });
+    expect(result).toEqual({ success: true });
+  });
+
+  it("forwards updateEventAnnouncement to application layer", async () => {
+    const updatedAnnouncement = {
+      ...ADMIN_ANNOUNCEMENT,
+      body: "Updated body.",
+    };
+    updateEventAnnouncementForAdminMock.mockResolvedValue(updatedAnnouncement);
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.event.updateEventAnnouncement({
+      body: "Updated body.",
+      eventId: "event-1",
+      id: "announcement-1",
+      isPinned: true,
+      publishedAt: "2026-09-01T00:00:00.000Z",
+      title: "Registration Open",
+    });
+
+    expect(updateEventAnnouncementForAdminMock).toHaveBeenCalledWith(
+      expect.objectContaining({ eventId: "event-1", id: "announcement-1", body: "Updated body." }),
+    );
+    expect(result).toEqual(updatedAnnouncement);
+  });
+
+  it("forwards deleteEventAnnouncement to application layer", async () => {
+    deleteEventAnnouncementForAdminMock.mockResolvedValue({ success: true });
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.event.deleteEventAnnouncement({ eventId: "event-1", id: "announcement-1" });
+
+    expect(deleteEventAnnouncementForAdminMock).toHaveBeenCalledWith("user-admin", {
+      eventId: "event-1",
+      id: "announcement-1",
+    });
+    expect(result).toEqual({ success: true });
+  });
+
+  it("forwards updateRegistrationFormVersion to application layer", async () => {
+    const updatedForm = { ...FORM_VERSION, isPublished: false };
+    updateRegistrationFormVersionForAdminMock.mockResolvedValue(updatedForm);
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.event.updateRegistrationFormVersion({
+      definition: { fields: [{ label: "Team Size", type: "number" }] },
+      eventId: "event-1",
+      id: "form-1",
+    });
+
+    expect(updateRegistrationFormVersionForAdminMock).toHaveBeenCalledWith(
+      expect.objectContaining({ eventId: "event-1", id: "form-1" }),
+    );
+    expect(result).toEqual(updatedForm);
+  });
+
+  it("forwards deleteRegistrationFormVersion to application layer", async () => {
+    deleteRegistrationFormVersionForAdminMock.mockResolvedValue({ success: true });
+
+    const client = createClient(ADMIN_SESSION);
+    const result = await client.event.deleteRegistrationFormVersion({ eventId: "event-1", id: "form-1" });
+
+    expect(deleteRegistrationFormVersionForAdminMock).toHaveBeenCalledWith("user-admin", {
+      eventId: "event-1",
+      id: "form-1",
+    });
+    expect(result).toEqual({ success: true });
+  });
+
+  it("forwards listPublicAwards for unauthenticated users", async () => {
+    const awards = [
+      {
+        awardKey: "winner",
+        awardName: "Tournament Winner",
+        eventCode: "VNCMP",
+        season: "2026",
+        teamNumber: "101",
+      },
+    ];
+    listPublicAwardsMock.mockResolvedValue(awards);
+
+    const client = createClient(null);
+    const result = await client.event.listPublicAwards({ eventCode: "VNCMP", season: "2026" });
+
+    expect(listPublicAwardsMock).toHaveBeenCalledWith("2026", "VNCMP");
+    expect(result).toEqual(awards);
+  });
+
+  it("forwards listPublicMatches without phase filter", async () => {
+    listPublicMatchesMock.mockResolvedValue([PUBLIC_MATCH]);
+
+    const client = createClient(null);
+    const result = await client.event.listPublicMatches({
+      eventCode: "VNCMP",
+      season: "2026",
+    });
+
+    expect(listPublicMatchesMock).toHaveBeenCalledWith("2026", "VNCMP", undefined);
+    expect(result).toEqual([PUBLIC_MATCH]);
+  });
+
+  it("surfaces application errors from updateEvent", async () => {
+    updateEventForAdminMock.mockRejectedValue(
+      new ORPCError("NOT_FOUND", {
+        message: "Event not found.",
+      }),
+    );
+
+    const client = createClient(ADMIN_SESSION);
+
+    await expect(
+      client.event.updateEvent({
+        eventCode: "VNCMP",
+        eventEndsAt: "2026-07-12T10:00:00.000Z",
+        eventStartsAt: "2026-07-10T10:00:00.000Z",
+        id: "nonexistent",
+        name: "Vietnam Championship",
+        season: "2026",
+        status: "published",
+      }),
+    ).rejects.toMatchObject({
+      code: "NOT_FOUND",
+      message: "Event not found.",
+    });
+  });
+
+  it("rejects unauthenticated updateEvent", async () => {
+    const client = createClient(null);
+
+    await expect(
+      client.event.updateEvent({
+        eventCode: "VNCMP",
+        eventEndsAt: "2026-07-12T10:00:00.000Z",
+        eventStartsAt: "2026-07-10T10:00:00.000Z",
+        id: "event-1",
+        name: "Vietnam Championship",
+        season: "2026",
+        status: "published",
+      }),
+    ).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
   });
 });
