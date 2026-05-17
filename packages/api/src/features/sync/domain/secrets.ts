@@ -30,10 +30,19 @@ const base64ToBytes = (value: string): Uint8Array<ArrayBuffer> => {
   return bytes;
 };
 
+/**
+ * Derives an encryption key from BETTER_AUTH_SECRET.
+ *
+ * ⚠️ IMPORTANT: If BETTER_AUTH_SECRET is rotated, all encrypted sync secrets
+ * become unreadable. Consider using a separate SYNC_ENCRYPTION_KEY env variable
+ * for independent key rotation lifecycle.
+ *
+ * @see https://github.com/nrc-full/docs/security.md#secret-rotation
+ */
 const getEncryptionKey = async (): Promise<CryptoKey> => {
-  const secret = process.env.BETTER_AUTH_SECRET;
+  const secret = process.env.SYNC_ENCRYPTION_KEY ?? process.env.BETTER_AUTH_SECRET;
   if (!secret) {
-    throw new Error("BETTER_AUTH_SECRET is required to encrypt sync client secrets.");
+    throw new Error("BETTER_AUTH_SECRET or SYNC_ENCRYPTION_KEY is required to encrypt sync client secrets.");
   }
 
   const digest = await crypto.subtle.digest(

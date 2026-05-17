@@ -68,6 +68,19 @@ const requireAdminSession = (
   return session;
 };
 
+/**
+ * Event router with public and admin endpoints.
+ *
+ * @public Endpoints (no auth required - data exposed to competition participants):
+ *   - getPublicEvent: Returns event details by season and code
+ *   - getPublicMatchDetail: Returns match details for public viewing
+ *   - listPublicAwards: Lists awards for an event
+ *   - listPublicMatches: Lists matches for an event
+ *   - listPublicRankings: Lists rankings for an event
+ *
+ * @admin Endpoints (require ADMIN systemRole):
+ *   - All other endpoints in this router
+ */
 export const eventRouter = {
   createEvent: publicProcedure.input(createEventInputSchema).handler(({ context, input }) => {
     requireAdminSession(context.session);
@@ -135,10 +148,18 @@ export const eventRouter = {
     return getAdminEventById(input.id);
   }),
 
+  /**
+   * @public - No authentication required. Returns event details for competition use.
+   * Exposes: event name, season, code, and associated metadata.
+   */
   getPublicEvent: publicProcedure
     .input(getPublicEventInputSchema)
     .handler(({ input }) => getPublicEventBySeasonAndCode(input.season, input.eventCode)),
 
+  /**
+   * @public - No authentication required. Returns match details for public viewing.
+   * Exposes: match scores, alliances, and performance data.
+   */
   getPublicMatchDetail: publicProcedure
     .input(getPublicMatchDetailInputSchema)
     .handler(({ input }) => getPublicMatchDetail(input.season, input.eventCode, input.matchKey)),
@@ -189,14 +210,26 @@ export const eventRouter = {
       return updateRegistrationFormVersionForAdmin(input);
     }),
 
+  /**
+   * @public - No authentication required. Lists awards for public display.
+   * Exposes: award names, recipients, and event associations.
+   */
   listPublicAwards: publicProcedure
     .input(listPublicAwardsInputSchema)
     .handler(({ input }) => listPublicAwards(input.season, input.eventCode)),
 
+  /**
+   * @public - No authentication required. Lists matches for public viewing.
+   * Exposes: match schedule, scores, and results.
+   */
   listPublicMatches: publicProcedure
     .input(listPublicMatchesInputSchema)
     .handler(({ input }) => listPublicMatches(input.season, input.eventCode, input.phase)),
 
+  /**
+   * @public - No authentication required. Lists rankings for public display.
+   * Exposes: team rankings, scores, and performance metrics.
+   */
   listPublicRankings: publicProcedure
     .input(listPublicRankingsInputSchema)
     .handler(({ input }) => listPublicRankings(input.season, input.eventCode)),

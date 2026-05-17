@@ -10,7 +10,23 @@ export const env = createEnv({
     APP_NAME: v.optional(v.pipe(v.string(), v.minLength(1)), "RMS"),
     BETTER_AUTH_SECRET: v.pipe(v.string(), v.minLength(1)),
     BETTER_AUTH_URL: v.pipe(v.string(), v.url()),
-    CORS_ORIGIN: v.pipe(v.string(), v.url()),
+    // Supports single URL or comma-separated list of URLs for multi-environment deployments
+    // Example: "https://app.example.com,https://staging.example.com"
+    CORS_ORIGIN: v.pipe(
+      v.string(),
+      v.check(
+        (value) =>
+          value.split(",").every((url) => {
+            try {
+              new URL(url.trim());
+              return true;
+            } catch {
+              return false;
+            }
+          }),
+        "CORS_ORIGIN must be a valid URL or comma-separated list of URLs",
+      ),
+    ),
     DATABASE_URL: v.pipe(v.string(), v.minLength(1)),
     GOOGLE_CLIENT_ID: v.pipe(v.string(), v.minLength(1)),
     GOOGLE_CLIENT_SECRET: v.pipe(v.string(), v.minLength(1)),

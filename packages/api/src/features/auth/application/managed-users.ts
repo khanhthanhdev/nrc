@@ -148,7 +148,13 @@ const buildManagedUsersConditions = ({
   const trimmedSearchValue = input.searchValue?.trim();
 
   if (trimmedSearchValue) {
-    const pattern = `%${trimmedSearchValue}%`;
+    // Escape ILIKE wildcards to prevent pattern injection
+    // % matches any sequence of characters, _ matches any single character
+    const escapedValue = trimmedSearchValue
+      .replaceAll("\\", "\\\\")  // Escape backslashes first
+      .replaceAll("%", "\\%")   // Escape percent signs
+      .replaceAll("_", "\\_");  // Escape underscores
+    const pattern = `%${escapedValue}%`;
     conditions.push(
       input.searchField === "name" ? ilike(user.name, pattern) : ilike(user.email, pattern),
     );

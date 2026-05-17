@@ -303,7 +303,9 @@ const authOptions: BetterAuthOptions = {
         organization: invitedOrganization,
         role,
       }) => {
-        const invitationUrl = `${env.CORS_ORIGIN}/auth/accept-invitation?invitationId=${encodeURIComponent(id)}`;
+        // Use the first (primary) origin for email links when multiple origins are configured
+        const primaryOrigin = env.CORS_ORIGIN.split(",")[0]?.trim() ?? env.CORS_ORIGIN;
+        const invitationUrl = `${primaryOrigin}/auth/accept-invitation?invitationId=${encodeURIComponent(id)}`;
         const organizationTeamNumber =
           typeof (invitedOrganization as Record<string, unknown>).teamNumber === "string"
             ? ((invitedOrganization as Record<string, unknown>).teamNumber as string)
@@ -329,7 +331,7 @@ const authOptions: BetterAuthOptions = {
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     },
   },
-  trustedOrigins: [env.CORS_ORIGIN, authOrigin],
+  trustedOrigins: [...env.CORS_ORIGIN.split(",").map((o) => o.trim()), authOrigin],
   user: {
     additionalFields: {
       systemRole: {

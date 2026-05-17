@@ -7,10 +7,22 @@ import { getDownloadUrl } from "../../adapters/storage/s3";
 import { getAuthSessionFromHeaders } from "../../auth/session";
 import { uploadHandler } from "./handler";
 
-const getInlineDownloadUrl = (key: string, fallbackFilename: string) =>
+const getDownloadFilename = (key: string, fallbackFilename: string) =>
+  (key.split("/").at(-1) ?? fallbackFilename)
+    // Strip control characters, quotes, backslashes, and newlines to prevent header injection
+    .replaceAll(/[\u0000-\u001f"\\]/g, "_")
+    .replaceAll(/[\r\n]/g, "_");
+
+const getImageDownloadUrl = (key: string, fallbackFilename: string) =>
   getDownloadUrl(key, {
     expiresIn: 300, // 5 minutes
-    responseContentDisposition: `inline; filename="${key.split("/").at(-1) ?? fallbackFilename}"`,
+    responseContentDisposition: `inline; filename="${getDownloadFilename(key, fallbackFilename)}"`,
+  });
+
+const getAttachmentDownloadUrl = (key: string, fallbackFilename: string) =>
+  getDownloadUrl(key, {
+    expiresIn: 300, // 5 minutes
+    responseContentDisposition: `attachment; filename="${getDownloadFilename(key, fallbackFilename)}"`,
   });
 
 const authorizeDownload = async (headers: Headers, key: string) => {
@@ -57,7 +69,7 @@ export const registerUploadRoute = (app: Hono<EvlogVariables>): void => {
     }
 
     try {
-      const url = await getInlineDownloadUrl(key, "image");
+      const url = await getImageDownloadUrl(key, "image");
 
       return c.redirect(url, 302);
     } catch (error) {
@@ -82,7 +94,7 @@ export const registerUploadRoute = (app: Hono<EvlogVariables>): void => {
     }
 
     try {
-      const url = await getInlineDownloadUrl(key, "document");
+      const url = await getAttachmentDownloadUrl(key, "document");
 
       return c.redirect(url, 302);
     } catch (error) {

@@ -93,12 +93,20 @@ export const createApp = (): Hono<EvlogVariables> => {
 
     await next();
   });
+  // CORS configuration: supports single origin or comma-separated list of origins
+  // For staging/preview deployments, set CORS_ORIGIN to include multiple origins:
+  // CORS_ORIGIN=https://app.example.com,https://staging.example.com
   app.use(
     "/*",
     cors({
       allowMethods: ["GET", "POST", "OPTIONS"],
       credentials: true,
-      origin: env.CORS_ORIGIN,
+      origin: (origin) => {
+        const allowedOrigins = env.CORS_ORIGIN.split(",").map((o) => o.trim());
+        // Allow requests with no origin (e.g., server-to-server, mobile apps)
+        if (!origin) return allowedOrigins[0];
+        return allowedOrigins.includes(origin) ? origin : "";
+      },
     }),
   );
 
