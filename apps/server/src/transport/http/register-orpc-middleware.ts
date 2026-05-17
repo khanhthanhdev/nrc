@@ -78,10 +78,12 @@ const csrfProtection = async (c: Context, next: Next) => {
     }
   }
 
-  const submittedToken = c.req.header(CSRF_HEADER_NAME);
+  if (origin || referer) {
+    const submittedToken = c.req.header(CSRF_HEADER_NAME);
 
-  if (!submittedToken || submittedToken !== csrfToken) {
-    return c.json({ error: "CSRF validation failed" }, 403);
+    if (!submittedToken || submittedToken !== csrfToken) {
+      return c.json({ error: "CSRF validation failed" }, 403);
+    }
   }
 
   await next();

@@ -21,6 +21,6 @@ export const registrationRateLimiter = rateLimiter({
     code: "RATE_LIMITED",
     message: "Too many registration attempts. Please try again later.",
   },
-  skip: (c: Context) => c.req.method === "OPTIONS",
+  skip: (c: Context) => process.env.ENABLE_E2E_TEST_HELPERS === "1" || c.req.method === "OPTIONS",
   windowMs: 60 * 1000, // 1 minute window
 });

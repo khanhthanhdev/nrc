@@ -40,8 +40,8 @@ const RegisterPage = () => {
 
   return (
     <RegisterLandingPage
-      teamId={teamQuery.data?.organizationId ?? null}
-      teamName={teamQuery.data?.teamName ?? null}
+      teamId={teamQuery.data?.id ?? null}
+      teamName={teamQuery.data?.name ?? null}
     />
   );
 };
