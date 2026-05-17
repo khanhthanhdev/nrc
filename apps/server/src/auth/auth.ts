@@ -8,6 +8,7 @@ import { APIError, createAuthMiddleware } from "better-auth/api";
 import { admin, organization } from "better-auth/plugins";
 import { defaultStatements } from "better-auth/plugins/organization/access";
 import { createAccessControl } from "better-auth/plugins/access";
+import { rateLimiter } from "hono-rate-limiter";
 
 import {
   sendOrganizationInvitationEmailViaSteamify,
@@ -21,10 +22,29 @@ import {
 import { resolveStaffRoleAssignmentForEmail } from "./staff-role-policy";
 
 const authOrigin = new URL(env.BETTER_AUTH_URL).origin;
+const authRateLimitWindowMs = 15 * 60 * 1000;
+const authRateLimitMaxRequests = 100;
 const staffRoleEmailConfig = {
   adminEmail: env.ADMIN_EMAIL,
   managerEmail: env.MANAGER_EMAIL,
 } as const;
+
+export const authRateLimiter = rateLimiter({
+  keyGenerator: (c) => {
+    const forwardedFor = c.req.header("x-forwarded-for")?.split(",")[0]?.trim();
+    return (
+      forwardedFor || c.req.header("cf-connecting-ip") || c.req.header("x-real-ip") || "unknown"
+    );
+  },
+  limit: authRateLimitMaxRequests,
+  message: {
+    code: "RATE_LIMITED",
+    message: "Too many auth requests. Please try again later.",
+  },
+  skip: (c) => c.req.method === "OPTIONS",
+  standardHeaders: "draft-6",
+  windowMs: authRateLimitWindowMs,
+});
 
 const adminAccessControl = createAccessControl({
   session: ["list", "revoke", "delete"],

@@ -764,7 +764,7 @@ export const getTeamEventRegistrationStatus = async (
     .where(
       and(
         eq(teamMembership.userId, userId),
-        eq(teamMembership.organizationId, input.teamId),
+        eq(teamMembership.teamId, input.teamId),
         eq(teamMembership.isActive, true),
         isNull(teamMembership.deletedAt),
       ),

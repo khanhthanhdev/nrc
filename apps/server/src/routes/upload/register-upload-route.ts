@@ -1,8 +1,41 @@
 import type { EvlogVariables } from "evlog/hono";
 import type { Hono } from "hono";
+import { and, eq, isNull } from "drizzle-orm";
 
-import { downloadFile } from "../../adapters/storage/s3";
+import { db, uploadedFiles } from "@nrc-full/db";
+import { getDownloadUrl } from "../../adapters/storage/s3";
+import { getAuthSessionFromHeaders } from "../../auth/session";
 import { uploadHandler } from "./handler";
+
+const getInlineDownloadUrl = (key: string, fallbackFilename: string) =>
+  getDownloadUrl(key, {
+    expiresIn: 300, // 5 minutes
+    responseContentDisposition: `inline; filename="${key.split("/").at(-1) ?? fallbackFilename}"`,
+  });
+
+const authorizeDownload = async (headers: Headers, key: string) => {
+  const session = await getAuthSessionFromHeaders(headers);
+
+  if (!session) {
+    return { error: { message: "Unauthorized.", status: 401 } };
+  }
+
+  const [file] = await db
+    .select({ userId: uploadedFiles.userId })
+    .from(uploadedFiles)
+    .where(and(eq(uploadedFiles.s3Key, key), isNull(uploadedFiles.deletedAt)))
+    .limit(1);
+
+  if (!file && session.user.systemRole !== "ADMIN") {
+    return { error: { message: "Uploaded file not found.", status: 404 } };
+  }
+
+  if (file && session.user.systemRole !== "ADMIN" && file.userId !== session.user.id) {
+    return { error: { message: "Forbidden.", status: 403 } };
+  }
+
+  return { error: null };
+};
 
 export const registerUploadRoute = (app: Hono<EvlogVariables>): void => {
   app.post("/api/upload", (c) => uploadHandler(c.req.raw));
@@ -14,57 +47,22 @@ export const registerUploadRoute = (app: Hono<EvlogVariables>): void => {
       return c.json({ message: "Missing upload key." }, 400);
     }
 
-    let file: Awaited<ReturnType<typeof downloadFile>>;
+    const authorization = await authorizeDownload(c.req.raw.headers, key);
+
+    if (authorization.error) {
+      return c.json(
+        { message: authorization.error.message },
+        authorization.error.status as 401 | 403 | 404,
+      );
+    }
 
     try {
-      file = await downloadFile(key);
+      const url = await getInlineDownloadUrl(key, "image");
+
+      return c.redirect(url, 302);
     } catch (error) {
-      const message = error instanceof Error ? error.message.toLowerCase() : "";
-      const errorName =
-        error && typeof error === "object" && "name" in error
-          ? String(error.name).toLowerCase()
-          : "";
-      const errorCode =
-        error && typeof error === "object" && "code" in error
-          ? String(error.code).toLowerCase()
-          : "";
-
-      if (
-        message.includes("not found") ||
-        message.includes("does not exist") ||
-        message.includes("nosuchkey") ||
-        message.includes("no such key") ||
-        errorName === "nosuchkey" ||
-        errorCode === "nosuchkey"
-      ) {
-        return c.json({ message: "Uploaded image not found." }, 404);
-      }
-
-      return c.json({ message: "Unable to load uploaded image." }, 502);
+      return c.json({ message: "Unable to generate download URL." }, 502);
     }
-
-    if (!file.body) {
-      return c.json({ message: "Uploaded image not found." }, 404);
-    }
-
-    if (!file.contentType?.toLowerCase().startsWith("image/")) {
-      return c.json({ message: "Uploaded object is not an image." }, 415);
-    }
-
-    const fileName = key.split("/").at(-1) ?? "image";
-    const headers = new Headers({
-      "content-disposition": `inline; filename="${fileName}"`,
-      "content-type": file.contentType,
-    });
-
-    if (file.contentLength) {
-      headers.set("content-length", String(file.contentLength));
-    }
-
-    return new Response(file.body, {
-      headers,
-      status: 200,
-    });
   });
 
   app.get("/api/upload/document", async (c) => {
@@ -74,52 +72,21 @@ export const registerUploadRoute = (app: Hono<EvlogVariables>): void => {
       return c.json({ message: "Missing upload key." }, 400);
     }
 
-    let file: Awaited<ReturnType<typeof downloadFile>>;
+    const authorization = await authorizeDownload(c.req.raw.headers, key);
+
+    if (authorization.error) {
+      return c.json(
+        { message: authorization.error.message },
+        authorization.error.status as 401 | 403 | 404,
+      );
+    }
 
     try {
-      file = await downloadFile(key);
+      const url = await getInlineDownloadUrl(key, "document");
+
+      return c.redirect(url, 302);
     } catch (error) {
-      const message = error instanceof Error ? error.message.toLowerCase() : "";
-      const errorName =
-        error && typeof error === "object" && "name" in error
-          ? String(error.name).toLowerCase()
-          : "";
-      const errorCode =
-        error && typeof error === "object" && "code" in error
-          ? String(error.code).toLowerCase()
-          : "";
-
-      if (
-        message.includes("not found") ||
-        message.includes("does not exist") ||
-        message.includes("nosuchkey") ||
-        message.includes("no such key") ||
-        errorName === "nosuchkey" ||
-        errorCode === "nosuchkey"
-      ) {
-        return c.json({ message: "Uploaded document not found." }, 404);
-      }
-
-      return c.json({ message: "Unable to load uploaded document." }, 502);
+      return c.json({ message: "Unable to generate download URL." }, 502);
     }
-
-    if (!file.body) {
-      return c.json({ message: "Uploaded document not found." }, 404);
-    }
-
-    const fileName = key.split("/").at(-1) ?? "document";
-    const headers = new Headers({
-      "content-disposition": `inline; filename="${fileName}"`,
-      "content-type": file.contentType ?? "application/octet-stream",
-    });
-
-    if (file.contentLength) {
-      headers.set("content-length", String(file.contentLength));
-    }
-
-    return new Response(file.body, {
-      headers,
-      status: 200,
-    });
   });
 };

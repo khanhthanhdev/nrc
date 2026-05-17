@@ -44,6 +44,7 @@ export const useUploadFile = (route: UploadRoute) =>
     mutationFn: async (file: File): Promise<string> => {
       const result = await uploadFile({
         api: uploadApi,
+        credentials: "include",
         file,
         route,
       });
@@ -57,6 +58,7 @@ export const useUploadFiles = (route: UploadRoute) =>
     mutationFn: async (files: File[]): Promise<string[]> => {
       const result = await uploadFiles({
         api: uploadApi,
+        credentials: "include",
         files,
         route,
       });

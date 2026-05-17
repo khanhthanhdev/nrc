@@ -25,6 +25,7 @@
     "drizzle-orm": "^0.45.2",
     "evlog": "^2.13.0",
     "hono": "catalog:",
+    "hono-rate-limiter": "0.5.3",
     "i18next": "catalog:",
     "valibot": "catalog:"
   },
