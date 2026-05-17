@@ -19,6 +19,7 @@ import type { orpc } from "@/utils/orpc";
 
 import { Toaster } from "@/components/ui/sonner";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { getPublicCacheControl } from "@/lib/cache-config";
 import { getLocaleFromPathname } from "@/lib/locale-routing";
 import { isStaffPath } from "@/lib/navigation";
 
@@ -104,7 +105,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
   }),
   server: {
     handlers: {
-      GET: ({ context, next, request }) => {
+      GET: async ({ context, next, request }) => {
         const log = (context as { log?: RequestLogger } | undefined)?.log;
         const { pathname, searchParams } = new URL(request.url);
 
@@ -121,7 +122,9 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
           });
         }
 
-        return next();
+        const response = await next();
+        response.headers.set("Cache-Control", getPublicCacheControl(pathname));
+        return response;
       },
     },
     middleware: [evlogMiddleware],

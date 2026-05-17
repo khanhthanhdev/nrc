@@ -11,7 +11,9 @@ import {
   getRankingQualifyingScore,
 } from "@/features/events/public-event-data";
 import { PublicEventShell } from "@/features/events/public-event-shell";
+import { PUBLIC_ROUTE_CACHE } from "@/lib/cache-config";
 import { getSupportedLocale, stripLocaleFromPathname } from "@/lib/locale-routing";
+import { eventPageMeta } from "@/lib/og-tags";
 import { isValidEventId, isValidSeason } from "@/lib/route-policy";
 import { orpc } from "@/utils/orpc";
 
@@ -23,11 +25,13 @@ const EventPage = () => {
   });
   const { eventId, season } = useParams({ from: "/{-$locale}/$season/$eventId" });
   const isValidRoute = isValidSeason(season) && isValidEventId(eventId);
+  const loaderData = Route.useLoaderData();
   const eventQuery = useQuery({
     ...orpc.event.getPublicEvent.queryOptions({
       input: { eventCode: eventId, season },
     }),
     enabled: isValidRoute,
+    initialData: loaderData?.event,
     retry: false,
   });
   const matchesQuery = useQuery({
@@ -35,6 +39,7 @@ const EventPage = () => {
       input: { eventCode: eventId, season },
     }),
     enabled: isValidRoute,
+    initialData: loaderData?.matches,
     refetchInterval: 30_000,
     retry: false,
   });
@@ -43,6 +48,7 @@ const EventPage = () => {
       input: { eventCode: eventId, season },
     }),
     enabled: isValidRoute,
+    initialData: loaderData?.rankings,
     refetchInterval: 30_000,
     retry: false,
   });
@@ -59,7 +65,7 @@ const EventPage = () => {
   if (eventQuery.isLoading) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-8">
-        <p className="text-muted-foreground text-sm">Loading event...</p>
+        <p className="text-muted-foreground text-sm">Loading event&hellip;</p>
       </div>
     );
   }
@@ -385,4 +391,29 @@ const EventPage = () => {
 
 export const Route = createFileRoute("/{-$locale}/$season/$eventId")({
   component: EventPage,
+  gcTime: PUBLIC_ROUTE_CACHE.eventDetails.gcTime,
+  loader: async ({ context, params }) => {
+    if (!isValidSeason(params.season) || !isValidEventId(params.eventId)) {
+      return undefined;
+    }
+
+    const eventInput = { eventCode: params.eventId, season: params.season };
+    const [event, matches, rankings] = await Promise.all([
+      context.queryClient.ensureQueryData(
+        context.orpc.event.getPublicEvent.queryOptions({ input: eventInput }),
+      ),
+      context.queryClient.ensureQueryData(
+        context.orpc.event.listPublicMatches.queryOptions({ input: eventInput }),
+      ),
+      context.queryClient.ensureQueryData(
+        context.orpc.event.listPublicRankings.queryOptions({ input: eventInput }),
+      ),
+    ]);
+
+    return { event, matches, rankings };
+  },
+  head: ({ loaderData }) => ({
+    meta: eventPageMeta(loaderData?.event),
+  }),
+  staleTime: PUBLIC_ROUTE_CACHE.eventDetails.staleTime,
 });

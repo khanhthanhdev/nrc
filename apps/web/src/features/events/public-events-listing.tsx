@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -18,7 +18,7 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getSupportedLocale, localizePathname } from "@/lib/locale-routing";
 import { cn } from "@/lib/utils";
-import { orpc } from "@/utils/orpc";
+import { client, orpc } from "@/utils/orpc";
 
 type PublicEventStatus =
   | "active"
@@ -36,6 +36,12 @@ const STATUS_OPTIONS: PublicEventStatus[] = [
   "completed",
   "archived",
 ];
+
+type PublicEventsListingData = Awaited<ReturnType<typeof client.registration.listPublicEvents>>;
+
+interface PublicEventsListingPageProps {
+  initialEvents?: PublicEventsListingData;
+}
 
 const statusClassName = (status: string): string => {
   switch (status) {
@@ -57,9 +63,20 @@ const statusClassName = (status: string): string => {
   }
 };
 
-export function PublicEventsListingPage() {
+const formatPublicEventDate = (value: string, formatter: Intl.DateTimeFormat): string =>
+  formatter.format(new Date(value));
+
+export function PublicEventsListingPage({ initialEvents }: PublicEventsListingPageProps) {
   const { i18n, t } = useTranslation();
   const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
+  const eventDateFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(activeLanguage, {
+        dateStyle: "medium",
+        timeZone: "UTC",
+      }),
+    [activeLanguage],
+  );
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [page, setPage] = useState(1);
 
@@ -71,6 +88,7 @@ export function PublicEventsListingPage() {
         ...(statusFilter !== "all" ? { status: statusFilter as PublicEventStatus } : {}),
       },
     }),
+    initialData: page === 1 && statusFilter === "all" ? initialEvents : undefined,
     retry: false,
   });
 
@@ -159,15 +177,15 @@ export function PublicEventsListingPage() {
 
                   <div className="space-y-1 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1.5">
-                      <CalendarDays className="h-3.5 w-3.5" />
+                      <CalendarDays className="size-3.5" />
                       <span>
-                        {new Date(event.eventStartsAt).toLocaleDateString()} –{" "}
-                        {new Date(event.eventEndsAt).toLocaleDateString()}
+                        {formatPublicEventDate(event.eventStartsAt, eventDateFormatter)} –{" "}
+                        {formatPublicEventDate(event.eventEndsAt, eventDateFormatter)}
                       </span>
                     </div>
                     {event.location ? (
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5" />
+                        <MapPin className="size-3.5" />
                         <span>{event.venue ?? event.location}</span>
                       </div>
                     ) : null}

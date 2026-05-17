@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 
 import { getSupportedLocale, localizePathname } from "@/lib/locale-routing";
 import { Button } from "@/components/ui/button";
+import { PUBLIC_ROUTE_CACHE } from "@/lib/cache-config";
+import { publicPageMeta } from "@/lib/og-tags";
 
 const HomeComponent = () => {
   const { i18n } = useTranslation();
@@ -126,4 +128,12 @@ const HomeComponent = () => {
 
 export const Route = createFileRoute("/{-$locale}/")({
   component: HomeComponent,
+  gcTime: PUBLIC_ROUTE_CACHE.homepage.gcTime,
+  head: () => ({
+    meta: publicPageMeta(
+      "NRC Competition Hub",
+      "Public competition hub for National Robotics Competition events, teams, rankings, results, and awards.",
+    ),
+  }),
+  staleTime: PUBLIC_ROUTE_CACHE.homepage.staleTime,
 });

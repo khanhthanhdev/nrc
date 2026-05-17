@@ -11,17 +11,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PublicDataMessage } from "@/features/events/public-event-data";
+import { PUBLIC_ROUTE_CACHE } from "@/lib/cache-config";
+import { eventPageMeta } from "@/lib/og-tags";
 import { isValidEventId, isValidSeason } from "@/lib/route-policy";
 import { orpc } from "@/utils/orpc";
 
 const AwardsPage = () => {
   const { eventId, season } = useParams({ from: "/{-$locale}/$season/$eventId/awards" });
   const isValidRoute = isValidSeason(season) && isValidEventId(eventId);
+  const loaderData = Route.useLoaderData();
   const awardsQuery = useQuery({
     ...orpc.event.listPublicAwards.queryOptions({
       input: { eventCode: eventId, season },
     }),
     enabled: isValidRoute,
+    initialData: loaderData?.awards,
     refetchInterval: 30_000,
     retry: false,
   });
@@ -74,4 +78,26 @@ const AwardsPage = () => {
 
 export const Route = createFileRoute("/{-$locale}/$season/$eventId/awards")({
   component: AwardsPage,
+  gcTime: PUBLIC_ROUTE_CACHE.awards.gcTime,
+  loader: async ({ context, params }) => {
+    if (!isValidSeason(params.season) || !isValidEventId(params.eventId)) {
+      return undefined;
+    }
+
+    const eventInput = { eventCode: params.eventId, season: params.season };
+    const [event, awards] = await Promise.all([
+      context.queryClient.ensureQueryData(
+        context.orpc.event.getPublicEvent.queryOptions({ input: eventInput }),
+      ),
+      context.queryClient.ensureQueryData(
+        context.orpc.event.listPublicAwards.queryOptions({ input: eventInput }),
+      ),
+    ]);
+
+    return { event, awards };
+  },
+  head: ({ loaderData }) => ({
+    meta: eventPageMeta(loaderData?.event, "Awards"),
+  }),
+  staleTime: PUBLIC_ROUTE_CACHE.awards.staleTime,
 });
