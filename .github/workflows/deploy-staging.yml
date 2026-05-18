@@ -1,0 +1,40 @@
+# =======================================================
+# Staging deploys
+#  - Auto on every push to `develop`
+#  - Manual via "Run workflow" (defaults to develop)
+# Uses the reusable `_deploy.yml` workflow with the
+# `staging` GitHub Environment.
+# =======================================================
+
+name: Deploy · Staging
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to deploy"
+        required: true
+        default: "develop"
+        type: string
+
+# One staging deploy at a time. Cancel any in-flight job so the
+# most recent commit always wins; safe because deploys are idempotent.
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+  deployments: write
+
+jobs:
+  call:
+    uses: ./.github/workflows/_deploy.yml
+    with:
+      environment: staging
+      env_suffix:  stg
+      branch:      ${{ github.event.inputs.branch || github.ref_name }}
+    secrets: inherit

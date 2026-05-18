@@ -1,65 +1,222 @@
-# Docker Compose for nrc-full
-# Full-stack container orchestration
+# =======================================================
+# nrc-full — production compose with Caddy edge ingress
+#
+# Network topology:
+#
+#   ┌───────── INTERNET ─────────┐
+#               │ :80 :443 :443/udp
+#   ┌──────────▼──────────┐
+#   │       caddy         │   (edge network — public)
+#   └──┬───────────────┬──┘
+#      │ web:3000      │ server:3000
+#   ┌──▼──┐         ┌──▼─────┐
+#   │ web │         │ server │
+#   └─────┘         └──┬─────┘
+#                      │ (internal network — no NAT)
+#                   ┌──▼─┐
+#                   │ db │
+#                   └────┘
+#
+# Best practices applied:
+#   * Only Caddy publishes host ports. Web/server/db never leave docker.
+#   * `internal: true` on db-net blocks egress for the database.
+#   * Secrets via `.env` (validated by `${VAR:?...}` for required ones).
+#   * Healthchecks + restart=unless-stopped + capped JSON logs.
+#   * `read_only` rootfs + tmpfs + no-new-privileges on app services.
+#   * Resource limits cap blast radius.
+#   * Caddy stores certs in named volumes (survives recreate).
+#   * For local dev see `docker-compose.override.yml`.
+# =======================================================
 
 name: nrc-full
 
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-app-common: &app-common
+  restart: unless-stopped
+  logging: *default-logging
+  security_opt:
+    - no-new-privileges:true
+
 services:
+  # -----------------------------------------------------
+  # Caddy — sole public ingress, automatic HTTPS
+  # -----------------------------------------------------
+  caddy:
+    image: caddy:2.8-alpine
+    container_name: nrc-full-caddy
+    <<: *app-common
+    cap_drop: [ALL]
+    cap_add:
+      - NET_BIND_SERVICE        # bind to :80 / :443 as non-root
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"           # HTTP/3 (QUIC)
+    environment:
+      WEB_DOMAIN: ${WEB_DOMAIN:?WEB_DOMAIN is required}
+      API_DOMAIN: ${API_DOMAIN:?API_DOMAIN is required}
+      ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL is required}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data            # certificates, ACME account, OCSP
+      - caddy-config:/config        # auto-saved JSON config
+    networks:
+      - edge
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:2019/reverse_proxy/upstreams"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256M
+    depends_on:
+      web:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+
+  # -----------------------------------------------------
+  # Web — TanStack Start SSR (private)
+  # -----------------------------------------------------
   web:
     build:
-      context: ./apps/web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/web/Dockerfile
+    image: nrc-full/web:${IMAGE_TAG:-latest}
     container_name: nrc-full-web
-    ports:
-      - "3000:3000"
+    <<: *app-common
+    cap_drop: [ALL]
     environment:
-      - NODE_ENV=production
-      - VITE_API_URL=http://server:3001
-    restart: unless-stopped
-    depends_on:
-      - server
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      # SSR calls go to the server over the private docker DNS name.
+      VITE_API_URL: http://server:3000
+      PUBLIC_API_URL: https://${API_DOMAIN}
+    expose:
+      - "3000"
     networks:
-      - nrc-full-network
+      - edge
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "bun -e \"await fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
 
+  # -----------------------------------------------------
+  # Server — oRPC API + auth (private)
+  # -----------------------------------------------------
   server:
     build:
-      context: ./apps/server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/server/Dockerfile
+    image: nrc-full/server:${IMAGE_TAG:-latest}
     container_name: nrc-full-server
-    ports:
-      - "3001:3000"
+    <<: *app-common
+    cap_drop: [ALL]
     environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - DATABASE_URL=postgresql://postgres:password@db:5432/nrc-full
-    restart: unless-stopped
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-nrc_full}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET is required}
+      BETTER_AUTH_URL:    https://${API_DOMAIN}
+      CORS_ORIGIN:        https://${WEB_DOMAIN}
+      GOOGLE_CLIENT_ID:     ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      AWS_REGION:            ${AWS_REGION:-}
+      AWS_ACCESS_KEY_ID:     ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_S3_BUCKET:         ${AWS_S3_BUCKET:-}
+    expose:
+      - "3000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
-      - nrc-full-network
-
-  db:
-    image: postgres:16-alpine
-    container_name: nrc-full-postgres
-    environment:
-      POSTGRES_DB: nrc-full
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
-    volumes:
-      - nrc-full_postgres_data:/var/lib/postgresql/data
+      - edge        # so Caddy can reach it
+      - internal    # so it can reach the db
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test:
+        - CMD-SHELL
+        - "bun -e \"await fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1G
+
+  # -----------------------------------------------------
+  # Postgres — internal-only, no host port published
+  # -----------------------------------------------------
+  db:
+    image: postgres:16.4-alpine
+    container_name: nrc-full-postgres
+    <<: *app-common
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB:-nrc_full}
+      POSTGRES_USER:     ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      PGDATA:            /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-nrc_full}"
       interval: 10s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
-    networks:
-      - nrc-full-network
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
 
 networks:
-  nrc-full-network:
+  # Public-facing: Caddy + apps. NAT/egress allowed.
+  edge:
+    name: nrc-full-edge
     driver: bridge
+  # Database-only: no egress to the internet, no host port.
+  internal:
+    name: nrc-full-internal
+    driver: bridge
+    internal: true
 
 volumes:
-  nrc-full_postgres_data:
+  postgres-data:
+    name: nrc-full_postgres_data
+  caddy-data:
+    name: nrc-full_caddy_data
+  caddy-config:
+    name: nrc-full_caddy_config

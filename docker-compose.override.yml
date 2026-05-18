@@ -1,0 +1,38 @@
+# =======================================================
+# Local-dev override — auto-loaded by `docker compose up`.
+# - Publishes app/db ports on the host so you can hit them
+#   directly without going through Caddy.
+# - Relaxes read-only rootfs for live tinkering.
+# - Caddy is still started; point /etc/hosts of
+#   WEB_DOMAIN / API_DOMAIN to 127.0.0.1 to test TLS locally
+#   (Caddy will mint a cert from its internal CA).
+# Do NOT use in production.
+# =======================================================
+
+services:
+  caddy:
+    environment:
+      # Use Caddy's local CA instead of Let's Encrypt for dev.
+      WEB_DOMAIN: ${WEB_DOMAIN:-localhost}
+      API_DOMAIN: ${API_DOMAIN:-api.localhost}
+      ACME_EMAIL: ${ACME_EMAIL:-dev@example.com}
+
+  web:
+    read_only: false
+    environment:
+      NODE_ENV: development
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+
+  server:
+    read_only: false
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    ports:
+      - "${SERVER_PORT:-3001}:3000"
+
+  db:
+    # Publish for psql / drizzle-kit. Loopback only.
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"

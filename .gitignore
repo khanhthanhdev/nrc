@@ -11,6 +11,8 @@ build
 # Environment variables
 .env
 .env*.local
+.env.staging
+.env.production
 
 # IDEs and editors
 .vscode/*

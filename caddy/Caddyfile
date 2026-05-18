@@ -1,0 +1,111 @@
+# =======================================================
+# Caddy edge proxy for nrc-full
+# - Automatic HTTPS via ACME (Let's Encrypt)
+# - HTTP/2 + HTTP/3 (QUIC)
+# - Hardened security headers + zstd/gzip compression
+# - JSON access logs to stdout (picked up by docker logs)
+# - Upstreams are reached over the private docker network
+#
+# Configured by the following env vars (passed in by compose):
+#   WEB_DOMAIN  — public hostname for the SPA (e.g. s4vnrc.org)
+#   API_DOMAIN  — public hostname for the API  (e.g. api.s4vnrc.org)
+#   ACME_EMAIL  — contact email for Let's Encrypt
+# =======================================================
+
+{
+	# Global options
+	email {$ACME_EMAIL}
+	admin off                      # disable admin API on the network
+	servers {
+		protocols h1 h2 h3         # enable HTTP/3
+		trusted_proxies static private_ranges
+	}
+	# Use the ACME staging directory if STAGING=1 (rotate without rate-limit pain)
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+# ---------- snippets ----------
+
+(security_headers) {
+	header {
+		# HSTS — 1 year, preload eligible
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		# Clickjacking + sniffing
+		X-Content-Type-Options    "nosniff"
+		X-Frame-Options           "DENY"
+		# Referrer / permissions
+		Referrer-Policy           "strict-origin-when-cross-origin"
+		Permissions-Policy        "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+		# Cross-origin isolation (safe defaults)
+		Cross-Origin-Opener-Policy   "same-origin"
+		Cross-Origin-Resource-Policy "same-site"
+		# Strip server fingerprinting
+		-Server
+		-X-Powered-By
+	}
+}
+
+(common) {
+	encode zstd gzip
+	import security_headers
+	log {
+		output stdout
+		format json
+		level  INFO
+	}
+}
+
+(deny_dotfiles) {
+	@dotfiles path_regexp dotfiles ^/\.(?!well-known)
+	respond @dotfiles 404
+}
+
+# ---------- sites ----------
+
+# Web — TanStack Start SSR
+{$WEB_DOMAIN} {
+	import common
+	import deny_dotfiles
+
+	reverse_proxy web:3000 {
+		header_up Host              {host}
+		header_up X-Real-IP         {remote_host}
+		header_up X-Forwarded-For   {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+		# Sensible upstream timeouts
+		transport http {
+			dial_timeout      5s
+			response_header_timeout 30s
+			read_timeout      60s
+			write_timeout     60s
+		}
+	}
+}
+
+# API — oRPC / better-auth server
+{$API_DOMAIN} {
+	import common
+	import deny_dotfiles
+
+	# Lock down dangerous methods at the edge
+	@bad_methods method TRACE CONNECT
+	respond @bad_methods 405
+
+	# Light request-size cap (override per-route in app if needed)
+	request_body {
+		max_size 10MB
+	}
+
+	reverse_proxy server:3000 {
+		header_up Host              {host}
+		header_up X-Real-IP         {remote_host}
+		header_up X-Forwarded-For   {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+		transport http {
+			dial_timeout            5s
+			response_header_timeout 30s
+			read_timeout            60s
+			write_timeout           60s
+		}
+	}
+}

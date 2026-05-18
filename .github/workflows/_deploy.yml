@@ -1,0 +1,293 @@
+# =======================================================
+# Reusable deploy workflow — called by `deploy-staging.yml`
+# and `deploy-production.yml`. Builds images once, pushes
+# to GHCR, then SSH-deploys the immutable SHA tag to EC2.
+#
+# Required GitHub Environment secrets (per environment):
+#   EC2_HOST          — public DNS / IP of the target instance
+#   EC2_SSH_KEY       — private key (PEM) authorised on EC2
+#   SERVER_ENV        — full contents of apps/server/.env.<suffix>
+#   WEB_ENV           — full contents of apps/web/.env.<suffix>
+#
+# Required GitHub Environment variables (per environment):
+#   DOMAIN            — public domain (e.g. s4vnrc.org)
+#   EC2_USER          — defaults to ec2-user if unset
+#   PROJECT_PATH      — defaults to ~/projects/RMS if unset
+#
+# Optional repo-level secret:
+#   SLACK_WEBHOOK_URL — enables Slack notifications
+# =======================================================
+
+name: Reusable Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "GitHub Environment (staging | production)"
+        required: true
+        type: string
+      env_suffix:
+        description: "Compose / dotenv suffix (stg | prod)"
+        required: true
+        type: string
+      branch:
+        description: "Git branch being deployed"
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAMESPACE: ${{ github.repository_owner }}
+  IMAGE_PROJECT: rms
+
+jobs:
+  # -----------------------------------------------------
+  # 1. Build & push immutable images to GHCR
+  # -----------------------------------------------------
+  build:
+    name: Build & push images (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.tag.outputs.value }}
+      owner_lc: ${{ steps.owner.outputs.value }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Lowercase repo owner
+        id: owner
+        run: echo "value=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Compute immutable image tag
+        id: tag
+        run: echo "value=${{ inputs.branch }}-${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push — server
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./apps/server/Dockerfile
+          platforms: linux/amd64
+          push: true
+          provenance: false
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.owner.outputs.value }}/${{ env.IMAGE_PROJECT }}-${{ inputs.env_suffix }}-server:${{ steps.tag.outputs.value }}
+            ${{ env.REGISTRY }}/${{ steps.owner.outputs.value }}/${{ env.IMAGE_PROJECT }}-${{ inputs.env_suffix }}-server:${{ inputs.branch }}
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          cache-from: type=gha,scope=server-${{ inputs.env_suffix }}
+          cache-to:   type=gha,scope=server-${{ inputs.env_suffix }},mode=max
+
+      - name: Build & push — web
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./apps/web/Dockerfile
+          platforms: linux/amd64
+          push: true
+          provenance: false
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.owner.outputs.value }}/${{ env.IMAGE_PROJECT }}-${{ inputs.env_suffix }}-web:${{ steps.tag.outputs.value }}
+            ${{ env.REGISTRY }}/${{ steps.owner.outputs.value }}/${{ env.IMAGE_PROJECT }}-${{ inputs.env_suffix }}-web:${{ inputs.branch }}
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          cache-from: type=gha,scope=web-${{ inputs.env_suffix }}
+          cache-to:   type=gha,scope=web-${{ inputs.env_suffix }},mode=max
+
+  # -----------------------------------------------------
+  # 2. Deploy on EC2 — gated by GitHub Environment
+  #    (approval rules for `production` live in repo settings)
+  # -----------------------------------------------------
+  deploy:
+    name: Deploy ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 20
+    environment:
+      name: ${{ inputs.environment }}
+      url: https://${{ vars.DOMAIN }}
+    permissions:
+      contents: read
+      deployments: write
+    env:
+      EC2_USER:     ${{ vars.EC2_USER     || 'ec2-user' }}
+      PROJECT_PATH: ${{ vars.PROJECT_PATH || '~/projects/RMS' }}
+      IMAGE_TAG:    ${{ needs.build.outputs.image_tag }}
+      OWNER_LC:     ${{ needs.build.outputs.owner_lc }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Setup SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          umask 077
+          printf '%s\n' "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy on EC2
+        run: |
+          # Pass non-secret context via env so the remote heredoc can expand it.
+          # Secrets are streamed via stdin to avoid shell-expansion leaks.
+          ssh -i ~/.ssh/deploy_key \
+              -o StrictHostKeyChecking=accept-new \
+              -o ServerAliveInterval=30 \
+              "${EC2_USER}@${{ secrets.EC2_HOST }}" \
+              "BRANCH='${{ inputs.branch }}' \
+               ENV_SUFFIX='${{ inputs.env_suffix }}' \
+               IMAGE_TAG='${IMAGE_TAG}' \
+               OWNER_LC='${OWNER_LC}' \
+               GHCR_USER='${{ github.actor }}' \
+               GHCR_TOKEN='${{ secrets.GITHUB_TOKEN }}' \
+               PROJECT_PATH='${PROJECT_PATH}' \
+               bash -s" <<'REMOTE'
+            set -euo pipefail
+
+            cd "${PROJECT_PATH/#\~/$HOME}"
+
+            echo "📥 Sync code → $BRANCH"
+            git fetch --prune origin
+            git reset --hard "origin/$BRANCH"
+            git clean -fd
+
+            echo "🔐 GHCR login"
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+
+            echo "📝 Writing env files (from stdin pipeline)"
+            mkdir -p apps/server apps/web
+          REMOTE
+
+          # Stream env files separately so secret contents never appear in argv.
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new \
+              "${EC2_USER}@${{ secrets.EC2_HOST }}" \
+              "cat > ${PROJECT_PATH}/apps/server/.env.${{ inputs.env_suffix }}" <<'SERVER_ENV'
+          ${{ secrets.SERVER_ENV }}
+          SERVER_ENV
+
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new \
+              "${EC2_USER}@${{ secrets.EC2_HOST }}" \
+              "cat > ${PROJECT_PATH}/apps/web/.env.${{ inputs.env_suffix }}" <<'WEB_ENV'
+          ${{ secrets.WEB_ENV }}
+          WEB_ENV
+
+          echo "🚀 Release"
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new \
+              "${EC2_USER}@${{ secrets.EC2_HOST }}" \
+              "BRANCH='${{ inputs.branch }}' \
+               ENV_SUFFIX='${{ inputs.env_suffix }}' \
+               IMAGE_TAG='${IMAGE_TAG}' \
+               OWNER_LC='${OWNER_LC}' \
+               PROJECT_PATH='${PROJECT_PATH}' \
+               bash -s" <<'REMOTE'
+            set -euo pipefail
+            cd "${PROJECT_PATH/#\~/$HOME}"
+
+            export GITHUB_REPOSITORY_OWNER="$OWNER_LC"
+            export IMAGE_TAG
+
+            COMPOSE_FILE="compose.${ENV_SUFFIX}.yaml"
+
+            echo "📥 Pull pre-built images ($IMAGE_TAG)"
+            docker compose -f "$COMPOSE_FILE" pull server web
+
+            echo "🛠  scripts/release.sh"
+            chmod +x scripts/release.sh
+            SKIP_GIT_PULL=true SKIP_BUILD=true ./scripts/release.sh "$BRANCH"
+
+            echo "🧹 Prune dangling images"
+            docker image prune -f >/dev/null
+          REMOTE
+
+      - name: Health check
+        run: |
+          sleep 15
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new \
+              "${EC2_USER}@${{ secrets.EC2_HOST }}" \
+              "DOMAIN='${{ vars.DOMAIN }}' ENV_SUFFIX='${{ inputs.env_suffix }}' PROJECT_PATH='${PROJECT_PATH}' bash -s" <<'REMOTE'
+            set -euo pipefail
+            cd "${PROJECT_PATH/#\~/$HOME}"
+            echo "📊 docker compose ps"
+            docker compose -f "compose.${ENV_SUFFIX}.yaml" ps
+            echo "🏥 /health"
+            curl -fsS --max-time 10 -H "Host: ${DOMAIN}" http://localhost/health
+            echo " - OK"
+          REMOTE
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## ${{ job.status == 'success' && '✅' || '❌' }} Deploy — ${{ inputs.environment }}"
+            echo ""
+            echo "| Field | Value |"
+            echo "| ----- | ----- |"
+            echo "| Branch | \`${{ inputs.branch }}\` |"
+            echo "| Image tag | \`${IMAGE_TAG}\` |"
+            echo "| Commit | \`${{ github.sha }}\` |"
+            echo "| Actor | @${{ github.actor }} |"
+            echo "| URL | https://${{ vars.DOMAIN }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # -----------------------------------------------------
+  # 3. Notify Slack (best-effort, never fails the run)
+  # -----------------------------------------------------
+  notify:
+    name: Notify Slack
+    runs-on: ubuntu-latest
+    needs: [build, deploy]
+    if: always() && vars.SLACK_ENABLED == 'true'
+    steps:
+      - name: Slack — success
+        if: needs.deploy.result == 'success'
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: "#36a64f"
+          SLACK_TITLE: "✅ Deployed to ${{ inputs.environment }}"
+          SLACK_MESSAGE: |
+            *Repo*: ${{ github.repository }}
+            *Branch*: `${{ inputs.branch }}`
+            *Tag*: `${{ needs.build.outputs.image_tag }}`
+            *Commit*: `${{ github.sha }}`
+            *By*: @${{ github.actor }}
+          SLACK_FOOTER: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Slack — failure
+        if: needs.deploy.result != 'success'
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: "#ff0000"
+          SLACK_TITLE: "❌ Deploy FAILED — ${{ inputs.environment }}"
+          SLACK_MESSAGE: |
+            *Repo*: ${{ github.repository }}
+            *Branch*: `${{ inputs.branch }}`
+            *Commit*: `${{ github.sha }}`
+            *By*: @${{ github.actor }}
+            Check the run for details.
+          SLACK_FOOTER: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

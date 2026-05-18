@@ -1,0 +1,46 @@
+# =======================================================
+# Production deploys
+#  - Auto on every push to `main`
+#  - Manual via "Run workflow" (defaults to main)
+#
+# The actual deploy job runs in the `production` GitHub
+# Environment. Configure required reviewers there to enforce
+# manual approval before any prod release:
+#     Repo → Settings → Environments → production
+#       ✓ Required reviewers
+#       ✓ Wait timer (optional)
+#       ✓ Restrict deployment to `main`
+# =======================================================
+
+name: Deploy · Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch / tag to deploy"
+        required: true
+        default: "main"
+        type: string
+
+# Never run two production deploys in parallel. Do NOT cancel
+# in-flight: a half-applied prod rollout is worse than waiting.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+  deployments: write
+
+jobs:
+  call:
+    uses: ./.github/workflows/_deploy.yml
+    with:
+      environment: production
+      env_suffix:  prod
+      branch:      ${{ github.event.inputs.branch || github.ref_name }}
+    secrets: inherit

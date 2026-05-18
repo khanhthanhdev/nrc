@@ -1,23 +1,53 @@
-name: nrc-full
+# =======================================================
+# packages/db — standalone Postgres for local dev.
+# Used by `bun run db:start` / drizzle-kit workflows.
+# Variables come from `../../.env` (root).
+# =======================================================
+
+name: nrc-full-db
 
 services:
   postgres:
-    image: postgres
+    image: postgres:16.4-alpine
     container_name: nrc-full-postgres
+    restart: unless-stopped
+    # Load secrets from the monorepo root .env (optional — uses defaults if missing).
+    env_file:
+      - path: ../../.env
+        required: false
     environment:
-      POSTGRES_DB: nrc-full
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB:-nrc_full}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - "5432:5432"
+      # Bind to loopback only — never expose Postgres to the network.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - nrc-full_postgres_data:/var/lib/postgresql
+      - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-nrc_full}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
+      start_period: 20s
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
 
 volumes:
-  nrc-full_postgres_data:
+  postgres-data:
+    name: nrc-full_postgres_data

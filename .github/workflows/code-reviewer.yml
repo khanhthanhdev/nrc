@@ -1,0 +1,133 @@
+name: PR Notification
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types: [opened, reopened, synchronize, closed, edited]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get latest commit message
+        id: get_commit_message
+        run: echo "commit_msg=$(git log -1 --pretty=format:%s)" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Extract all LIN-xxx from PR title and build JIRA links
+        id: extract_jira
+        run: |
+          matches=$(echo "${{ github.event.pull_request.title }}" | grep -oE 'LIN-[0-9]+' || true )
+          if [ -n "$matches" ]; then
+            links=""
+            for key in $matches; do
+              links="$links <https://linktovn.atlassian.net/browse/$key|$key>"
+            done
+            echo "jira_links=$links" >> $GITHUB_OUTPUT
+          else
+            echo "jira_links=" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      # Notifications for different PR events
+      - name: Send Notification for New PR
+        if: ${{ github.event.action == 'opened' }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: '#FFA500'
+          SLACK_TITLE: 🆕 Pull Request mới được tạo!
+          SLACK_MESSAGE: |
+            📂 *Repository*: ${{ github.repository }}
+            ✏️ *Title*: ${{ github.event.pull_request.title }}
+            ${{ steps.extract_jira.outputs.jira_links && format('🗂 *JIRA-TASK*: {0}', steps.extract_jira.outputs.jira_links) || '' }}
+            👤 *Author*: ${{ github.event.pull_request.user.login }}
+            📝 *Description*: ${{ github.event.pull_request.body || 'Không có mô tả.' }}
+            🌿 *Target Branch*: ${{ github.event.pull_request.base.ref }}
+          SLACK_FOOTER: ${{ github.event.pull_request.html_url }}
+
+      - name: Send Notification for PR Update
+        if: ${{ github.event.action == 'synchronize' }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: '#FFA500'
+          SLACK_TITLE: 🔄 Pull Request được cập nhật!
+          SLACK_MESSAGE: |
+            📂 *Repository*: ${{ github.repository }}
+            ✏️ *Title*: ${{ github.event.pull_request.title }}
+            ${{ steps.extract_jira.outputs.jira_links && format('🗂 *JIRA-TASK*: {0}', steps.extract_jira.outputs.jira_links) || '' }}
+            👤 *Author*: ${{ github.event.pull_request.user.login }}
+            📝 *Commit mới*: ${{ steps.get_commit_message.outputs.commit_msg || 'Không có mô tả.' }}
+            🌿 *Target Branch*: ${{ github.event.pull_request.base.ref }}
+          SLACK_FOOTER: ${{ github.event.pull_request.html_url }}
+
+      - name: Send Notification for PR Edit
+        if: ${{ github.event.action == 'edited' }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: '#FFA500'
+          SLACK_TITLE: ✏️ Pull Request được chỉnh sửa!
+          SLACK_MESSAGE: |
+            📂 *Repository*: ${{ github.repository }}
+            ✏️ *Title*: ${{ github.event.pull_request.title }}
+            ${{ steps.extract_jira.outputs.jira_links && format('🗂 *JIRA-TASK*: {0}', steps.extract_jira.outputs.jira_links) || '' }}
+            👤 *Edited By*: ${{ github.actor }}
+            📝 *Description*: ${{ github.event.pull_request.body || 'Không có mô tả.' }}
+            🌿 *Target Branch*: ${{ github.event.pull_request.base.ref }}
+          SLACK_FOOTER: ${{ github.event.pull_request.html_url }}
+
+      - name: Send Notification for PR Reopened
+        if: ${{ github.event.action == 'reopened' }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: '#0000FF'
+          SLACK_TITLE: 🔄 Pull Request được mở lại!
+          SLACK_MESSAGE: |
+            📂 *Repository*: ${{ github.repository }}
+            ✏️ *Title*: ${{ github.event.pull_request.title }}
+            ${{ steps.extract_jira.outputs.jira_links && format('🗂 *JIRA-TASK*: {0}', steps.extract_jira.outputs.jira_links) || '' }}
+            👤 *Reopened By*: ${{ github.actor }}
+            🌿 *Target Branch*: ${{ github.event.pull_request.base.ref }}
+          SLACK_FOOTER: ${{ github.event.pull_request.html_url }}
+
+      - name: Send Notification for Merged PR
+        if: ${{ github.event.action == 'closed' && github.event.pull_request.merged }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: '#800080'
+          SLACK_TITLE: 🎉 Pull Request đã được MERGE thành công!
+          SLACK_MESSAGE: |
+            📂 *Repository*: ${{ github.repository }}
+            ✏️ *Title*: ${{ github.event.pull_request.title }}
+            ${{ steps.extract_jira.outputs.jira_links && format('🗂 *JIRA-TASK*: {0}', steps.extract_jira.outputs.jira_links) || '' }}
+            👤 *Merged By*: ${{ github.event.pull_request.merged_by.login }}
+            🌿 *Target Branch*: ${{ github.event.pull_request.base.ref }}
+          SLACK_FOOTER: ${{ github.event.pull_request.html_url }}
+
+      - name: Send Notification for Closed PR
+        if: ${{ github.event.action == 'closed' && !github.event.pull_request.merged }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: '#ff0000'
+          SLACK_TITLE: ❌ Pull Request đã bị ĐÓNG mà không merge!
+          SLACK_MESSAGE: |
+            📂 *Repository*: ${{ github.repository }}
+            ✏️ *Title*: ${{ github.event.pull_request.title }}
+            ${{ steps.extract_jira.outputs.jira_links && format('🗂 *JIRA-TASK*: {0}', steps.extract_jira.outputs.jira_links) || '' }}
+            👤 *Closed By*: ${{ github.actor }}
+            🌿 *Target Branch*: ${{ github.event.pull_request.base.ref }}
+          SLACK_FOOTER: ${{ github.event.pull_request.html_url }}
