@@ -9,6 +9,7 @@
     "account": {
       "accountSettings": "Account settings",
       "createTeam": "Create team",
+      "dashboard": "Dashboard",
       "staffPanel": "Staff panel",
       "signOut": "Sign out"
     },

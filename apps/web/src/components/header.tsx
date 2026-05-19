@@ -170,6 +170,11 @@ export default function Header() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
+                    <Link to={localizePathname("/dashboard", activeLanguage)}>
+                      {t("header.account.dashboard")}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <Link to={localizePathname("/teams/new", activeLanguage)}>
                       {t("header.account.createTeam")}
                     </Link>
@@ -218,7 +223,7 @@ export default function Header() {
               <SheetDescription>{t("header.mobile.description")}</SheetDescription>
             </SheetHeader>
 
-            <div className="flex h-full flex-col gap-6 overflow-y-auto px-6 py-6">
+            <div className="flex h-full flex-col gap-6 overflow-y-auto p-6">
               <nav className="flex flex-col gap-2">
                 {publicNavigation.map(({ labelKey, to }) => (
                   <Button
@@ -248,6 +253,16 @@ export default function Header() {
                     >
                       <Link to={localizePathname("/account", activeLanguage)}>
                         {t("header.account.accountSettings")}
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      className="justify-start"
+                      onClick={() => setMobileMenuOpen(false)}
+                      variant="ghost"
+                    >
+                      <Link to={localizePathname("/dashboard", activeLanguage)}>
+                        {t("header.account.dashboard")}
                       </Link>
                     </Button>
                     <Button

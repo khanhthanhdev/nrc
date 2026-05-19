@@ -9,6 +9,7 @@
     "account": {
       "accountSettings": "Cai dat tai khoan",
       "createTeam": "Tao nhom",
+      "dashboard": "Bang dieu khien",
       "staffPanel": "Bang staff",
       "signOut": "Dang xuat"
     },

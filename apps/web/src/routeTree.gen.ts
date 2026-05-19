@@ -16,6 +16,7 @@ import { Route as Char123LocaleChar125StaffRouteImport } from './routes/{-$local
 import { Route as Char123LocaleChar125RegisterRouteImport } from './routes/{-$locale}/register'
 import { Route as Char123LocaleChar125OnboardingRouteImport } from './routes/{-$locale}/onboarding'
 import { Route as Char123LocaleChar125EventsRouteImport } from './routes/{-$locale}/events'
+import { Route as Char123LocaleChar125DashboardRouteImport } from './routes/{-$locale}/dashboard'
 import { Route as Char123LocaleChar125AuthRouteImport } from './routes/{-$locale}/auth'
 import { Route as Char123LocaleChar125AccountRouteImport } from './routes/{-$locale}/account'
 import { Route as Char123LocaleChar125SeasonRouteImport } from './routes/{-$locale}/$season'
@@ -86,6 +87,12 @@ const Char123LocaleChar125EventsRoute =
   Char123LocaleChar125EventsRouteImport.update({
     id: '/{-$locale}/events',
     path: '/{-$locale}/events',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char123LocaleChar125DashboardRoute =
+  Char123LocaleChar125DashboardRouteImport.update({
+    id: '/{-$locale}/dashboard',
+    path: '/{-$locale}/dashboard',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char123LocaleChar125AuthRoute =
@@ -267,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/$season': typeof Char123LocaleChar125SeasonRouteWithChildren
   '/{-$locale}/account': typeof Char123LocaleChar125AccountRoute
   '/{-$locale}/auth': typeof Char123LocaleChar125AuthRouteWithChildren
+  '/{-$locale}/dashboard': typeof Char123LocaleChar125DashboardRoute
   '/{-$locale}/events': typeof Char123LocaleChar125EventsRoute
   '/{-$locale}/onboarding': typeof Char123LocaleChar125OnboardingRoute
   '/{-$locale}/register': typeof Char123LocaleChar125RegisterRouteWithChildren
@@ -305,6 +313,7 @@ export interface FileRoutesByTo {
   '/{-$locale}/$season': typeof Char123LocaleChar125SeasonRouteWithChildren
   '/{-$locale}/account': typeof Char123LocaleChar125AccountRoute
   '/{-$locale}/auth': typeof Char123LocaleChar125AuthRouteWithChildren
+  '/{-$locale}/dashboard': typeof Char123LocaleChar125DashboardRoute
   '/{-$locale}/events': typeof Char123LocaleChar125EventsRoute
   '/{-$locale}/onboarding': typeof Char123LocaleChar125OnboardingRoute
   '/{-$locale}/register': typeof Char123LocaleChar125RegisterRouteWithChildren
@@ -344,6 +353,7 @@ export interface FileRoutesById {
   '/{-$locale}/$season': typeof Char123LocaleChar125SeasonRouteWithChildren
   '/{-$locale}/account': typeof Char123LocaleChar125AccountRoute
   '/{-$locale}/auth': typeof Char123LocaleChar125AuthRouteWithChildren
+  '/{-$locale}/dashboard': typeof Char123LocaleChar125DashboardRoute
   '/{-$locale}/events': typeof Char123LocaleChar125EventsRoute
   '/{-$locale}/onboarding': typeof Char123LocaleChar125OnboardingRoute
   '/{-$locale}/register': typeof Char123LocaleChar125RegisterRouteWithChildren
@@ -384,6 +394,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/$season'
     | '/{-$locale}/account'
     | '/{-$locale}/auth'
+    | '/{-$locale}/dashboard'
     | '/{-$locale}/events'
     | '/{-$locale}/onboarding'
     | '/{-$locale}/register'
@@ -422,6 +433,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/$season'
     | '/{-$locale}/account'
     | '/{-$locale}/auth'
+    | '/{-$locale}/dashboard'
     | '/{-$locale}/events'
     | '/{-$locale}/onboarding'
     | '/{-$locale}/register'
@@ -460,6 +472,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/$season'
     | '/{-$locale}/account'
     | '/{-$locale}/auth'
+    | '/{-$locale}/dashboard'
     | '/{-$locale}/events'
     | '/{-$locale}/onboarding'
     | '/{-$locale}/register'
@@ -499,6 +512,7 @@ export interface RootRouteChildren {
   Char123LocaleChar125SeasonRoute: typeof Char123LocaleChar125SeasonRouteWithChildren
   Char123LocaleChar125AccountRoute: typeof Char123LocaleChar125AccountRoute
   Char123LocaleChar125AuthRoute: typeof Char123LocaleChar125AuthRouteWithChildren
+  Char123LocaleChar125DashboardRoute: typeof Char123LocaleChar125DashboardRoute
   Char123LocaleChar125EventsRoute: typeof Char123LocaleChar125EventsRoute
   Char123LocaleChar125OnboardingRoute: typeof Char123LocaleChar125OnboardingRoute
   Char123LocaleChar125RegisterRoute: typeof Char123LocaleChar125RegisterRouteWithChildren
@@ -557,6 +571,13 @@ declare module '@tanstack/react-router' {
       path: '/{-$locale}/events'
       fullPath: '/{-$locale}/events'
       preLoaderRoute: typeof Char123LocaleChar125EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/{-$locale}/dashboard': {
+      id: '/{-$locale}/dashboard'
+      path: '/{-$locale}/dashboard'
+      fullPath: '/{-$locale}/dashboard'
+      preLoaderRoute: typeof Char123LocaleChar125DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/{-$locale}/auth': {
@@ -988,6 +1009,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125SeasonRoute: Char123LocaleChar125SeasonRouteWithChildren,
   Char123LocaleChar125AccountRoute: Char123LocaleChar125AccountRoute,
   Char123LocaleChar125AuthRoute: Char123LocaleChar125AuthRouteWithChildren,
+  Char123LocaleChar125DashboardRoute: Char123LocaleChar125DashboardRoute,
   Char123LocaleChar125EventsRoute: Char123LocaleChar125EventsRoute,
   Char123LocaleChar125OnboardingRoute: Char123LocaleChar125OnboardingRoute,
   Char123LocaleChar125RegisterRoute:
