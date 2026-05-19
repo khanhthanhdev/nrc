@@ -6,7 +6,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { client, queryClient } from "@/utils/orpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ import { useRequireAuth } from "@/lib/route-guards";
 const NewTeamPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const [name, setName] = useState("");
   const [schoolOrOrganization, setSchoolOrOrganization] = useState("");
   const [cityOrProvince, setCityOrProvince] = useState("");

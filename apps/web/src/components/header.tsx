@@ -12,6 +12,7 @@ import {
 } from "@/lib/locale-routing";
 import { getSystemRole, isStaffSystemRole } from "@/lib/route-policy";
 import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { isStaffPath, publicNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
@@ -43,7 +44,7 @@ export default function Header() {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const systemRole = getSystemRole(session.data);
   const canAccessStaffPanel = isStaffSystemRole(systemRole);
   const isStaffRoute = isStaffPath(pathname);

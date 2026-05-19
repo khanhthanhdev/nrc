@@ -7,7 +7,7 @@ import {
 } from "@/features/seasons/admin-season-pages";
 import { stripLocaleFromPathname } from "@/lib/locale-routing";
 import { useRequireAdmin } from "@/lib/route-guards";
-import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { orpc } from "@/utils/orpc";
 
 const StaffSeasonsPage = () => {
@@ -15,7 +15,7 @@ const StaffSeasonsPage = () => {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const session = authClient.useSession();
+  const session = useAuthSession();
 
   useRequireAdmin(session);
 

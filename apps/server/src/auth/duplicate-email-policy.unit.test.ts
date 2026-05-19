@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeEmailForLookup } from "./duplicate-email-policy.js";
+import {
+  normalizeEmailForLookup,
+  shouldBlockCredentialSignUpForGoogleOnlyAccount,
+} from "./duplicate-email-policy.js";
 
 describe("normalizeEmailForLookup", () => {
   it("returns lowercase trimmed email", () => {
@@ -53,5 +56,34 @@ describe("normalizeEmailForLookup", () => {
 
   it("handles mixed whitespace", () => {
     expect(normalizeEmailForLookup(" \t user@example.com \t ")).toBe("user@example.com");
+  });
+});
+
+describe("shouldBlockCredentialSignUpForGoogleOnlyAccount", () => {
+  it("blocks when only google provider is linked", () => {
+    expect(shouldBlockCredentialSignUpForGoogleOnlyAccount([{ providerId: "google" }])).toBe(true);
+  });
+
+  it("does not block when credential provider is already linked", () => {
+    expect(
+      shouldBlockCredentialSignUpForGoogleOnlyAccount([
+        { providerId: "google" },
+        { providerId: "credential" },
+      ]),
+    ).toBe(false);
+  });
+
+  it("does not block when only credential provider is linked", () => {
+    expect(shouldBlockCredentialSignUpForGoogleOnlyAccount([{ providerId: "credential" }])).toBe(
+      false,
+    );
+  });
+
+  it("does not block when no providers are linked", () => {
+    expect(shouldBlockCredentialSignUpForGoogleOnlyAccount([])).toBe(false);
+  });
+
+  it("ignores unrelated providers", () => {
+    expect(shouldBlockCredentialSignUpForGoogleOnlyAccount([{ providerId: "github" }])).toBe(false);
   });
 });

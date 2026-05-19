@@ -11,14 +11,13 @@ import { stripLocaleFromPathname } from "@/lib/locale-routing";
 import { canWriteRegistration, getSystemRole } from "@/lib/route-policy";
 import { useRequireAuth } from "@/lib/route-guards";
 import { useCurrentTeamSummary } from "@/lib/team-access";
-import { authClient } from "@/utils/auth-client";
-
+import { useAuthSession } from "@/utils/auth-session-context";
 const RegisterEventPage = () => {
   const navigate = useNavigate();
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const teamQuery = useCurrentTeamSummary();
   const { eventId } = useParams({ from: "/{-$locale}/register/$eventId" });
 

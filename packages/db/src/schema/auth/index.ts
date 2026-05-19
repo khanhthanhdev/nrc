@@ -65,6 +65,9 @@ export const user = pgTable(
     index("user_deleted_by_user_id_idx").on(table.deletedByUserId),
     index("user_status_idx").on(table.status),
     index("user_type_idx").on(table.userType),
+    index("user_email_lower_active_idx")
+      .on(sql`lower(${table.email})`)
+      .where(sql`${table.deletedAt} IS NULL`),
   ],
 );
 

@@ -2,9 +2,14 @@ import { normalizeEmailForLookup } from "./duplicate-email-policy";
 
 export type StaffSystemRole = "ADMIN" | "MANAGER";
 
-export interface StaffRoleEmailConfig {
+export interface StaffRoleEmailEnvironment {
   adminEmail?: string | null;
   managerEmail?: string | null;
+}
+
+export interface StaffRoleEmailConfig {
+  adminEmails: ReadonlySet<string>;
+  managerEmails: ReadonlySet<string>;
 }
 
 export interface StaffRoleAssignment {
@@ -12,16 +17,25 @@ export interface StaffRoleAssignment {
   userType: "STAFF";
 }
 
-const parseEmailAllowlist = (value: unknown): string[] => {
+const parseEmailAllowlist = (value: unknown): Set<string> => {
   if (typeof value !== "string") {
-    return [];
+    return new Set();
   }
 
-  return value
+  const entries = value
     .split(",")
     .map((email) => normalizeEmailForLookup(email))
     .filter((email): email is string => email !== null);
+
+  return new Set(entries);
 };
+
+export const createStaffRoleEmailConfig = (
+  environment: StaffRoleEmailEnvironment,
+): StaffRoleEmailConfig => ({
+  adminEmails: parseEmailAllowlist(environment.adminEmail),
+  managerEmails: parseEmailAllowlist(environment.managerEmail),
+});
 
 export const resolveStaffRoleAssignmentForEmail = (
   email: unknown,
@@ -33,16 +47,14 @@ export const resolveStaffRoleAssignmentForEmail = (
     return null;
   }
 
-  const adminEmails = parseEmailAllowlist(config.adminEmail);
-  if (adminEmails.includes(normalizedEmail)) {
+  if (config.adminEmails.has(normalizedEmail)) {
     return {
       systemRole: "ADMIN",
       userType: "STAFF",
     };
   }
 
-  const managerEmails = parseEmailAllowlist(config.managerEmail);
-  if (managerEmails.includes(normalizedEmail)) {
+  if (config.managerEmails.has(normalizedEmail)) {
     return {
       systemRole: "MANAGER",
       userType: "STAFF",

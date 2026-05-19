@@ -1,13 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { useRequireAdmin } from "@/lib/route-guards";
-import { authClient } from "@/utils/auth-client";
-
+import { useAuthSession } from "@/utils/auth-session-context";
 import { UsersPage } from "./users";
 
 const StaffUsersPage = () => {
   const navigate = useNavigate();
-  const session = authClient.useSession();
+  const session = useAuthSession();
 
   useRequireAdmin(session);
 

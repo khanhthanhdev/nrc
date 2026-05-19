@@ -1,6 +1,6 @@
 import { account, db, user } from "@nrc-full/db";
 import { env } from "@nrc-full/env/server";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { betterAuth } from "better-auth";
 import type { BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -19,15 +19,29 @@ import {
   normalizeEmailForLookup,
   shouldBlockCredentialSignUpForGoogleOnlyAccount,
 } from "./duplicate-email-policy";
-import { resolveStaffRoleAssignmentForEmail } from "./staff-role-policy";
+import {
+  createStaffRoleEmailConfig,
+  resolveStaffRoleAssignmentForEmail,
+} from "./staff-role-policy";
 
 const authOrigin = new URL(env.BETTER_AUTH_URL).origin;
-const authRateLimitWindowMs = 15 * 60 * 1000;
-const authRateLimitMaxRequests = 100;
-const staffRoleEmailConfig = {
+
+// Rate-limit window/budget for authentication endpoints.
+const AUTH_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const AUTH_RATE_LIMIT_MAX_REQUESTS = 100;
+
+// Admin impersonation session lives 15 minutes by design.
+const IMPERSONATION_SESSION_TTL_SECONDS = 60 * 15;
+
+// Organization invitations expire after 48 hours.
+const ORGANIZATION_INVITATION_TTL_SECONDS = 60 * 60 * 48;
+
+const staffRoleEmailConfig = createStaffRoleEmailConfig({
   adminEmail: env.ADMIN_EMAIL,
   managerEmail: env.MANAGER_EMAIL,
-} as const;
+});
+
+const isE2ETestHelpersEnabled = env.ENABLE_E2E_TEST_HELPERS === "1";
 
 export const authRateLimiter = rateLimiter({
   keyGenerator: (c) => {
@@ -36,14 +50,14 @@ export const authRateLimiter = rateLimiter({
       forwardedFor || c.req.header("cf-connecting-ip") || c.req.header("x-real-ip") || "unknown"
     );
   },
-  limit: authRateLimitMaxRequests,
+  limit: AUTH_RATE_LIMIT_MAX_REQUESTS,
   message: {
     code: "RATE_LIMITED",
     message: "Too many auth requests. Please try again later.",
   },
-  skip: (c) => process.env.ENABLE_E2E_TEST_HELPERS === "1" || c.req.method === "OPTIONS",
+  skip: (c) => isE2ETestHelpersEnabled || c.req.method === "OPTIONS",
   standardHeaders: "draft-6",
-  windowMs: authRateLimitWindowMs,
+  windowMs: AUTH_RATE_LIMIT_WINDOW_MS,
 });
 
 const adminAccessControl = createAccessControl({
@@ -77,6 +91,9 @@ const staffRolePermissions = {
       "update",
     ],
   }),
+  // MANAGER and USER are declared with no admin-plugin permissions on purpose.
+  // Authorization for these roles is enforced at the API layer, not by the
+  // Better Auth admin plugin.
   MANAGER: adminAccessControl.newRole({
     session: [],
     user: [],
@@ -233,10 +250,12 @@ const authOptions: BetterAuthOptions = {
         return;
       }
 
+      // Case-insensitive lookup: stored email casing is preserved by Better
+      // Auth, but our policy treats addresses as case-insensitive.
       const [existingUser] = await db
         .select({ id: user.id })
         .from(user)
-        .where(and(eq(user.email, email), isNull(user.deletedAt)))
+        .where(and(eq(sql`lower(${user.email})`, email), isNull(user.deletedAt)))
         .limit(1);
 
       if (!existingUser) {
@@ -261,7 +280,7 @@ const authOptions: BetterAuthOptions = {
       adminRoles: ["ADMIN"],
       bannedUserMessage: "Your account has been suspended. Contact NRC support for assistance.",
       defaultRole: "USER",
-      impersonationSessionDuration: 60 * 15,
+      impersonationSessionDuration: IMPERSONATION_SESSION_TTL_SECONDS,
       roles: staffRolePermissions,
       schema: {
         user: {
@@ -275,9 +294,11 @@ const authOptions: BetterAuthOptions = {
       ac: organizationAccessControl,
       allowUserToCreateOrganization: false,
       cancelPendingInvitationsOnReInvite: true,
+      // Self-serve org creation is disabled; this role only applies when an
+      // admin creates an organization on behalf of a mentor.
       creatorRole: "TEAM_MENTOR",
       disableOrganizationDeletion: true,
-      invitationExpiresIn: 60 * 60 * 48,
+      invitationExpiresIn: ORGANIZATION_INVITATION_TTL_SECONDS,
       requireEmailVerificationOnInvitation: true,
       roles: teamMembershipRolePermissions,
       schema: {

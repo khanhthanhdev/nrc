@@ -4,7 +4,7 @@ import { Outlet, createFileRoute, useNavigate, useRouterState } from "@tanstack/
 import { AdminEventListPage, AdminEventListSkeleton } from "@/features/events/admin-event-pages";
 import { stripLocaleFromPathname } from "@/lib/locale-routing";
 import { useRequireAdmin } from "@/lib/route-guards";
-import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { orpc } from "@/utils/orpc";
 
 const StaffEventsPage = () => {
@@ -12,7 +12,7 @@ const StaffEventsPage = () => {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const session = authClient.useSession();
+  const session = useAuthSession();
 
   useRequireAdmin(session);
 

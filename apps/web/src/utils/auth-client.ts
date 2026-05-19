@@ -1,8 +1,8 @@
-import { env } from "@nrc-full/env/web";
 import { createAuthClient } from "better-auth/react";
 import { adminClient, inferAdditionalFields, organizationClient } from "better-auth/client/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
 import { defaultStatements } from "better-auth/plugins/organization/access";
+import { getInternalApiUrl } from "./internal-api-url";
 
 const organizationAccessControl = createAccessControl(defaultStatements);
 const adminAccessControl = createAccessControl({
@@ -64,8 +64,15 @@ const teamMembershipRoles = {
   }),
 } as const;
 
+// Use a same-origin relative path so the browser never preflights and so
+// cookies are scoped to the web domain. Caddy (prod) and Vite (dev) proxy
+// /api/auth/* to the API container. SSR session fetching goes through a
+// dedicated server function in utils/fetch-session.ts.
+const authBaseURL = typeof window === "undefined" ? getInternalApiUrl() : window.location.origin;
+
 export const authClient = createAuthClient({
-  baseURL: env.VITE_SERVER_URL,
+  baseURL: authBaseURL,
+  basePath: "/api/auth",
   fetchOptions: {
     credentials: "include",
   },

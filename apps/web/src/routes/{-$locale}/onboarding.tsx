@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
-import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { client, orpc, queryClient } from "@/utils/orpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +28,7 @@ interface OnboardingFormState {
 
 function OnboardingPage() {
   const navigate = useNavigate();
-  const session = authClient.useSession();
+  const session = useAuthSession();
 
   const profileQuery = useQuery({
     ...orpc.auth.getOnboardingProfile.queryOptions(),

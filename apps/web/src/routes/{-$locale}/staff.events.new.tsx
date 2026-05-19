@@ -2,11 +2,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { AdminEventCreatePage } from "@/features/events/admin-event-pages";
 import { useRequireAdmin } from "@/lib/route-guards";
-import { authClient } from "@/utils/auth-client";
-
+import { useAuthSession } from "@/utils/auth-session-context";
 const StaffEventNewPage = () => {
   const navigate = useNavigate();
-  const session = authClient.useSession();
+  const session = useAuthSession();
 
   useRequireAdmin(session);
 

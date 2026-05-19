@@ -11,12 +11,12 @@ import {
 import { isSeasonNotFoundError } from "@/features/seasons/helpers";
 import { isValidSeason } from "@/lib/route-policy";
 import { useRequireAdmin } from "@/lib/route-guards";
-import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { orpc } from "@/utils/orpc";
 
 const StaffSeasonEditPage = () => {
   const navigate = useNavigate();
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const { seasonId } = useParams({ from: "/{-$locale}/staff/seasons/$seasonId/edit" });
 
   useRequireAdmin(session);

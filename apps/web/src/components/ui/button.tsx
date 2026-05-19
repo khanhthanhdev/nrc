@@ -4,8 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
-import type * as React from "react";
-import { Slot } from "radix-ui";
+import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -22,8 +21,7 @@ export const buttonVariants = cva(
         icon: "size-10 rounded-full",
         "icon-lg": "size-11 rounded-full",
         "icon-sm": "size-9 rounded-full",
-        "icon-xl":
-          "size-12 rounded-full [&_svg:not([class*='size-'])]:size-5",
+        "icon-xl": "size-12 rounded-full [&_svg:not([class*='size-'])]:size-5",
         "icon-xs":
           "size-8 rounded-full not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-4",
         lg: "h-11 px-5",
@@ -50,12 +48,44 @@ export const buttonVariants = cva(
   },
 );
 
-export interface ButtonProps extends useRender.ComponentProps<"button"> {
+type ButtonBaseProps = Omit<useRender.ComponentProps<"button">, "render"> & {
   variant?: VariantProps<typeof buttonVariants>["variant"];
   size?: VariantProps<typeof buttonVariants>["size"];
   loading?: boolean;
-  asChild?: boolean;
-}
+};
+
+type ButtonAsChildProps = ButtonBaseProps & {
+  asChild: true;
+  render?: never;
+};
+
+type ButtonRenderProps = ButtonBaseProps & {
+  asChild?: false;
+  render?: useRender.ComponentProps<"button">["render"];
+};
+
+export type ButtonProps = ButtonAsChildProps | ButtonRenderProps;
+
+type BaseUIPreventableMouseEvent = React.MouseEvent<HTMLElement> & {
+  // Base UI adds this internal escape hatch to prevent the primitive's own
+  // handler after userland disabled handling has consumed the event.
+  preventBaseUIHandler?: () => void;
+};
+
+const mergeRefs =
+  <T,>(...refs: (React.Ref<T> | undefined)[]) =>
+  (value: T | null) => {
+    for (const ref of refs) {
+      if (typeof ref === "function") {
+        ref(value);
+      } else if (ref) {
+        ref.current = value;
+      }
+    }
+  };
+
+const getElementRef = <T,>(element: React.ReactElement): React.Ref<T> | undefined =>
+  (element.props as { ref?: React.Ref<T> }).ref ?? (element as { ref?: React.Ref<T> }).ref;
 
 export function Button({
   className,
@@ -69,9 +99,12 @@ export function Button({
   ...props
 }: ButtonProps): React.ReactElement {
   const isDisabled = Boolean(loading || disabledProp);
-  const renderProp = asChild ? <Slot.Root /> : render;
   const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] =
     render || asChild ? undefined : "button";
+
+  if (asChild && render) {
+    throw new Error("Button cannot use both `asChild` and `render`.");
+  }
 
   const defaultProps = {
     children: (
@@ -83,16 +116,74 @@ export function Button({
       </>
     ),
     className: cn(buttonVariants({ className, size, variant })),
-    "aria-disabled": loading || undefined,
+    "aria-disabled": isDisabled || undefined,
     "data-loading": loading ? "" : undefined,
     "data-slot": "button",
     disabled: isDisabled,
     type: typeValue,
   };
 
-  return useRender({
+  const renderedButton = useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(defaultProps, props),
-    render: renderProp,
+    render: asChild ? undefined : render,
   });
+
+  if (asChild) {
+    const child = React.Children.only(children);
+
+    if (
+      !React.isValidElement<{
+        children?: React.ReactNode;
+        className?: string;
+        ref?: React.Ref<HTMLElement>;
+      }>(child)
+    ) {
+      throw new Error("Button with asChild expects a single React element child.");
+    }
+
+    const { ref: _childRefProp, ...childPropsWithoutRef } = child.props;
+    const { ref: _buttonRefProp, ...propsWithoutRef } = props as typeof props & {
+      ref?: React.Ref<HTMLElement>;
+    };
+    const buttonRef = (props as { ref?: React.Ref<HTMLElement> }).ref;
+    const childRef = getElementRef<HTMLElement>(child);
+    const disabledProps = isDisabled
+      ? {
+          "aria-disabled": true,
+          disabled: true,
+          onClick: (event: React.MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+            event.stopPropagation();
+            (event as BaseUIPreventableMouseEvent).preventBaseUIHandler?.();
+          },
+          tabIndex: -1,
+        }
+      : undefined;
+    const mergedProps = mergeProps<"button">(
+      {
+        ...defaultProps,
+        children: loading ? (
+          <>
+            {childPropsWithoutRef.children}
+            <Spinner
+              className="pointer-events-none absolute"
+              data-slot="button-loading-indicator"
+            />
+          </>
+        ) : (
+          childPropsWithoutRef.children
+        ),
+      },
+      childPropsWithoutRef,
+      propsWithoutRef,
+      disabledProps,
+    );
+    mergedProps.className = cn(defaultProps.className, childPropsWithoutRef.className);
+    mergedProps.ref = mergeRefs(buttonRef, childRef);
+
+    return React.cloneElement(child, mergedProps);
+  }
+
+  return renderedButton;
 }

@@ -28,6 +28,7 @@ export const env = createEnv({
       ),
     ),
     DATABASE_URL: v.pipe(v.string(), v.minLength(1)),
+    ENABLE_E2E_TEST_HELPERS: v.optional(v.picklist(["0", "1"]), "0"),
     GOOGLE_CLIENT_ID: v.pipe(v.string(), v.minLength(1)),
     GOOGLE_CLIENT_SECRET: v.pipe(v.string(), v.minLength(1)),
     MANAGER_EMAIL: v.optional(v.pipe(v.string(), v.minLength(1))),

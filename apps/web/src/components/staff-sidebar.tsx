@@ -8,8 +8,7 @@ import {
 } from "@/lib/locale-routing";
 import { getSystemRole } from "@/lib/route-policy";
 import { getStaffNavigation } from "@/lib/navigation";
-import { authClient } from "@/utils/auth-client";
-
+import { useAuthSession } from "@/utils/auth-session-context";
 import {
   Sidebar,
   SidebarContent,
@@ -35,7 +34,7 @@ export function StaffSidebar() {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const systemRole = getSystemRole(session.data);
   const { footerItem, sections } = getStaffNavigation(systemRole);
   const { i18n, t } = useTranslation();

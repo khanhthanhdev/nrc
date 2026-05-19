@@ -9,8 +9,7 @@ import { TeamProfileShell } from "@/features/teams/team-profile-shell";
 import type { TeamProfileTab } from "@/features/teams/team-profile-shell";
 import { usePublicTeamProfile } from "@/lib/team-access";
 import { canInviteToTeam, canManageTeam } from "@/lib/route-policy";
-import { authClient } from "@/utils/auth-client";
-
+import { useAuthSession } from "@/utils/auth-session-context";
 type TeamProfileSearchTab = Exclude<TeamProfileTab, "overview"> | undefined;
 
 const TEAM_NUMBER_PATTERN = /^\d{5}$/;
@@ -48,7 +47,7 @@ const TeamProfilePage = () => {
   const { t } = useTranslation();
   const { teamNumber } = useParams({ from: "/{-$locale}/teams/$teamNumber" });
   const { tab: rawTab } = useSearch({ from: "/{-$locale}/teams/$teamNumber" });
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const isValidTeamNumber = TEAM_NUMBER_PATTERN.test(teamNumber);
   const teamQuery = usePublicTeamProfile(teamNumber, isValidTeamNumber);
   const tab = normalizeTeamProfileTab(rawTab);

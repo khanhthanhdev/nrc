@@ -8,6 +8,7 @@ import { resolvePostAuthRoute } from "@/lib/auth-routing";
 import { getSupportedLocale, localizePathname } from "@/lib/locale-routing";
 import { authClient } from "@/utils/auth-client";
 
+import { useAuthSession } from "@/utils/auth-session-context";
 interface AcceptInvitationSearch {
   invitationId?: string;
 }
@@ -15,7 +16,7 @@ interface AcceptInvitationSearch {
 const AcceptInvitationPage = () => {
   const navigate = useNavigate();
   const { invitationId } = useSearch({ from: "/{-$locale}/auth/accept-invitation" });
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const { i18n } = useTranslation();
   const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
   const [isSubmitting, setIsSubmitting] = useState(false);

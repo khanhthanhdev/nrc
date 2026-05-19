@@ -15,6 +15,13 @@
       "when": 1789654800000,
       "tag": "0001_registration_active_unique",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779155244568,
+      "tag": "0002_neat_havok",
+      "breakpoints": true
     }
   ]
 }

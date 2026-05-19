@@ -3,12 +3,12 @@ import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
 
 import { AdminEventEditorPage } from "@/features/events/admin-event-pages";
 import { useRequireAdmin } from "@/lib/route-guards";
-import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { orpc } from "@/utils/orpc";
 
 const StaffEventEditPage = () => {
   const navigate = useNavigate();
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const { eventRecordId } = useParams({ from: "/{-$locale}/staff/events/$eventRecordId/edit" });
 
   useRequireAdmin(session);

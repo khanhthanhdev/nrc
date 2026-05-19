@@ -139,8 +139,12 @@ services:
       PORT: 3000
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-nrc_full}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET is required}
-      BETTER_AUTH_URL:    https://${API_DOMAIN}
-      CORS_ORIGIN:        https://${WEB_DOMAIN}
+      # Auth + RPC are served from the web domain (Caddy proxies
+      # /api/auth/* + /rpc/* to this container). Keeping the canonical
+      # URL on the web domain lets cookies be set first-party and
+      # eliminates CORS preflights from the browser.
+      BETTER_AUTH_URL:    https://${WEB_DOMAIN}
+      CORS_ORIGIN:        https://${WEB_DOMAIN},https://${API_DOMAIN}
       GOOGLE_CLIENT_ID:     ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       AWS_REGION:            ${AWS_REGION:-}

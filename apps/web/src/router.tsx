@@ -17,7 +17,7 @@ export const getRouter = () => {
         </TooltipProvider>
       </I18nProvider>
     ),
-    context: { orpc, queryClient },
+    context: { orpc, queryClient, session: null },
     defaultNotFoundComponent: () => <div>Not Found</div>,
     defaultPendingComponent: () => <Loader />,
     defaultPreloadStaleTime: 0,

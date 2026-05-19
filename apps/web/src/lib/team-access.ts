@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { orpc } from "@/utils/orpc";
 
 export const useCurrentTeamSummary = () => {
-  const session = authClient.useSession();
+  const session = useAuthSession();
 
   return useQuery({
     ...orpc.team.getMyTeam.queryOptions(),

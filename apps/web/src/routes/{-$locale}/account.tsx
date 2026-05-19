@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { hasCredentialProvider } from "@/lib/account-security";
 import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { orpc } from "@/utils/orpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,7 +30,7 @@ const ReadOnlyField = ({ id, label, value }: ReadOnlyFieldProps) => (
 
 const AccountPage = () => {
   const navigate = useNavigate();
-  const session = authClient.useSession();
+  const session = useAuthSession();
 
   const profileQuery = useQuery({
     ...orpc.auth.getOnboardingProfile.queryOptions(),

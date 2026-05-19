@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute, Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Outlet, createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 
 import { StaffSidebar } from "@/components/staff-sidebar";
 import { Button } from "@/components/ui/button";
@@ -6,14 +6,12 @@ import { SidebarInset } from "@/components/ui/sidebar";
 import { stripLocaleFromPathname } from "@/lib/locale-routing";
 import { useRequireStaff } from "@/lib/route-guards";
 import { getSystemRole, isAdminSystemRole } from "@/lib/route-policy";
-import { authClient } from "@/utils/auth-client";
-
+import { useAuthSession } from "@/utils/auth-session-context";
 const StaffOverviewPage = () => {
-  const navigate = useNavigate();
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const systemRole = getSystemRole(session.data);
   const isAdmin = isAdminSystemRole(systemRole);
 
@@ -28,11 +26,9 @@ const StaffOverviewPage = () => {
   }
 
   if (!session.data) {
-    void navigate({ to: "/{-$locale}/auth" });
-
     return (
       <div className="mx-auto max-w-2xl px-4 py-8">
-        <p className="text-muted-foreground text-sm">Redirecting to sign in...</p>
+        <p className="text-muted-foreground text-sm">Loading staff dashboard...</p>
       </div>
     );
   }

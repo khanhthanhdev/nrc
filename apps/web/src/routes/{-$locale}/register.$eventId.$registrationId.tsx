@@ -4,11 +4,10 @@ import { RegistrationDetailPage } from "@/features/registration/registration-det
 import { canWriteRegistration, getSystemRole } from "@/lib/route-policy";
 import { useRequireAuth } from "@/lib/route-guards";
 import { useCurrentTeamSummary } from "@/lib/team-access";
-import { authClient } from "@/utils/auth-client";
-
+import { useAuthSession } from "@/utils/auth-session-context";
 const RegistrationDetailRoute = () => {
   const navigate = useNavigate();
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const teamQuery = useCurrentTeamSummary();
   const { eventId, registrationId } = useParams({
     from: "/{-$locale}/register/$eventId/$registrationId",

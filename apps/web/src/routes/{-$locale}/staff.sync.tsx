@@ -21,7 +21,7 @@ import {
   type SyncPushResourceType,
 } from "@/features/sync/admin-sync-api";
 import { useRequireAdmin } from "@/lib/route-guards";
-import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { orpc } from "@/utils/orpc";
 
 const formatDate = (value: string | null | undefined) =>
@@ -310,7 +310,7 @@ const BatchPanel = ({ eventCode, season }: { eventCode: string; season: string }
 
 const StaffSyncPage = () => {
   const navigate = useNavigate();
-  const session = authClient.useSession();
+  const session = useAuthSession();
   useRequireAdmin(session);
   const { eventsQuery, selectedEvent, selectedKey, setSelectedKey } = useSelectedEvent(
     Boolean(session.data),

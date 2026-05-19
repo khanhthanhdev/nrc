@@ -2,11 +2,10 @@ import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
 
 import { StaffRegistrationDetailPage } from "@/features/registration/staff-registrations-page";
 import { useRequireStaff } from "@/lib/route-guards";
-import { authClient } from "@/utils/auth-client";
-
+import { useAuthSession } from "@/utils/auth-session-context";
 const StaffRegistrationDetailRoute = () => {
   const navigate = useNavigate();
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const { registrationId } = useParams({
     from: "/{-$locale}/staff/registrations/$registrationId",
   });

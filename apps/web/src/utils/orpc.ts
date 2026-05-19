@@ -1,7 +1,6 @@
 import type { AppRouter } from "@nrc-full/api/app-router";
 import type { RouterClient } from "@orpc/server";
 
-import { env } from "@nrc-full/env/web";
 import { createORPCClient } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
@@ -9,10 +8,19 @@ import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { authClient } from "./auth-client";
+import { getInternalApiUrl } from "./internal-api-url";
 
 const CSRF_COOKIE_NAME = "nrc_csrf_token";
 const CSRF_HEADER_NAME = "x-csrf-token";
 let csrfTokenRequest: Promise<string | null> | null = null;
+
+// RPCLink constructs URL instances internally, so the base must always be
+// absolute. Browser calls stay same-origin for the Caddy/Vite proxy, while SSR
+// calls use the Docker-internal API URL when it is available.
+const RPC_BASE_URL =
+  typeof window === "undefined"
+    ? `${getInternalApiUrl()}/rpc`
+    : new URL("/rpc", window.location.origin).toString();
 
 const getCsrfToken = (): string | null => {
   if (typeof document === "undefined") {
@@ -51,7 +59,7 @@ const fetchCsrfToken = async (): Promise<string | null> => {
 };
 
 const requestCsrfToken = async (): Promise<string | null> => {
-  const response = await fetch(`${env.VITE_SERVER_URL}/rpc/csrf-token`, {
+  const response = await fetch(`${RPC_BASE_URL}/csrf-token`, {
     credentials: "include",
   });
 
@@ -103,7 +111,7 @@ const link = new RPCLink({
 
     return fetch(retryRequest, { credentials: "include" });
   },
-  url: `${env.VITE_SERVER_URL}/rpc`,
+  url: RPC_BASE_URL,
 });
 
 const getORPCClient = () => createORPCClient(link) as RouterClient<AppRouter>;

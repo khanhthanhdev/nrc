@@ -1,17 +1,15 @@
-import { Outlet, createFileRoute, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useRouterState } from "@tanstack/react-router";
 
 import { RegisterLandingPage } from "@/features/registration/register-landing-page";
 import { stripLocaleFromPathname } from "@/lib/locale-routing";
 import { useRequireAuth } from "@/lib/route-guards";
 import { useCurrentTeamSummary } from "@/lib/team-access";
-import { authClient } from "@/utils/auth-client";
-
+import { useAuthSession } from "@/utils/auth-session-context";
 const RegisterPage = () => {
-  const navigate = useNavigate();
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const teamQuery = useCurrentTeamSummary();
 
   useRequireAuth(session);
@@ -29,11 +27,9 @@ const RegisterPage = () => {
   }
 
   if (!session.data) {
-    void navigate({ to: "/{-$locale}/auth" });
-
     return (
       <div className="mx-auto max-w-2xl px-4 py-8">
-        <p className="text-muted-foreground text-sm">Redirecting to sign in...</p>
+        <p className="text-muted-foreground text-sm">Loading registration...</p>
       </div>
     );
   }

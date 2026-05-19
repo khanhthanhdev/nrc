@@ -16,6 +16,7 @@ import { resolvePostAuthRoute } from "@/lib/auth-routing";
 import { getSupportedLocale, localizePathname } from "@/lib/locale-routing";
 import { stripLocaleFromPathname } from "@/lib/locale-routing";
 import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +32,7 @@ const AuthPage = () => {
     select: (state) => state.location.pathname,
   });
   const { invitationId } = useSearch({ from: "/{-$locale}/auth" });
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const { i18n } = useTranslation();
   const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
 

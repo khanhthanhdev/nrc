@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Outlet, createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { stripLocaleFromPathname } from "@/lib/locale-routing";
@@ -15,7 +15,7 @@ const TeamsPage = () => {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const isListingPage = stripLocaleFromPathname(pathname) === "/teams";

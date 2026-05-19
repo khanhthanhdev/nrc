@@ -22,6 +22,7 @@ import {
 import { toast } from "sonner";
 
 import { authClient } from "@/utils/auth-client";
+import { useAuthSession } from "@/utils/auth-session-context";
 import { client } from "@/utils/orpc";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -392,7 +393,7 @@ const updateManagedUsersPageBanState = (
 export const UsersPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const session = authClient.useSession();
+  const session = useAuthSession();
   const currentSession = session.data;
   const currentUserId = currentSession?.user.id ?? "";
   const isAdmin = isAdminSystemRole(getSystemRole(currentSession));

@@ -15,6 +15,7 @@ import { createMiddleware } from "@tanstack/react-start";
 import { createError } from "evlog";
 import { useTranslation } from "react-i18next";
 
+import type { AuthSession } from "@/utils/auth-client";
 import type { orpc } from "@/utils/orpc";
 
 import { Toaster } from "@/components/ui/sonner";
@@ -22,12 +23,15 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { getPublicCacheControl } from "@/lib/cache-config";
 import { getLocaleFromPathname } from "@/lib/locale-routing";
 import { isStaffPath } from "@/lib/navigation";
+import { AuthSessionProvider } from "@/utils/auth-session-context";
+import { fetchSessionServerFn } from "@/utils/fetch-session";
 
 import Header from "../components/header";
 import appCss from "../index.css?url";
 export interface RouterAppContext {
   orpc: typeof orpc;
   queryClient: QueryClient;
+  session: AuthSession | null;
 }
 
 const RootDocument = () => {
@@ -38,6 +42,7 @@ const RootDocument = () => {
   const staffRoute = isStaffPath(pathname);
   const localeFromPath = getLocaleFromPathname(pathname);
   const activeLanguage = localeFromPath ?? "en";
+  const { session: ssrSession } = Route.useRouteContext();
 
   useEffect(() => {
     if (localeFromPath && i18n.resolvedLanguage !== localeFromPath) {
@@ -51,21 +56,23 @@ const RootDocument = () => {
         <HeadContent />
       </head>
       <body suppressHydrationWarning>
-        <SidebarProvider defaultOpen>
-          <div className="nrc-shell min-h-svh">
-            <Header />
-            {staffRoute ? (
-              <Outlet />
-            ) : (
-              <div className="mx-auto w-full max-w-[1440px] px-4 pb-12 sm:px-6 lg:px-8">
-                <main className="py-8 sm:py-10">
-                  <Outlet />
-                </main>
-              </div>
-            )}
-          </div>
-        </SidebarProvider>
-        <Toaster />
+        <AuthSessionProvider ssrSession={ssrSession}>
+          <SidebarProvider defaultOpen>
+            <div className="nrc-shell min-h-svh">
+              <Header />
+              {staffRoute ? (
+                <Outlet />
+              ) : (
+                <div className="mx-auto w-full max-w-[1440px] px-4 pb-12 sm:px-6 lg:px-8">
+                  <main className="py-8 sm:py-10">
+                    <Outlet />
+                  </main>
+                </div>
+              )}
+            </div>
+          </SidebarProvider>
+          <Toaster />
+        </AuthSessionProvider>
 
         <TanStackRouterDevtools position="bottom-left" />
         <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
@@ -82,6 +89,18 @@ const evlogMiddleware = createMiddleware().server(async (options) => {
 });
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
+  beforeLoad: async () => {
+    if (typeof window !== "undefined") {
+      return { session: null };
+    }
+
+    // SSR-prefetch the Better Auth session so the very first render
+    // already knows whether the user is authenticated. The result is
+    // exposed via route context to `RootDocument` and seeded into
+    // Better Auth's client store via `AuthSessionProvider`.
+    const session = await fetchSessionServerFn();
+    return { session };
+  },
   component: RootDocument,
   head: () => ({
     links: [
@@ -107,7 +126,9 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     handlers: {
       GET: async ({ context, next, request }) => {
         const log = (context as { log?: RequestLogger } | undefined)?.log;
-        const { pathname, searchParams } = new URL(request.url);
+        // TanStack Start may provide a relative request URL in local SSR paths.
+        // Supplying a base keeps URL parsing stable for both absolute and relative inputs.
+        const { pathname, searchParams } = new URL(request.url, "http://localhost");
 
         log?.set({
           route: { pathname },
@@ -122,7 +143,8 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
           });
         }
 
-        const response = await next();
+        // TanStack Start's route handler type is wider than the runtime Response returned here.
+        const response = (await next()) as unknown as Response;
         response.headers.set("Cache-Control", getPublicCacheControl(pathname));
         return response;
       },
