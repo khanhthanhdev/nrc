@@ -17,7 +17,11 @@
     "db:start": "docker compose up -d",
     "db:watch": "docker compose up",
     "db:stop": "docker compose stop",
-    "db:down": "docker compose down"
+    "db:down": "docker compose down",
+    "seed:2025": "bun run seed-season-2025.ts",
+    "seed:2025:quick": "bun run seed-2025-quick.ts",
+    "seed:2025:mock": "bun run mock-tournament.ts",
+    "simulate:registration": "bun run simulate-registration.ts"
   },
   "dependencies": {
     "@nrc-full/env": "workspace:*",
