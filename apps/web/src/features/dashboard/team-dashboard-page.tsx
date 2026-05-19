@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -39,51 +37,28 @@ export function TeamDashboardPage({ displayName }: TeamDashboardPageProps) {
   const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
   const locale = activeLanguage === "vi" ? "vi-VN" : "en-US";
 
-  const teamQuery = useQuery({
-    ...orpc.team.getMyTeam.queryOptions(),
+  const dashboardQuery = useQuery({
+    ...orpc.dashboard.getUserDashboard.queryOptions(),
     retry: false,
   });
 
-  const teamId = teamQuery.data?.id ?? "";
-
-  const registrationsQuery = useQuery({
-    ...orpc.registration.listTeamRegistrations.queryOptions({
-      input: { teamId },
-    }),
-    enabled: Boolean(teamId),
-    retry: false,
-  });
-
-  const eventsQuery = useQuery({
-    ...orpc.registration.listPublicEvents.queryOptions({
-      input: { limit: 8 },
-    }),
-    retry: false,
-  });
-
-  const registrations = registrationsQuery.data ?? [];
-  const events = eventsQuery.data?.items ?? [];
-  const upcomingEvents = useMemo(
-    () =>
-      events
-        .filter((event) => new Date(event.eventStartsAt).getTime() >= Date.now())
-        .slice(0, 2),
-    [events],
-  );
-  const pendingTasks = (teamQuery.data?.description ? 2 : 3) + (registrations.length === 0 ? 1 : 0);
-
-  if (teamQuery.isLoading) {
+  if (dashboardQuery.isLoading) {
     return <DashboardSkeleton />;
   }
 
-  const hasTeam = Boolean(teamQuery.data);
+  const data = dashboardQuery.data;
+  const hasTeam = Boolean(data?.activeTeam);
+  const upcomingEvents = data?.upcomingEvents ?? [];
+  const registrations = data?.registrations ?? [];
+  const pendingTasks = data?.tasks.length ?? 0;
+  const notificationCount = data?.notifications.length ?? 0;
 
   return (
     <div className="flex flex-col gap-6">
       <section className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-normal text-foreground">
-            {t("dashboard.welcome", "Welcome back, {{name}}! 👋", { name: displayName })}
+            {t("dashboard.welcome", "Welcome back, {{name}}", { name: displayName })}
           </h1>
           <p className="mt-2 text-muted-foreground">
             {t(
@@ -126,20 +101,20 @@ export function TeamDashboardPage({ displayName }: TeamDashboardPageProps) {
           icon={Bell}
           label={t("dashboard.stats.unread", "Unread Notifications")}
           tone="purple"
-          value={2}
-          detail={t("dashboard.stats.stayUpdated", "Stay updated")}
+          value={notificationCount}
+          detail={t("dashboard.stats.recentAlerts", "Recent updates")}
         />
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_340px]">
         <main className="grid gap-6 lg:grid-cols-2">
           <UpcomingSchedule events={upcomingEvents} locale={locale} />
-          <TeamPanel team={teamQuery.data ?? null} />
+          <TeamPanel team={data?.activeTeam ?? null} />
           <RegistrationStatus registrations={registrations} />
-          <TasksPanel hasTeamDescription={Boolean(teamQuery.data?.description)} />
+          <TasksPanel tasks={data?.tasks ?? []} />
         </main>
         <aside className="flex flex-col gap-6">
-          <NotificationsPanel />
+          <NotificationsPanel notifications={data?.notifications ?? []} />
           <QuickActions />
           <HelpPanel />
         </aside>

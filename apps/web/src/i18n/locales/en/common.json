@@ -595,6 +595,57 @@
     "title": "Registration Detail",
     "withdraw": "Withdraw Registration"
   },
+  "dashboard": {
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "stats": {
+      "recentAlerts": "Recent updates"
+    },
+    "tasks": {
+      "empty": "No urgent tasks right now."
+    },
+    "notifications": {
+      "empty": "No recent in-app notifications."
+    }
+  },
+  "staffDashboard": {
+    "actions": {
+      "events": "Events",
+      "registrations": "Registrations",
+      "sync": "Sync logs",
+      "title": "Quick actions",
+      "users": "Users"
+    },
+    "alerts": {
+      "empty": "No recent alerts.",
+      "title": "Operational alerts"
+    },
+    "description": "Track event workload, registration review, sync attention, and operational notices.",
+    "events": {
+      "empty": "No upcoming scoped events.",
+      "title": "Upcoming event operations"
+    },
+    "eyebrow": "Staff operations",
+    "kpis": {
+      "events": "Active events",
+      "pending": "Pending review",
+      "seasons": "Active seasons",
+      "sync": "Sync attention"
+    },
+    "manageEvents": "Manage events",
+    "registrations": {
+      "empty": "No registrations in scope yet.",
+      "title": "Recent registrations"
+    },
+    "scope": {
+      "copy": "{{count}} active scoped events",
+      "title": "Manager scope"
+    },
+    "title": "Operations dashboard"
+  },
   "formBuilder": {
     "addField": "Add field",
     "empty": "No fields yet. Click \"Add field\" to start building your registration form.",

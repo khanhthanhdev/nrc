@@ -595,6 +595,57 @@
     "title": "Chi tiet dang ky",
     "withdraw": "Rut dang ky"
   },
+  "dashboard": {
+    "priority": {
+      "high": "Cao",
+      "medium": "Vua",
+      "low": "Thap"
+    },
+    "stats": {
+      "recentAlerts": "Cap nhat gan day"
+    },
+    "tasks": {
+      "empty": "Hien khong co viec khan cap."
+    },
+    "notifications": {
+      "empty": "Khong co thong bao trong ung dung gan day."
+    }
+  },
+  "staffDashboard": {
+    "actions": {
+      "events": "Su kien",
+      "registrations": "Dang ky",
+      "sync": "Nhat ky dong bo",
+      "title": "Tac vu nhanh",
+      "users": "Nguoi dung"
+    },
+    "alerts": {
+      "empty": "Khong co canh bao gan day.",
+      "title": "Canh bao van hanh"
+    },
+    "description": "Theo doi khoi luong su kien, duyet dang ky, dong bo can chu y va thong bao van hanh.",
+    "events": {
+      "empty": "Khong co su kien sap toi trong pham vi.",
+      "title": "Van hanh su kien sap toi"
+    },
+    "eyebrow": "Van hanh nhan su",
+    "kpis": {
+      "events": "Su kien dang hoat dong",
+      "pending": "Cho xem xet",
+      "seasons": "Mua dang hoat dong",
+      "sync": "Dong bo can chu y"
+    },
+    "manageEvents": "Quan ly su kien",
+    "registrations": {
+      "empty": "Chua co dang ky trong pham vi.",
+      "title": "Dang ky gan day"
+    },
+    "scope": {
+      "copy": "{{count}} su kien trong pham vi",
+      "title": "Pham vi quan ly"
+    },
+    "title": "Bang dieu khien van hanh"
+  },
   "formBuilder": {
     "addField": "Them truong",
     "empty": "Chua co truong nao. Nhan \"Them truong\" de bat dau xay dung bieu mau dang ky.",

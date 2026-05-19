@@ -10,9 +10,22 @@ import { getSupportedLocale, localizePathname } from "@/lib/locale-routing";
 type RegistrationSummary = {
   createdAt: string;
   eventId: string;
+  eventName: string;
   id: string;
   status: string;
   submittedAt: string | null;
+};
+type DashboardTask = {
+  href: string;
+  id: string;
+  priority: "high" | "medium" | "low";
+  title: string;
+};
+type DashboardNotification = {
+  body: string;
+  createdAt: string;
+  id: string;
+  title: string;
 };
 const statusVariant = (status: string): "success" | "warning" | "info" | "error" | "secondary" => {
   if (status === "approved") {
@@ -67,7 +80,7 @@ export function RegistrationStatus({ registrations }: { registrations: Registrat
               </span>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-bold">
-                  {t("dashboard.registrations.event", "Event registration")}
+                  {registration.eventName}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {new Date(registration.submittedAt ?? registration.createdAt).toLocaleDateString()}
@@ -85,13 +98,9 @@ export function RegistrationStatus({ registrations }: { registrations: Registrat
   );
 }
 
-export function TasksPanel({ hasTeamDescription }: { hasTeamDescription: boolean }) {
-  const { t } = useTranslation();
-  const tasks = [
-    [t("dashboard.tasks.profile", "Complete team profile"), t("dashboard.tasks.profileHint", "Add team description and logo"), hasTeamDescription ? "Low" : "High"],
-    [t("dashboard.tasks.documents", "Submit required documents"), t("dashboard.tasks.documentsHint", "Upload team member list"), "Medium"],
-    [t("dashboard.tasks.guidelines", "Review event guidelines"), t("dashboard.tasks.guidelinesHint", "Read competition rules"), "Low"],
-  ];
+export function TasksPanel({ tasks }: { tasks: DashboardTask[] }) {
+  const { i18n, t } = useTranslation();
+  const activeLanguage = getSupportedLocale(i18n.resolvedLanguage ?? i18n.language);
 
   return (
     <Card>
@@ -102,24 +111,33 @@ export function TasksPanel({ hasTeamDescription }: { hasTeamDescription: boolean
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col">
-        {tasks.map(([title, hint, priority]) => (
-          <div className="flex items-center gap-4 py-3" key={title}>
-            <span className="size-6 rounded-full border border-border" />
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-bold">{title}</p>
-              <p className="truncate text-sm text-muted-foreground">{hint}</p>
-            </div>
-            <Badge variant={priority === "High" ? "info" : priority === "Medium" ? "warning" : "secondary"}>
-              {priority}
-            </Badge>
-          </div>
-        ))}
+        {tasks.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            {t("dashboard.tasks.empty", "No urgent tasks right now.")}
+          </p>
+        ) : (
+          tasks.map((task) => (
+            <Link
+              className="flex items-center gap-4 rounded-md py-3 hover:bg-muted"
+              key={task.id}
+              to={localizePathname(task.href, activeLanguage)}
+            >
+              <span className="size-6 rounded-full border border-border" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-bold">{task.title}</p>
+              </div>
+              <Badge variant={task.priority === "high" ? "info" : task.priority === "medium" ? "warning" : "secondary"}>
+                {t(`dashboard.priority.${task.priority}`, task.priority)}
+              </Badge>
+            </Link>
+          ))
+        )}
       </CardContent>
     </Card>
   );
 }
 
-export function NotificationsPanel() {
+export function NotificationsPanel({ notifications }: { notifications: DashboardNotification[] }) {
   const { t } = useTranslation();
   return (
     <Card>
@@ -133,19 +151,24 @@ export function NotificationsPanel() {
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {[
-          [t("dashboard.notifications.registration", "Registration confirmed"), t("dashboard.notifications.registrationCopy", "Your team registration has been confirmed."), "2 hours ago"],
-          [t("dashboard.notifications.schedule", "Schedule updated"), t("dashboard.notifications.scheduleCopy", "Event schedule has been updated."), "1 day ago"],
-        ].map(([title, copy, time]) => (
-          <div className="flex gap-3" key={title}>
-            <span className="mt-1.5 size-2.5 rounded-full bg-primary" />
-            <div className="min-w-0 flex-1">
-              <p className="font-bold">{title}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{copy}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{time}</p>
+        {notifications.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            {t("dashboard.notifications.empty", "No recent in-app notifications.")}
+          </p>
+        ) : (
+          notifications.map((notification) => (
+            <div className="flex gap-3" key={notification.id}>
+              <span className="mt-1.5 size-2.5 rounded-full bg-primary" />
+              <div className="min-w-0 flex-1">
+                <p className="font-bold">{notification.title}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{notification.body}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {new Date(notification.createdAt).toLocaleDateString()}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </CardContent>
     </Card>
   );
